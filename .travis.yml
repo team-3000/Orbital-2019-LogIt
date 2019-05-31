@@ -16,3 +16,6 @@ android:
 
     # Emulators
 #    - sys-img-x86-android-28
+
+before_install:
+  - chmod +x gradlew
