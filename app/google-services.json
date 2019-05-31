@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "406492304021",
+    "firebase_url": "https://logit-28b4b.firebaseio.com",
+    "project_id": "logit-28b4b",
+    "storage_bucket": "logit-28b4b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406492304021:android:d797be01e77cb416",
+        "android_client_info": {
+          "package_name": "com.team3000.logit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406492304021-qcn4qf3s9s483273f6vq74netl1aujv4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.team3000.logit",
+            "certificate_hash": "9a962ae0b6a73d6d4991ceb77083d059a693f4a7"
+          }
+        },
+        {
+          "client_id": "406492304021-k3g7pndd92dhi7tsshckoa22o36mr36o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcFMSqO0CCN6Fjc05sA3FnHo-HQ2T7kC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406492304021-k3g7pndd92dhi7tsshckoa22o36mr36o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
