@@ -16,10 +16,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
     FirebaseAuth mAuth;
+    EditText mUserNameField;
     EditText mEmailField;
     EditText mPasswordField;
     EditText mConfirmPasswordField;
@@ -33,6 +35,7 @@ public class SignUpActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // Find all necessary views
+        mUserNameField = findViewById(R.id.nameField);
         mEmailField = findViewById(R.id.emailField);
         mPasswordField = findViewById(R.id.passwordField);
         mConfirmPasswordField = findViewById(R.id.confirmPasswordField);
@@ -62,10 +65,11 @@ public class SignUpActivity extends AppCompatActivity {
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            // Sign up success, set user's name and send verification email
                             if (task.isSuccessful()) {
-                                // Sign up success, send verification email
                                 Log.d(TAG, "createUserWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                intialiseProfile(user);
                                 sendEmailVerification(user);
                             } else {
                                 // If sign up fails, display a message to the user.
@@ -109,6 +113,29 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         return isValid;
+    }
+
+    // Initialize the user's profile (Currently only the user's name)
+    private void intialiseProfile(FirebaseUser user) {
+        String userName = mUserNameField.getText().toString().trim();
+
+        // Construct a UserProfileChangeRequest object
+        UserProfileChangeRequest profileInitialization =
+                new UserProfileChangeRequest.Builder()
+                        .setDisplayName(userName)
+                        .build();
+
+        user.updateProfile(profileInitialization)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.i(TAG, "Username is initialised");
+                        } else {
+                            Log.e(TAG, "Fail to initialize username!");
+                        }
+                    }
+                });
     }
 
     private void sendEmailVerification(final FirebaseUser user) {
