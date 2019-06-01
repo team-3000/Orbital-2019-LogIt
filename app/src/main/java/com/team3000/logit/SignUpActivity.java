@@ -94,6 +94,9 @@ public class SignUpActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(password)) {
             mPasswordField.setError("Required.");
             isValid = false;
+        } else if (password.length() < 8) {
+            Toast.makeText(this, "password must be at least 8 characters long!", Toast.LENGTH_SHORT).show();
+            isValid = false;
         }
 
         if (TextUtils.isEmpty(confirmPassword)) {
