@@ -11,7 +11,7 @@
     </RelativeLayout>
 
     <EditText
-        android:id="@+id/emailField_Login"
+        android:id="@+id/emailField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -21,7 +21,7 @@
         android:hint="Enter email"/>
 
     <EditText
-        android:id="@+id/passwordField_Login"
+        android:id="@+id/passwordField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -31,17 +31,11 @@
         android:hint="Enter password"/>
 
     <Button
+        android:id="@+id/signUp_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Login"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="80dp"
-        android:text="New user? Sign up here!" />
-
+        android:layout_marginBottom="100dp"
+        android:text="Sign up !"/>
 
 </LinearLayout>
