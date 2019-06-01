@@ -54,13 +54,14 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void signUp() {
+        final String username = mUserNameField.getText().toString().trim();
         String email = mEmailField.getText().toString();
         String password = mPasswordField.getText().toString();
         String confirmPassword = mConfirmPasswordField.getText().toString();
 
         // Sign up the user only if the signUp form is valid
         // If the sign-up task is successful, send verification email to the user
-        if (validateForm(email, password, confirmPassword)) {
+        if (validateForm(username, email, password, confirmPassword)) {
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -69,7 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "createUserWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                intialiseProfile(user);
+                                intialiseProfile(user, username);
                                 sendEmailVerification(user);
                             } else {
                                 // If sign up fails, display a message to the user.
@@ -86,10 +87,15 @@ public class SignUpActivity extends AppCompatActivity {
      * Validate the signUp form
      * @return a boolean indicating whether the signUp form is valid
      */
-    private boolean validateForm(String email, String password, String confirmPassword) {
+    private boolean validateForm(String username, String email, String password, String confirmPassword) {
         boolean isValid = true;
 
-        // Check all the fields
+        // Check the validity of all the fields
+        if (TextUtils.isEmpty(username)) {
+            mUserNameField.setError("Required");
+            isValid = false;
+        }
+
         if (TextUtils.isEmpty(email)) {
             mEmailField.setError("Required.");
             isValid = false;
@@ -116,13 +122,11 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     // Initialize the user's profile (Currently only the user's name)
-    private void intialiseProfile(FirebaseUser user) {
-        String userName = mUserNameField.getText().toString().trim();
-
+    private void intialiseProfile(FirebaseUser user, String username) {
         // Construct a UserProfileChangeRequest object
         UserProfileChangeRequest profileInitialization =
                 new UserProfileChangeRequest.Builder()
-                        .setDisplayName(userName)
+                        .setDisplayName(username)
                         .build();
 
         user.updateProfile(profileInitialization)
