@@ -1,5 +1,6 @@
 package com.team3000.logit;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -13,6 +14,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -23,11 +26,15 @@ import android.view.Menu;
 
 public class DailyLogActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily_log);
+
+        mAuth = FirebaseAuth.getInstance();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -45,6 +52,18 @@ public class DailyLogActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    // Check if user is logged in.
+    // Redirect the user to the login page if they have not logged in.
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null || !user.isEmailVerified()) {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
     }
 
     @Override
@@ -97,6 +116,10 @@ public class DailyLogActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+        } else if (id == R.id.nav_signOut) {
+            mAuth.signOut();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish(); // destroy this activity
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

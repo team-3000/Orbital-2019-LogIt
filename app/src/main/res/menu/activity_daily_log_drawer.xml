@@ -35,4 +35,8 @@
         </menu>
     </item>
 
+    <item
+        android:id="@+id/nav_signOut"
+        android:title="Sign out"/>
+
 </menu>

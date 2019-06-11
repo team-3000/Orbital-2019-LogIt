@@ -51,8 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         // Redirect user if the user has already signed in
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null && user.isEmailVerified()) {
-            Intent i = new Intent(this, DailyLogActivity.class);
-            startActivity(i);
+            updateUI();
         }
     }
 
@@ -99,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // Only update the UI if user has verified their account
                                 // through email
                                 if (user.isEmailVerified()) {
-                                    updateUI(user);
+                                    updateUI();
                                 } else {
                                     mAuth.signOut();
                                     Toast.makeText(LoginActivity.this, "" +
@@ -140,8 +139,9 @@ public class LoginActivity extends AppCompatActivity {
         return isValid;
     }
 
-    private void updateUI(FirebaseUser user) {
-        Toast.makeText(this, "Username is " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+    private void updateUI() {
+        startActivity(new Intent(this, DailyLogActivity.class));
+        finish(); // destroy this activity
     }
 
     /*
