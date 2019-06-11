@@ -22,6 +22,7 @@
 
     <include layout="@layout/content_daily_log" />
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

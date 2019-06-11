@@ -44,6 +44,18 @@ public class LoginActivity extends AppCompatActivity {
         setClickListeners();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Redirect user if the user has already signed in
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null && user.isEmailVerified()) {
+            Intent i = new Intent(this, DailyLogActivity.class);
+            startActivity(i);
+        }
+    }
+
     private void setClickListeners() {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
