@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,17 +20,22 @@ import com.google.firebase.auth.FirebaseUser;
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
+        // FirebaseAuth part
         mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
+        // App bar part
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Navigation drawer part
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -36,6 +43,15 @@ public abstract class BaseActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Set the text of the welcome message in the navigation drawer
+        View header = navigationView.getHeaderView(0);
+        TextView message = header.findViewById(R.id.welcome_textView);
+        if (user.getDisplayName() != null) {
+            message.setText(String.format("Welcome %s!", user.getDisplayName()));
+        } else {
+            message.setText(String.format("Welcome %s!", user.getEmail()));
+        }
     }
 
     // Check if user is logged in.
