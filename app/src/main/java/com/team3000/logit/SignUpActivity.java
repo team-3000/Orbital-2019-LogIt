@@ -20,12 +20,12 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
-    FirebaseAuth mAuth;
-    EditText mUserNameField;
-    EditText mEmailField;
-    EditText mPasswordField;
-    EditText mConfirmPasswordField;
-    Button signUpButton;
+    private FirebaseAuth mAuth;
+    private EditText mUserNameField;
+    private EditText mEmailField;
+    private EditText mPasswordField;
+    private EditText mConfirmPasswordField;
+    private Button signUpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
