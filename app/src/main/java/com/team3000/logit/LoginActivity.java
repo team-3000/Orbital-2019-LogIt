@@ -3,6 +3,8 @@ package com.team3000.logit;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,6 +21,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private FirebaseAuth mAuth;
@@ -26,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordField;
     private Button loginButton;
     private TextView signUpLink;
+    // private TextView resendVerificationLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordField = findViewById(R.id.passwordField);
         loginButton = findViewById(R.id.login_button);
         signUpLink = findViewById(R.id.signUpLink);
+        // resendVerificationLink = findViewById(R.id.resendVerificationLink);
 
         setClickListeners();
     }
@@ -58,6 +66,16 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        /*
+        resendVerificationLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog dialog = createResendDialog();
+                dialog.show();
+            }
+        });
+        */
     }
 
     private void logIn() {
@@ -69,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
+                            if (task.isSuccessful() && mAuth.getCurrentUser().isEmailVerified()) {
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
 
@@ -95,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+
     /**
      * Validate the signUp form
      * @return a boolean indicating whether the signUp form is valid
@@ -119,4 +138,84 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         Toast.makeText(this, "Username is " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
     }
+
+    /*
+    // Try using fragment instead to make code cleaner
+    private AlertDialog createResendDialog() {
+        // Create an alert dialog builder
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final View dialog = getLayoutInflater().inflate(R.layout.resend_verification_dialog, null);
+
+        // Set clickListener for the dialog
+        final Button resendButton = dialog.findViewById(R.id.resendVerification_button);
+        resendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView emailField = dialog.findViewById(R.id.emailField);
+                String email = emailField.getText().toString().trim();
+
+                resendEmailVerification(email);
+            }
+        });
+
+        // Attach the view to the dialog
+        dialogBuilder.setView(dialog);
+
+        // Create and return the dialog
+        return dialogBuilder.create();
+    }
+    */
+
+    /*
+    private void resendEmailVerification(String email) {
+        String email = mEmailField.getText().toString().trim();
+        String password = mPasswordField.getText().toString();
+
+        if (validateForm(email, password)) {
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, makeResendEmailOnCompleteListeners());
+        }
+    }
+    */
+
+    /*
+    // Try using fragment instead to make code cleaner
+    private OnCompleteListener<AuthResult> makeResendEmailOnCompleteListeners() {
+        OnCompleteListener<AuthResult> signInListener = new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "signInWithEmail:success");
+                    sendEmailThenSignOUt();
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithEmail:failure", task.getException());
+                    Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            // Send verification email to user once they successfully sign in
+            // then sign the user out again
+            public void sendEmailThenSignOUt() {
+                final FirebaseUser user = mAuth.getCurrentUser();
+                user.sendEmailVerification()
+                        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(LoginActivity.this,
+                                            "Verification email sent to " + user.getEmail(),
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Log.e(TAG, "sendEmailVerification", task.getException());
+                                    Toast.makeText(SignUpActivity.this,
+                                            "Failed to send verification email.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }};
+    }
+    */
 }
