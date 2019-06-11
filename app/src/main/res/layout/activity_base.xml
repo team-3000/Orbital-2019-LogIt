@@ -14,7 +14,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android">
 
         <include
-            layout="@layout/app_bar_daily_log"
+            layout="@layout/app_bar"
             android:id="@+id/content_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -32,7 +32,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_daily_log"
+        app:headerLayout="@layout/nav_header"
         app:menu="@menu/activity_daily_log_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
