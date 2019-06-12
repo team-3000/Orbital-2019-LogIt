@@ -12,14 +12,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+<<<<<<< HEAD
         <activity android:name=".CalendarActivity"></activity>
         <activity
             android:name=".TaskActivity"
             android:label="@string/title_activity_task" />
         <activity android:name=".MainActivity">
+=======
+        <activity
+            android:name=".DailyLogActivity"
+            android:label="@string/title_activity_daily_log"
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".SignUpActivity" />
+
+        <activity android:name=".LoginActivity">
+>>>>>>> master
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
