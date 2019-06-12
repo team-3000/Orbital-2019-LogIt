@@ -3,17 +3,21 @@ package com.team3000.logit;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.CalendarView;
+import android.widget.FrameLayout;
 
-public class CalendarActivity extends AppCompatActivity {
+@TargetApi(11)
+public class CalendarActivity extends BaseActivity {
     CalendarView calendarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar);
+        FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_calendar, contentFrameLayout);
 
         calendarView = findViewById(R.id.calendarView);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {

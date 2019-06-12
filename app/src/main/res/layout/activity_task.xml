@@ -11,13 +11,11 @@
         android:id="@+id/nav_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
         android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/entry_bottom_nav_menu" />
 
     <TextView
         android:id="@+id/tvTaskTitle"
@@ -28,18 +26,18 @@
         android:text="Title"
         android:textIsSelectable="false"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@id/layoutDateEisen"
+        app:layout_constraintBottom_toTopOf="@id/layoutDateTime"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/layoutDateEisen"
+        android:id="@+id/layoutDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/tvTaskCollection"
+        app:layout_constraintBottom_toTopOf="@+id/layoutCollectionEisen"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTaskTitle">
 
@@ -52,30 +50,18 @@
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/tvTaskEisen"
+            android:id="@+id/tvTaskTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
+            android:layout_marginStart="20dp"
             android:layout_weight="1"
-            android:text="Delegate"
+            android:text="02:00 pm"
             android:textSize="24sp" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvTaskCollection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
-        android:text="Collection Tag"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/svTaskContent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutDateEisen" />
-
     <ScrollView
-        android:id="@+id/svTaskContent"
+        android:id="@+id/svTaskDesc"
         android:layout_width="0dp"
         android:layout_height="250dp"
         android:layout_marginStart="20dp"
@@ -86,7 +72,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btnEditTask"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTaskCollection">
+        app:layout_constraintTop_toBottomOf="@+id/layoutCollectionEisen">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -94,10 +80,10 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvTaskScrollContent"
+                android:id="@+id/tvTaskScrollDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Test"
+                android:text="I should really get my life in order sometime. It's such a mess but there's so much anime to watch and those loli figurines aren't going to polish themselves uwu!!! filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler"
                 android:textSize="24sp" />
         </LinearLayout>
     </ScrollView>
@@ -115,6 +101,36 @@
         app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/svTaskContent" />
+        app:layout_constraintTop_toBottomOf="@+id/svTaskDesc" />
+
+    <LinearLayout
+        android:id="@+id/layoutCollectionEisen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/svTaskDesc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutDateTime">
+
+        <TextView
+            android:id="@+id/tvTaskCollection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Collection Tag"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/tvTaskEisen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_weight="1"
+            android:text="Delegate"
+            android:textSize="24sp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

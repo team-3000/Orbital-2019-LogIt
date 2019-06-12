@@ -5,15 +5,16 @@ import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
-public class TaskActivity extends AppCompatActivity {
+public class TaskActivity extends BaseActivity {
     TextView tvTaskTitle;
     TextView tvTaskDate;
+    TextView tvTaskTime;
     TextView tvTaskCollection;
     TextView tvTaskEisen;
 
@@ -23,13 +24,12 @@ public class TaskActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_alltasks:
+                case R.id.entry_nav_alltasks:
 //                    Intent taskListIntent = new Intent(TaskActivity.this, TaskListActivity.class);
 //                    startActivity(taskListIntent);
                     return true;
-                case R.id.navigation_calendar:
-//                    Intent calendarIntent = new Intent(TaskActivity.this, CalendarActivity.class);
-//                    startActivity(calendarIntent);
+                case R.id.entry_nav_calendar:
+                    startActivity(new Intent(TaskActivity.this, CalendarActivity.class));
                     return true;
             }
             return false;
@@ -39,13 +39,15 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
+        getLayoutInflater().inflate(R.layout.activity_task, contentFrameLayout);
 
+        BottomNavigationView navView = findViewById(R.id.nav_view);
         tvTaskTitle = findViewById(R.id.tvTaskTitle);
         tvTaskDate = findViewById(R.id.tvTaskDate);
+        tvTaskTime = findViewById(R.id.tvTaskTime);
         tvTaskCollection = findViewById(R.id.tvTaskCollection);
-        tvTaskEisen = findViewById(R.id.tvTaskEisen);
+        tvTaskEisen = findViewById(R.id.tvTaskTime);
 
         String date = getIntent().getIntExtra("day", 0) + "/" + getIntent().getIntExtra("month", 0) + "/" +
                         getIntent().getIntExtra("year", 0);

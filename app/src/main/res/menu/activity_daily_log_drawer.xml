@@ -5,38 +5,39 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_today"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:title="@string/menu_today" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_this_month"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:title="@string/menu_this_month" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_calendar"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
-        <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" />
+            android:title="@string/menu_calendar" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/nav_tag_groups">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/menu_share" />
+                android:id="@+id/nav_collections"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="@string/menu_collections"/>
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_eisen"
                 android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send" />
+                android:title="@string/menu_eisen" />
         </menu>
     </item>
 
     <item
+        android:id="@+id/nav_new"
+        android:icon="@drawable/ic_note_add_black_24dp"
+        android:title="@string/nav_new"/>
+
+    <item
         android:id="@+id/nav_signOut"
-        android:title="Sign out"/>
+        android:title="@string/nav_sign_out"/>
 
 </menu>
