@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">LogIt</string>
+    <string name="title_activity_task">TaskActivity</string>
+    <string name="title_calendar">Calendar</string>
+    <string name="title_alltasks">All Tasks</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="btnEdit">Edit</string>
 </resources>
