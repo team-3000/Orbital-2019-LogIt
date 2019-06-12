@@ -12,11 +12,11 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class TaskActivity extends BaseActivity {
-    TextView tvTaskTitle;
-    TextView tvTaskDate;
-    TextView tvTaskTime;
-    TextView tvTaskCollection;
-    TextView tvTaskEisen;
+    protected TextView tvTaskTitle;
+    protected TextView tvTaskDate;
+    protected TextView tvTaskTime;
+    protected TextView tvTaskCollection;
+    protected TextView tvTaskEisen;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -31,6 +31,7 @@ public class TaskActivity extends BaseActivity {
                 case R.id.entry_nav_calendar:
                     startActivity(new Intent(TaskActivity.this, CalendarActivity.class));
                     return true;
+                default:
             }
             return false;
         }

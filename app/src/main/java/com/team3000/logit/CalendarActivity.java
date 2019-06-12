@@ -1,7 +1,6 @@
 package com.team3000.logit;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
@@ -11,7 +10,7 @@ import android.widget.FrameLayout;
 
 @TargetApi(11)
 public class CalendarActivity extends BaseActivity {
-    CalendarView calendarView;
+    private CalendarView calendarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
