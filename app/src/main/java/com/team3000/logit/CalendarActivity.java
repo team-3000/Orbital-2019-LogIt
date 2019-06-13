@@ -8,9 +8,10 @@ import android.os.Bundle;
 import android.widget.CalendarView;
 import android.widget.FrameLayout;
 
+import java.text.DateFormatSymbols;
+
 @TargetApi(11)
 public class CalendarActivity extends BaseActivity {
-    private CalendarView calendarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +19,7 @@ public class CalendarActivity extends BaseActivity {
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_calendar, contentFrameLayout);
 
-        calendarView = findViewById(R.id.calendarView);
+        CalendarView calendarView = findViewById(R.id.calendarView);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
@@ -30,9 +31,12 @@ public class CalendarActivity extends BaseActivity {
     }
 
     private void goToDailyLog(int year, int month, int dayOfMonth){
-        Intent intent = new Intent(CalendarActivity.this, TaskActivity.class);
+        String monthName = new DateFormatSymbols().getMonths()[month];
+        String monthNameShort = monthName.substring(0, 3);
+
+        Intent intent = new Intent(CalendarActivity.this, EntryActivity.class);
         intent.putExtra("year", year);
-        intent.putExtra("month", month);
+        intent.putExtra("month", monthNameShort);
         intent.putExtra("day", dayOfMonth);
         startActivity(intent);
     }

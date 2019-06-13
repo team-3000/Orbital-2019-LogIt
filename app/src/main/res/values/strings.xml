@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">LogIt</string>
 
-    <string name="title_activity_task">TaskActivity</string>
+    <string name="title_entry_task">EntryActivity</string>
     <string name="title_calendar">Calendar</string>
     <string name="title_alltasks">All Tasks</string>
     <string name="btnEdit">Edit</string>
@@ -24,10 +24,10 @@
     <string name="nav_sign_out">Sign out</string>
 
     <string name="form_type">Type:</string>
-    <string name="form_title">Title</string>
-    <string name="form_date">Date</string>
-    <string name="form_time">Time</string>
-    <string name="form_collection">Collection (Personal Category)</string>
+    <string name="form_title">Title (required)</string>
+    <string name="form_date">Date (required)</string>
+    <string name="form_time">Time (required)</string>
+    <string name="form_collection">Collection - Personal Category</string>
     <string name="form_priority">Priority:</string>
     <string name="form_description">Description</string>
     <string name="form_monthlyLog">Add to Monthly Log</string>

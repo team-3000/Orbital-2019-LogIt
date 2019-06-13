@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LogFormActivity">
+    tools:context=".EntryFormActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                 android:textSize="18sp" />
 
             <Spinner
-                android:id="@+id/spinnerFormType"
+                android:id="@+id/spnFormType"
                 android:layout_width="116dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
@@ -89,6 +89,7 @@
             android:textSize="18sp" />
 
         <LinearLayout
+            android:id="@+id/layoutPriority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -105,7 +106,7 @@
                 android:textSize="18sp" />
 
             <Spinner
-                android:id="@+id/spinnerFormEisen"
+                android:id="@+id/spnFormEisen"
                 android:layout_width="187dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
@@ -118,7 +119,7 @@
         <EditText
             android:id="@+id/etFormDesc"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="135dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
@@ -130,7 +131,7 @@
             android:textSize="18sp" />
 
         <CheckBox
-            android:id="@+id/cbAddMonthLog"
+            android:id="@+id/cbAddToMonthLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -140,7 +141,7 @@
             android:textSize="18sp" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnFormSubmit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="100dp"

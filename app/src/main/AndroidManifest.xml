@@ -14,11 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LogFormActivity"></activity>
+        <activity android:name=".EntryFormActivity"></activity>
         <activity android:name=".CalendarActivity" />
         <activity
-            android:name=".TaskActivity"
-            android:label="@string/title_activity_task" />
+            android:name=".EntryActivity"
+            android:label="@string/title_entry_task" />
         <activity
             android:name=".DailyLogActivity"
             android:label="@string/title_activity_daily_log"

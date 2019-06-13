@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TaskActivity">
+    tools:context=".EntryActivity">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
@@ -18,7 +18,7 @@
         app:menu="@menu/entry_bottom_nav_menu" />
 
     <TextView
-        android:id="@+id/tvTaskTitle"
+        android:id="@+id/tvEntryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -39,10 +39,10 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/layoutCollectionEisen"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTaskTitle">
+        app:layout_constraintTop_toBottomOf="@+id/tvEntryTitle">
 
         <TextView
-            android:id="@+id/tvTaskDate"
+            android:id="@+id/tvEntryDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -50,7 +50,7 @@
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/tvTaskTime"
+            android:id="@+id/tvEntryTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -61,7 +61,7 @@
     </LinearLayout>
 
     <ScrollView
-        android:id="@+id/svTaskDesc"
+        android:id="@+id/svEntryDesc"
         android:layout_width="0dp"
         android:layout_height="250dp"
         android:layout_marginStart="20dp"
@@ -69,7 +69,7 @@
         android:layout_marginEnd="20dp"
         android:background="#F1F1F1"
         android:scrollbarStyle="outsideInset"
-        app:layout_constraintBottom_toTopOf="@+id/btnEditTask"
+        app:layout_constraintBottom_toTopOf="@+id/btnEditEntry"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutCollectionEisen">
@@ -80,7 +80,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvTaskScrollDesc"
+                android:id="@+id/tvEntryDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="I should really get my life in order sometime. It's such a mess but there's so much anime to watch and those loli figurines aren't going to polish themselves uwu!!! filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler"
@@ -89,19 +89,20 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/btnEditTask"
+        android:id="@+id/btnEditEntry"
         android:layout_width="88dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="161dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="162dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginBottom="20dp"
         android:text="@string/btnEdit"
+        android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/nav_view"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnDeleteEntry"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/svTaskDesc" />
+        app:layout_constraintTop_toBottomOf="@+id/svEntryDesc" />
 
     <LinearLayout
         android:id="@+id/layoutCollectionEisen"
@@ -110,12 +111,12 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/svTaskDesc"
+        app:layout_constraintBottom_toTopOf="@+id/svEntryDesc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutDateTime">
 
         <TextView
-            android:id="@+id/tvTaskCollection"
+            android:id="@+id/tvEntryCollection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -123,7 +124,7 @@
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/tvTaskEisen"
+            android:id="@+id/tvEntryEisen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="70dp"
@@ -132,5 +133,21 @@
             android:textSize="24sp" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btnDeleteEntry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="20dp"
+        android:text="Delete"
+        android:textColor="#FD0808"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/nav_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnEditEntry"
+        app:layout_constraintTop_toBottomOf="@+id/svEntryDesc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

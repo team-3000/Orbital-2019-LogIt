@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
-    private FirebaseUser user;
+    protected FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +115,7 @@ public abstract class BaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_eisen) {
 
         } else if (id == R.id.nav_new) {
-            startActivity(new Intent(this, LogFormActivity.class));
+            startActivity(new Intent(this, EntryFormActivity.class));
         } else if (id == R.id.nav_signOut) {
             mAuth.signOut();
             startActivity(new Intent(this, LoginActivity.class));
