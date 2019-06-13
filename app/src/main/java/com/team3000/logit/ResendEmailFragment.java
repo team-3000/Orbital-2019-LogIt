@@ -21,9 +21,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class ResendEmailFragment extends DialogFragment {
-    FirebaseAuth mAuth;
-    TextView mEmailField;
-    TextView mPasswordField;
+    private FirebaseAuth mAuth;
+    private TextView mEmailField;
+    private TextView mPasswordField;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,7 +93,6 @@ public class ResendEmailFragment extends DialogFragment {
         user.sendEmailVerification().addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                String message = "";
                 if (task.isSuccessful()) {
                     mAuth.signOut();
                     ResendEmailFragment.this.dismiss();
