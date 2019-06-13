@@ -183,15 +183,25 @@ public class LoginActivity extends AppCompatActivity {
     }
     */
 
-    /*
-    // Try using fragment instead to make code cleaner
-    private OnCompleteListener<AuthResult> makeResendEmailOnCompleteListeners() {
-        OnCompleteListener<AuthResult> signInListener = new OnCompleteListener<AuthResult>() {
+    private OnCompleteListener<AuthResult> getLoggedInListener() {
+        return new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
+                if (task.isSuccessful() && mAuth.getCurrentUser().isEmailVerified()) {
                     Log.d(TAG, "signInWithEmail:success");
-                    sendEmailThenSignOUt();
+                    FirebaseUser user = mAuth.getCurrentUser();
+
+                    // Only update the UI if user has verified their account
+                    // through email
+                    if (user.isEmailVerified()) {
+                        updateUI();
+                    } else {
+                        mAuth.signOut();
+                        Toast.makeText(LoginActivity.this, "" +
+                                        "Either email or password entered is incorrect" +
+                                        "or have not performed email verification",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -199,28 +209,29 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 }
             }
-
-            // Send verification email to user once they successfully sign in
-            // then sign the user out again
-            public void sendEmailThenSignOUt() {
-                final FirebaseUser user = mAuth.getCurrentUser();
-                user.sendEmailVerification()
-                        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this,
-                                            "Verification email sent to " + user.getEmail(),
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Log.e(TAG, "sendEmailVerification", task.getException());
-                                    Toast.makeText(SignUpActivity.this,
-                                            "Failed to send verification email.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }};
+        };
     }
-    */
+
+    private OnCompleteListener<Void> getResendListener() {
+        return new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                String message;
+
+                if (task.isSuccessful()) {
+                    message = "Successfully resend verification email";
+                } else {
+                    Log.e(TAG, "sendEmailVerification", task.getException());
+                    message = "Failed to send verification email.";
+                }
+
+                // Display toast message accordingly
+                Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+
+                // Sign the user out regardless of the success of resending the
+                // verification email
+                mAuth.signOut();
+            }
+        };
+    }
 }
