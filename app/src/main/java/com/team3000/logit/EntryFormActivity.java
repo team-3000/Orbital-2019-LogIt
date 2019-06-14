@@ -22,7 +22,6 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -64,6 +63,7 @@ public class EntryFormActivity extends BaseActivity {
         etFormDesc = findViewById(R.id.etFormDesc);
         cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
         btnFormSubmit = findViewById(R.id.btnFormSubmit);
+        String oriDir = getIntent().getStringExtra("oriDir");
         final String type = getIntent().getStringExtra("type");
 
         tvFormType.setText(String.format(Locale.US, "Type: %s", type.toUpperCase()));
@@ -72,6 +72,23 @@ public class EntryFormActivity extends BaseActivity {
         }
         if (!type.equals("event")) {
             etFormLocation.setVisibility(View.GONE);
+        }
+
+        if (oriDir != null ) {
+            db.document(oriDir).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    DocumentSnapshot doc = task.getResult();
+                    etFormTitle.setText(doc.getString("title"));
+                    etFormDate.setText(doc.getString("date"));
+                    etFormTime.setText(doc.getString("time"));
+                    actvCollection.setText(doc.getString("collection"));
+                    if (type.equals("event")) {
+                        etFormLocation.setText(doc.getString("location"));
+                    }
+                    etFormDesc.setText(doc.getString("desc"));
+                }
+            });
         }
 
         // Open a DatePicker when Date EditText clicked
