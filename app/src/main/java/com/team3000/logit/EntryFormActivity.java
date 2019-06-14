@@ -179,8 +179,13 @@ public class EntryFormActivity extends BaseActivity {
                     int year = Integer.parseInt(dateArr[2]);
                     String month = dateArr[1];
                     String dbPath = String.format(Locale.US, "users/%s/%s/%d/%s", user.getUid(), type, year, month);
+                    CollectionReference ref = db.collection(dbPath);
 
-                    db.collection(dbPath).document(entryId).set(entryData);
+                    if (oriDir == null) {
+                        ref.add(entryData);
+                    } else {
+                        ref.document(entryId).set(entryData);
+                    }
 
 //                if (cbAddToMonthLog.isChecked()) {
                     // Add to monthly log
