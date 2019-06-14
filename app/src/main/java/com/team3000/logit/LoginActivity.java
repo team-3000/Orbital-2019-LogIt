@@ -2,6 +2,9 @@ package com.team3000.logit;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordField;
     private Button loginButton;
     private TextView signUpLink;
-    // private TextView resendVerificationLink;
+    private TextView resendVerificationLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordField = findViewById(R.id.passwordField);
         loginButton = findViewById(R.id.login_button);
         signUpLink = findViewById(R.id.signUpLink);
-        // resendVerificationLink = findViewById(R.id.resendVerificationLink);
+        resendVerificationLink = findViewById(R.id.resendVerificationLink);
 
         setClickListeners();
     }
@@ -71,15 +74,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        /*
         resendVerificationLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog dialog = createResendDialog();
-                dialog.show();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+
+                ResendEmailFragment fragment = new ResendEmailFragment();
+                fragment.show(getSupportFragmentManager(), "dialog");
             }
         });
-        */
+
     }
 
     private void logIn() {
@@ -143,84 +152,4 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(new Intent(this, DailyLogActivity.class));
         finish(); // destroy this activity
     }
-
-    /*
-    // Try using fragment instead to make code cleaner
-    private AlertDialog createResendDialog() {
-        // Create an alert dialog builder
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        final View dialog = getLayoutInflater().inflate(R.layout.resend_verification_dialog, null);
-
-        // Set clickListener for the dialog
-        final Button resendButton = dialog.findViewById(R.id.resendVerification_button);
-        resendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView emailField = dialog.findViewById(R.id.emailField);
-                String email = emailField.getText().toString().trim();
-
-                resendEmailVerification(email);
-            }
-        });
-
-        // Attach the view to the dialog
-        dialogBuilder.setView(dialog);
-
-        // Create and return the dialog
-        return dialogBuilder.create();
-    }
-    */
-
-    /*
-    private void resendEmailVerification(String email) {
-        String email = mEmailField.getText().toString().trim();
-        String password = mPasswordField.getText().toString();
-
-        if (validateForm(email, password)) {
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, makeResendEmailOnCompleteListeners());
-        }
-    }
-    */
-
-    /*
-    // Try using fragment instead to make code cleaner
-    private OnCompleteListener<AuthResult> makeResendEmailOnCompleteListeners() {
-        OnCompleteListener<AuthResult> signInListener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "signInWithEmail:success");
-                    sendEmailThenSignOUt();
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail:failure", task.getException());
-                    Toast.makeText(LoginActivity.this, "Authentication failed.",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            // Send verification email to user once they successfully sign in
-            // then sign the user out again
-            public void sendEmailThenSignOUt() {
-                final FirebaseUser user = mAuth.getCurrentUser();
-                user.sendEmailVerification()
-                        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this,
-                                            "Verification email sent to " + user.getEmail(),
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Log.e(TAG, "sendEmailVerification", task.getException());
-                                    Toast.makeText(SignUpActivity.this,
-                                            "Failed to send verification email.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }};
-    }
-    */
 }
