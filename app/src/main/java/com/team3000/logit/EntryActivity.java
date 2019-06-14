@@ -50,6 +50,7 @@ public class EntryActivity extends BaseActivity {
                     intentToday.putExtra("month", cal.get(Calendar.MONTH));
                     intentToday.putExtra("day", cal.get(Calendar.DAY_OF_MONTH));
                     startActivity(intentToday);
+                    return true;
                 default:
                     break;
             }

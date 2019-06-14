@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
+// import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -81,7 +81,7 @@ public class EntryFormActivity extends BaseActivity {
                     etFormDate.setText(doc.getString("date"));
                     etFormTime.setText(doc.getString("time"));
                     actvCollection.setText(doc.getString("collection"));
-                    if (type.equals("event")) {
+                    if ("event".equals(type)) {
                         etFormLocation.setText(doc.getString("location"));
                     }
                     etFormDesc.setText(doc.getString("desc"));
