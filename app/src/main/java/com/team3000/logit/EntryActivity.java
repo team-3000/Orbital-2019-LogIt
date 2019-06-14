@@ -75,6 +75,7 @@ public class EntryActivity extends BaseActivity {
         btnEditEntry = findViewById(R.id.btnEditEntry);
         btnDeleteEntry = findViewById(R.id.btnDeleteEntry);
         final String type = getIntent().getStringExtra("type");
+        final String entryId = getIntent().getStringExtra("entryId");
 
         if (type.equals("note")) {
             tvEntryExtra.setVisibility(View.GONE);
@@ -107,6 +108,7 @@ public class EntryActivity extends BaseActivity {
                 Intent intentEdit = new Intent(EntryActivity.this, EntryFormActivity.class);
                 intentEdit.putExtra("type", type);
                 intentEdit.putExtra("oriDir", directory);
+                intentEdit.putExtra("entryId", entryId);
                 startActivity(intentEdit);
             }
         });

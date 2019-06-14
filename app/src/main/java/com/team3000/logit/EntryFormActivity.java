@@ -63,8 +63,9 @@ public class EntryFormActivity extends BaseActivity {
         etFormDesc = findViewById(R.id.etFormDesc);
         cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
         btnFormSubmit = findViewById(R.id.btnFormSubmit);
-        String oriDir = getIntent().getStringExtra("oriDir");
         final String type = getIntent().getStringExtra("type");
+        final String oriDir = getIntent().getStringExtra("oriDir");
+        final String entryId = getIntent().getStringExtra("entryId");
 
         tvFormType.setText(String.format(Locale.US, "Type: %s", type.toUpperCase()));
         if (!type.equals("task")) {
@@ -178,9 +179,8 @@ public class EntryFormActivity extends BaseActivity {
                     int year = Integer.parseInt(dateArr[2]);
                     String month = dateArr[1];
                     String dbPath = String.format(Locale.US, "users/%s/%s/%d/%s", user.getUid(), type, year, month);
-                    CollectionReference ref = db.collection(dbPath);
 
-                    ref.add(entryData);
+                    db.collection(dbPath).document(entryId).set(entryData);
 
 //                if (cbAddToMonthLog.isChecked()) {
                     // Add to monthly log
