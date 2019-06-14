@@ -24,7 +24,6 @@ public class DailyLogActivity extends BaseActivity {
 
         /* ----------------Test, feel free to comment out -------------------------------------- */
         TextView tvTest = findViewById(R.id.tvTest);
-        final int year = getIntent().getIntExtra("year", 0);
         tvTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
