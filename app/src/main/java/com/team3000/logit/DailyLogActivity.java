@@ -27,12 +27,14 @@ public class DailyLogActivity extends BaseActivity {
         tvTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Placeholder entryId, change here after all test Edit/Delete ops
+                String entryId = "CCVvhaumJvI00SAFMEud";
                 Intent intent = new Intent(DailyLogActivity.this, EntryActivity.class);
                 intent.putExtra("type", "task");
-                String directory = String.format(Locale.US, "users/%s/task/2019/Jun/rMpaHrQOZkQUkGlbm2BK",
-                        user.getUid());
+                String directory = String.format(Locale.US, "users/%s/task/2019/Jun/%s",
+                        user.getUid(), entryId);
                 intent.putExtra("directory", directory);
-                intent.putExtra("entryId", "rMpaHrQOZkQUkGlbm2BK");
+                intent.putExtra("entryId", entryId);
                 startActivity(intent);
             }
         });
