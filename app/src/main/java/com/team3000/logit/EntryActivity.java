@@ -19,7 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.util.Calendar;
-import java.util.Locale;
 
 public class EntryActivity extends BaseActivity {
     private TextView tvEntryTitle;
@@ -28,10 +27,8 @@ public class EntryActivity extends BaseActivity {
     private TextView tvEntryCollection;
     private TextView tvEntryExtra;
     private TextView tvEntryDesc;
-    private Button btnEditEntry;
-    private Button btnDeleteEntry;
 
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -54,6 +51,7 @@ public class EntryActivity extends BaseActivity {
                     intentToday.putExtra("day", cal.get(Calendar.DAY_OF_MONTH));
                     startActivity(intentToday);
                 default:
+                    break;
             }
             return false;
         }
@@ -72,12 +70,12 @@ public class EntryActivity extends BaseActivity {
         tvEntryCollection = findViewById(R.id.tvEntryCollection);
         tvEntryExtra = findViewById(R.id.tvEntryExtra);
         tvEntryDesc = findViewById(R.id.tvEntryDesc);
-        btnEditEntry = findViewById(R.id.btnEditEntry);
-        btnDeleteEntry = findViewById(R.id.btnDeleteEntry);
+        Button btnEditEntry = findViewById(R.id.btnEditEntry);
+        Button btnDeleteEntry = findViewById(R.id.btnDeleteEntry);
         final String type = getIntent().getStringExtra("type");
         final String entryId = getIntent().getStringExtra("entryId");
 
-        if (type.equals("note")) {
+        if ("note".equals(type)) {
             tvEntryExtra.setVisibility(View.GONE);
         }
 
@@ -91,9 +89,9 @@ public class EntryActivity extends BaseActivity {
                 tvEntryDate.setText(doc.getString("date"));
                 tvEntryTime.setText(doc.getString("time"));
                 tvEntryCollection.setText(doc.getString("collection"));
-                if (type.equals("task")) {
+                if ("task".equals(type)) {
                     tvEntryExtra.setText(doc.getString("eisen"));
-                } else if (type.equals("event")) {
+                } else if ("event".equals(type)) {
                     tvEntryExtra.setText(doc.getString("location"));
                 }
                 tvEntryDesc.setText(doc.getString("desc"));

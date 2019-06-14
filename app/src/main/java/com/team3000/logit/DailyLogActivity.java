@@ -11,7 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Locale;
 
 public class DailyLogActivity extends BaseActivity {
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

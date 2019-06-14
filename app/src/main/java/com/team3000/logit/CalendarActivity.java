@@ -13,8 +13,6 @@ import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
 public class CalendarActivity extends BaseActivity {
-    Button btnCalToday;
-    Button btnCalTomorrow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +20,10 @@ public class CalendarActivity extends BaseActivity {
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_calendar, contentFrameLayout);
 
-        btnCalToday = findViewById(R.id.btnCalToday);
-        btnCalTomorrow = findViewById(R.id.btnCalTomorrow);
-
+        Button btnCalToday = findViewById(R.id.btnCalToday);
+        Button btnCalTomorrow = findViewById(R.id.btnCalTomorrow);
         CalendarView calendarView = findViewById(R.id.calendarView);
+
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {

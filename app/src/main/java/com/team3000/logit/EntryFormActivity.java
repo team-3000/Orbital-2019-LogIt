@@ -32,19 +32,16 @@ import java.util.Locale;
 import java.util.Map;
 
 public class EntryFormActivity extends BaseActivity {
-    private TextView tvFormType;
     private EditText etFormTitle;
     private EditText etFormDate;
     private EditText etFormTime;
     private EditText etFormLocation;
     private AutoCompleteTextView actvCollection;
-    private LinearLayout layoutPriority;
     private Spinner spnFormEisen;
     private EditText etFormDesc;
-    private CheckBox cbAddToMonthLog;
-    private Button btnFormSubmit;
+//    private CheckBox cbAddToMonthLog;
 
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,26 +49,26 @@ public class EntryFormActivity extends BaseActivity {
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_entry_form, contentFrameLayout);
 
-        tvFormType = findViewById(R.id.tvFormType);
+        TextView tvFormType = findViewById(R.id.tvFormType);
         etFormTitle = findViewById(R.id.etFormTitle);
         etFormDate = findViewById(R.id.etFormDate);
         etFormTime = findViewById(R.id.etFormTime);
         etFormLocation = findViewById(R.id.etFormLocation);
         actvCollection = findViewById(R.id.actvCollection);
-        layoutPriority = findViewById(R.id.layoutPriority);
+        LinearLayout layoutPriority = findViewById(R.id.layoutPriority);
         spnFormEisen = findViewById(R.id.spnFormEisen);
         etFormDesc = findViewById(R.id.etFormDesc);
-        cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
-        btnFormSubmit = findViewById(R.id.btnFormSubmit);
+//        cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
+        Button btnFormSubmit = findViewById(R.id.btnFormSubmit);
         final String type = getIntent().getStringExtra("type");
         final String oriDir = getIntent().getStringExtra("oriDir");
         final String entryId = getIntent().getStringExtra("entryId");
 
         tvFormType.setText(String.format(Locale.US, "Type: %s", type.toUpperCase()));
-        if (!type.equals("task")) {
+        if (!"task".equals(type)) {
             layoutPriority.setVisibility(View.GONE);
         }
-        if (!type.equals("event")) {
+        if (!"event".equals(type)) {
             etFormLocation.setVisibility(View.GONE);
         }
 
@@ -150,7 +147,7 @@ public class EntryFormActivity extends BaseActivity {
                 String eisen = spnFormEisen.getSelectedItem().toString();
                 String desc = etFormDesc.getText().toString();
 
-                if (title.equals("") || date.equals("") || time.equals("")) {
+                if ("".equals(title) || "".equals(date) || "".equals(time)) {
                     Toast.makeText(EntryFormActivity.this, "Please fill in required fields", Toast.LENGTH_SHORT).show();
                 } else {
                     Map<String, String> entryData = new HashMap<>();
@@ -158,18 +155,18 @@ public class EntryFormActivity extends BaseActivity {
                     entryData.put("title", title);
                     entryData.put("date", date);
                     entryData.put("time", time);
-                    if (type.equals("event")) {
+                    if ("event".equals(type)) {
                         entryData.put("location", location);
                     }
-                    if (collection.equals("")) {
+                    if ("".equals(collection)) {
                         entryData.put("collection", "");
                     } else {
                         entryData.put("collection", collection);
                     }
-                    if (type.equals("task")) {
+                    if ("task".equals(type)) {
                         entryData.put("eisen", eisen);
                     }
-                    if (desc.equals("")) {
+                    if ("".equals(desc)) {
                         entryData.put("desc", "");
                     } else {
                         entryData.put("desc", desc);
