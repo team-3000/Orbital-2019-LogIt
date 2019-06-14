@@ -4,6 +4,7 @@
     <string name="title_entry_task">EntryActivity</string>
     <string name="title_calendar">Calendar</string>
     <string name="title_alltasks">All Tasks</string>
+    <string name="title_today">Today</string>
     <string name="btnEdit">Edit</string>
 
     <string name="title_activity_daily_log">DailyLogActivity</string>

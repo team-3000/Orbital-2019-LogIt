@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 public class EntryActivity extends BaseActivity {
@@ -45,6 +46,13 @@ public class EntryActivity extends BaseActivity {
                 case R.id.entry_nav_calendar:
                     startActivity(new Intent(EntryActivity.this, CalendarActivity.class));
                     return true;
+                case R.id.entry_nav_today:
+                    Calendar cal = Calendar.getInstance();
+                    Intent intentToday = new Intent(EntryActivity.this, DailyLogActivity.class);
+                    intentToday.putExtra("year", cal.get(Calendar.YEAR));
+                    intentToday.putExtra("month", cal.get(Calendar.MONTH));
+                    intentToday.putExtra("day", cal.get(Calendar.DAY_OF_MONTH));
+                    startActivity(intentToday);
                 default:
             }
             return false;
@@ -58,7 +66,6 @@ public class EntryActivity extends BaseActivity {
         getLayoutInflater().inflate(R.layout.activity_entry, contentFrameLayout);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        final String type = getIntent().getStringExtra("type");
         tvEntryTitle = findViewById(R.id.tvEntryTitle);
         tvEntryDate = findViewById(R.id.tvEntryDate);
         tvEntryTime = findViewById(R.id.tvEntryTime);
@@ -67,6 +74,7 @@ public class EntryActivity extends BaseActivity {
         tvEntryDesc = findViewById(R.id.tvEntryDesc);
         btnEditEntry = findViewById(R.id.btnEditEntry);
         btnDeleteEntry = findViewById(R.id.btnDeleteEntry);
+        final String type = getIntent().getStringExtra("type");
 
         if (type.equals("note")) {
             tvEntryExtra.setVisibility(View.GONE);
