@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,6 +54,9 @@ public abstract class BaseActivity extends AppCompatActivity
         } else {
             message.setText(String.format("Welcome %s!", user.getEmail()));
         }
+
+        // Bottom bar part
+        setOnClickListeners();
     }
 
     // Check if user is logged in.
@@ -127,4 +132,34 @@ public abstract class BaseActivity extends AppCompatActivity
         return true;
     }
 
+    // Set the necessary onclicklisteners
+    private void setOnClickListeners() {
+        Button noteButton = findViewById(R.id.note);
+        Button taskButton = findViewById(R.id.task);
+        Button eventButton = findViewById(R.id.event);
+
+        noteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Replace the action accordingly
+                Toast.makeText(BaseActivity.this, "Note clicked!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        taskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Replace the action accordingly
+                Toast.makeText(BaseActivity.this, "Task clicked!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        eventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Replace the action accordingly
+                Toast.makeText(BaseActivity.this, "Event clicked!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
