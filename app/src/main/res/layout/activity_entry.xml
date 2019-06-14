@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:text="Title"
+        android:text="    "
         android:textIsSelectable="false"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@id/layoutDateTime"
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="10 Jun 2019"
+            android:text="    "
             android:textSize="24sp" />
 
         <TextView
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_weight="1"
-            android:text="02:00 pm"
+            android:text="    "
             android:textSize="24sp" />
 
     </LinearLayout>
@@ -83,7 +83,7 @@
                 android:id="@+id/tvEntryDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="I should really get my life in order sometime. It's such a mess but there's so much anime to watch and those loli figurines aren't going to polish themselves uwu!!! filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler filler"
+                android:text="    "
                 android:textSize="24sp" />
         </LinearLayout>
     </ScrollView>
@@ -106,12 +106,14 @@
 
     <LinearLayout
         android:id="@+id/layoutCollectionEisen"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/svEntryDesc"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutDateTime">
 
@@ -120,16 +122,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Collection Tag"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:textStyle="italic" />
 
         <TextView
-            android:id="@+id/tvEntryEisen"
+            android:id="@+id/tvEntryExtra"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
+            android:layout_gravity="right|end"
+            android:layout_marginStart="20dp"
             android:layout_weight="1"
-            android:text="Delegate"
+            android:text="    "
             android:textSize="24sp" />
 
     </LinearLayout>

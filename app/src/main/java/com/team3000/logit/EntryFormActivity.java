@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -14,15 +13,17 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormatSymbols;
@@ -31,13 +32,12 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import io.opencensus.tags.Tag;
-
 public class EntryFormActivity extends BaseActivity {
-    private Spinner spnFormType;
+    private TextView tvFormType;
     private EditText etFormTitle;
     private EditText etFormDate;
     private EditText etFormTime;
+    private EditText etFormLocation;
     private AutoCompleteTextView actvCollection;
     private LinearLayout layoutPriority;
     private Spinner spnFormEisen;
@@ -52,18 +52,27 @@ public class EntryFormActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_entry_form, contentFrameLayout);
-        final String entryId = getIntent().getStringExtra("entryId");
 
-        spnFormType = findViewById(R.id.spnFormType);
+        tvFormType = findViewById(R.id.tvFormType);
         etFormTitle = findViewById(R.id.etFormTitle);
         etFormDate = findViewById(R.id.etFormDate);
         etFormTime = findViewById(R.id.etFormTime);
+        etFormLocation = findViewById(R.id.etFormLocation);
         actvCollection = findViewById(R.id.actvCollection);
         layoutPriority = findViewById(R.id.layoutPriority);
         spnFormEisen = findViewById(R.id.spnFormEisen);
         etFormDesc = findViewById(R.id.etFormDesc);
         cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
         btnFormSubmit = findViewById(R.id.btnFormSubmit);
+        final String type = getIntent().getStringExtra("type");
+
+        tvFormType.setText(String.format(Locale.US, "Type: %s", type.toUpperCase()));
+        if (!type.equals("task")) {
+            layoutPriority.setVisibility(View.GONE);
+        }
+        if (!type.equals("event")) {
+            etFormLocation.setVisibility(View.GONE);
+        }
 
         // Open a DatePicker when Date EditText clicked
         etFormDate.setOnClickListener(new View.OnClickListener() {
@@ -115,15 +124,15 @@ public class EntryFormActivity extends BaseActivity {
         btnFormSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String type = spnFormType.getSelectedItem().toString().toLowerCase();
                 String title = etFormTitle.getText().toString();
                 String date = etFormDate.getText().toString();
                 String time = etFormTime.getText().toString();
+                String location = etFormLocation.getText().toString();
                 String collection = actvCollection.getText().toString();
                 String eisen = spnFormEisen.getSelectedItem().toString();
                 String desc = etFormDesc.getText().toString();
 
-                if (type.equals("") || title.equals("") || date.equals("") || time.equals("")) {
+                if (title.equals("") || date.equals("") || time.equals("")) {
                     Toast.makeText(EntryFormActivity.this, "Please fill in required fields", Toast.LENGTH_SHORT).show();
                 } else {
                     Map<String, String> entryData = new HashMap<>();
@@ -131,8 +140,16 @@ public class EntryFormActivity extends BaseActivity {
                     entryData.put("title", title);
                     entryData.put("date", date);
                     entryData.put("time", time);
-                    if (!collection.equals("")) {
+                    if (type.equals("event")) {
+                        entryData.put("location", location);
+                    }
+                    if (collection.equals("")) {
+                        entryData.put("collection", "");
+                    } else {
                         entryData.put("collection", collection);
+                    }
+                    if (type.equals("task")) {
+                        entryData.put("eisen", eisen);
                     }
                     if (desc.equals("")) {
                         entryData.put("desc", "");
@@ -146,11 +163,7 @@ public class EntryFormActivity extends BaseActivity {
                     String dbPath = String.format(Locale.US, "users/%s/%s/%d/%s", user.getUid(), type, year, month);
                     CollectionReference ref = db.collection(dbPath);
 
-                    if (entryId == null) {
-                        ref.add(entryData);
-                    } else {
-                        ref.document(entryId).set(entryData);
-                    }
+                    ref.add(entryData);
 
 //                if (cbAddToMonthLog.isChecked()) {
                     // Add to monthly log
@@ -160,6 +173,4 @@ public class EntryFormActivity extends BaseActivity {
             }
         });
     }
-
-
 }

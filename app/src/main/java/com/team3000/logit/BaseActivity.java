@@ -115,7 +115,11 @@ public abstract class BaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_eisen) {
 
         } else if (id == R.id.nav_new) {
-            startActivity(new Intent(this, EntryFormActivity.class));
+            // Test
+            Intent intentNew = new Intent(BaseActivity.this, EntryFormActivity.class);
+            intentNew.putExtra("type", "task");
+            startActivity(intentNew);
+            //
         } else if (id == R.id.nav_signOut) {
             mAuth.signOut();
             startActivity(new Intent(this, LoginActivity.class));

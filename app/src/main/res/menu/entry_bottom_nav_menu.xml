@@ -7,7 +7,7 @@
         android:title="@string/title_calendar" />
 
     <item
-        android:id="@+id/entry_nav_alltasks"
+        android:id="@+id/entry_nav_allentries"
         android:icon="@drawable/ic_format_list_bulleted_black_24dp"
         android:title="@string/title_alltasks" />
 

@@ -23,10 +23,11 @@
     <string name="nav_new">New</string>
     <string name="nav_sign_out">Sign out</string>
 
-    <string name="form_type">Type:</string>
+    <string name="form_type">Type</string>
     <string name="form_title">Title (required)</string>
     <string name="form_date">Date (required)</string>
     <string name="form_time">Time (required)</string>
+    <string name="form_location">Location</string>
     <string name="form_collection">Collection - Personal Category</string>
     <string name="form_priority">Priority:</string>
     <string name="form_description">Description</string>

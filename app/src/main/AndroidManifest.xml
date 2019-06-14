@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EntryFormActivity"></activity>
+        <activity android:name=".EntryFormActivity" />
         <activity android:name=".CalendarActivity" />
         <activity
             android:name=".EntryActivity"

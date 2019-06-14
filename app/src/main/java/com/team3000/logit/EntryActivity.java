@@ -3,11 +3,18 @@ package com.team3000.logit;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -18,8 +25,12 @@ public class EntryActivity extends BaseActivity {
     private TextView tvEntryDate;
     private TextView tvEntryTime;
     private TextView tvEntryCollection;
-    private TextView tvEntryEisen;
+    private TextView tvEntryExtra;
     private TextView tvEntryDesc;
+    private Button btnEditEntry;
+    private Button btnDeleteEntry;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -27,7 +38,7 @@ public class EntryActivity extends BaseActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.entry_nav_alltasks:
+                case R.id.entry_nav_allentries:
 //                    Intent taskListIntent = new Intent(EntryActivity.this, TaskListActivity.class);
 //                    startActivity(taskListIntent);
                     return true;
@@ -47,20 +58,57 @@ public class EntryActivity extends BaseActivity {
         getLayoutInflater().inflate(R.layout.activity_entry, contentFrameLayout);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
+        final String type = getIntent().getStringExtra("type");
         tvEntryTitle = findViewById(R.id.tvEntryTitle);
         tvEntryDate = findViewById(R.id.tvEntryDate);
         tvEntryTime = findViewById(R.id.tvEntryTime);
         tvEntryCollection = findViewById(R.id.tvEntryCollection);
-        tvEntryEisen = findViewById(R.id.tvEntryEisen);
+        tvEntryExtra = findViewById(R.id.tvEntryExtra);
         tvEntryDesc = findViewById(R.id.tvEntryDesc);
+        btnEditEntry = findViewById(R.id.btnEditEntry);
+        btnDeleteEntry = findViewById(R.id.btnDeleteEntry);
 
-        String date = String.format(Locale.US, "%2d %s %d",
-                                    getIntent().getIntExtra("day", 0),
-                                    getIntent().getStringExtra("month"),
-                                    getIntent().getIntExtra("year", 0));
-        tvEntryDate.setText(date);
+        if (type.equals("note")) {
+            tvEntryExtra.setVisibility(View.GONE);
+        }
+
+        final String directory = getIntent().getStringExtra("directory");
+        final DocumentReference ref = db.document(directory);
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot doc = task.getResult();
+                tvEntryTitle.setText(doc.getString("title"));
+                tvEntryDate.setText(doc.getString("date"));
+                tvEntryTime.setText(doc.getString("time"));
+                tvEntryCollection.setText(doc.getString("collection"));
+                if (type.equals("task")) {
+                    tvEntryExtra.setText(doc.getString("eisen"));
+                } else if (type.equals("event")) {
+                    tvEntryExtra.setText(doc.getString("location"));
+                }
+                tvEntryDesc.setText(doc.getString("desc"));
+            }
+        });
 
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        btnEditEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentEdit = new Intent(EntryActivity.this, EntryFormActivity.class);
+                intentEdit.putExtra("type", type);
+                intentEdit.putExtra("oriDir", directory);
+                startActivity(intentEdit);
+            }
+        });
+
+        btnDeleteEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ref.delete();
+            }
+        });
     }
 
 }
