@@ -42,8 +42,10 @@ public class EntryFormActivity extends BaseActivity {
     private Spinner spnFormEisen;
     private EditText etFormDesc;
     //    private CheckBox cbAddToMonthLog;
+    private Button btnFormSubmit;
     private String oriDir;
     private String type;
+    private String entryId;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -63,10 +65,10 @@ public class EntryFormActivity extends BaseActivity {
         spnFormEisen = findViewById(R.id.spnFormEisen);
         etFormDesc = findViewById(R.id.etFormDesc);
 //        cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
-        Button btnFormSubmit = findViewById(R.id.btnFormSubmit);
+        btnFormSubmit = findViewById(R.id.btnFormSubmit);
         type = getIntent().getStringExtra("type");
         oriDir = getIntent().getStringExtra("oriDir");
-        final String entryId = getIntent().getStringExtra("entryId");
+        entryId = getIntent().getStringExtra("entryId");
 
         tvFormType.setText(String.format(Locale.US, "Type: %s", type.toUpperCase()));
         if (!"task".equals(type)) {
@@ -118,6 +120,11 @@ public class EntryFormActivity extends BaseActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         btnFormSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
