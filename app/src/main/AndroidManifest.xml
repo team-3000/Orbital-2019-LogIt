@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="com.team3000.logit">
+    package="com.team3000.logit"
+    android:versionCode="1"
+    android:versionName="1.0">
 
     <dist:module dist:instant="true" />'
 
@@ -12,6 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".EntryFormActivity" />
+        <activity android:name=".CalendarActivity" />
+        <activity
+            android:name=".EntryActivity"
+            android:label="@string/title_entry_task" />
         <activity
             android:name=".DailyLogActivity"
             android:label="@string/title_activity_daily_log"
