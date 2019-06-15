@@ -6,8 +6,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.Locale;
 
 public class DailyLogActivity extends BaseActivity {
