@@ -23,6 +23,9 @@ public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth mAuth;
     protected FirebaseUser user;
+    protected Button noteButton;
+    protected Button taskButton;
+    protected Button eventButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,9 +141,9 @@ public abstract class BaseActivity extends AppCompatActivity
 
     // Set the necessary onclicklisteners
     private void setOnClickListeners() {
-        Button noteButton = findViewById(R.id.note);
-        Button taskButton = findViewById(R.id.task);
-        Button eventButton = findViewById(R.id.event);
+        noteButton = findViewById(R.id.note);
+        taskButton = findViewById(R.id.task);
+        eventButton = findViewById(R.id.event);
 
         noteButton.setOnClickListener(new View.OnClickListener() {
             @Override

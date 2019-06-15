@@ -21,42 +21,21 @@ import android.widget.TextView;
 import java.util.Calendar;
 
 public class EntryActivity extends BaseActivity {
+    private BottomNavigationView navView;
     private TextView tvEntryTitle;
     private TextView tvEntryDate;
     private TextView tvEntryTime;
     private TextView tvEntryCollection;
     private TextView tvEntryExtra;
     private TextView tvEntryDesc;
+    private Button btnEditEntry;
+    private Button btnDeleteEntry;
+    private String type;
+    private String entryId;
+    private String directory;
+    private DocumentReference ref;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.entry_nav_allentries:
-//                    Intent taskListIntent = new Intent(EntryActivity.this, TaskListActivity.class);
-//                    startActivity(taskListIntent);
-                    return true;
-                case R.id.entry_nav_calendar:
-                    startActivity(new Intent(EntryActivity.this, CalendarActivity.class));
-                    return true;
-                case R.id.entry_nav_today:
-                    Calendar cal = Calendar.getInstance();
-                    Intent intentToday = new Intent(EntryActivity.this, DailyLogActivity.class);
-                    intentToday.putExtra("year", cal.get(Calendar.YEAR));
-                    intentToday.putExtra("month", cal.get(Calendar.MONTH));
-                    intentToday.putExtra("day", cal.get(Calendar.DAY_OF_MONTH));
-                    startActivity(intentToday);
-                    return true;
-                default:
-                    break;
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,24 +43,31 @@ public class EntryActivity extends BaseActivity {
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_entry, contentFrameLayout);
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         tvEntryTitle = findViewById(R.id.tvEntryTitle);
         tvEntryDate = findViewById(R.id.tvEntryDate);
         tvEntryTime = findViewById(R.id.tvEntryTime);
         tvEntryCollection = findViewById(R.id.tvEntryCollection);
         tvEntryExtra = findViewById(R.id.tvEntryExtra);
         tvEntryDesc = findViewById(R.id.tvEntryDesc);
-        Button btnEditEntry = findViewById(R.id.btnEditEntry);
-        Button btnDeleteEntry = findViewById(R.id.btnDeleteEntry);
-        final String type = getIntent().getStringExtra("type");
-        final String entryId = getIntent().getStringExtra("entryId");
+        btnEditEntry = findViewById(R.id.btnEditEntry);
+        btnDeleteEntry = findViewById(R.id.btnDeleteEntry);
+        type = getIntent().getStringExtra("type");
+        entryId = getIntent().getStringExtra("entryId");
+        directory = getIntent().getStringExtra("directory");
+        ref = db.document(directory);
 
+        noteButton.setVisibility(View.GONE);
+        taskButton.setVisibility(View.GONE);
+        eventButton.setVisibility(View.GONE);
         if ("note".equals(type)) {
             tvEntryExtra.setVisibility(View.GONE);
         }
+    }
 
-        final String directory = getIntent().getStringExtra("directory");
-        final DocumentReference ref = db.document(directory);
+    @Override
+    protected void onStart() {
+        super.onStart();
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -120,4 +106,31 @@ public class EntryActivity extends BaseActivity {
         });
     }
 
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.entry_nav_allentries:
+//                    Intent taskListIntent = new Intent(EntryActivity.this, TaskListActivity.class);
+//                    startActivity(taskListIntent);
+                    return true;
+                case R.id.entry_nav_calendar:
+                    startActivity(new Intent(EntryActivity.this, CalendarActivity.class));
+                    return true;
+                case R.id.entry_nav_today:
+                    Calendar cal = Calendar.getInstance();
+                    Intent intentToday = new Intent(EntryActivity.this, DailyLogActivity.class);
+                    intentToday.putExtra("year", cal.get(Calendar.YEAR));
+                    intentToday.putExtra("month", cal.get(Calendar.MONTH));
+                    intentToday.putExtra("day", cal.get(Calendar.DAY_OF_MONTH));
+                    startActivity(intentToday);
+                    return true;
+                default:
+                    break;
+            }
+            return false;
+        }
+    };
 }
