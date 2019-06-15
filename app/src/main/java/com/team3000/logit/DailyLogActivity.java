@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 public class DailyLogActivity extends BaseActivity {
@@ -21,6 +22,11 @@ public class DailyLogActivity extends BaseActivity {
 
         /* ----------------Test, feel free to comment out -------------------------------------- */
         TextView tvTest = findViewById(R.id.tvTest);
+        Calendar cal = Calendar.getInstance();
+        int today = cal.get(Calendar.DAY_OF_MONTH);
+        int monthNow = cal.get(Calendar.MONTH) + 1;
+        int yearNow = cal.get(Calendar.YEAR);
+        tvTest.setText(String.format(Locale.US, "%d/%d/%d", today, monthNow, yearNow));
         tvTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
