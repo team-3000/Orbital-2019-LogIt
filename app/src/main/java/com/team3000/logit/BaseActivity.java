@@ -124,11 +124,7 @@ public abstract class BaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_eisen) {
 
         } else if (id == R.id.nav_new) {
-            // Test
-            Intent intentNew = new Intent(BaseActivity.this, EntryFormActivity.class);
-            intentNew.putExtra("type", "task");
-            startActivity(intentNew);
-            //
+
         } else if (id == R.id.nav_signOut) {
             mAuth.signOut();
             startActivity(new Intent(this, LoginActivity.class));
@@ -149,24 +145,27 @@ public abstract class BaseActivity extends AppCompatActivity
         noteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Replace the action accordingly
-                Toast.makeText(BaseActivity.this, "Note clicked!", Toast.LENGTH_SHORT).show();
+                Intent intentNew = new Intent(BaseActivity.this, EntryFormActivity.class);
+                intentNew.putExtra("type", "note");
+                startActivity(intentNew);
             }
         });
 
         taskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Replace the action accordingly
-                Toast.makeText(BaseActivity.this, "Task clicked!", Toast.LENGTH_SHORT).show();
+                Intent intentNew = new Intent(BaseActivity.this, EntryFormActivity.class);
+                intentNew.putExtra("type", "task");
+                startActivity(intentNew);
             }
         });
 
         eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Replace the action accordingly
-                Toast.makeText(BaseActivity.this, "Event clicked!", Toast.LENGTH_SHORT).show();
+                Intent intentNew = new Intent(BaseActivity.this, EntryFormActivity.class);
+                intentNew.putExtra("type", "event");
+                startActivity(intentNew);
             }
         });
     }

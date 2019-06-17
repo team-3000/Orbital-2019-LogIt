@@ -20,9 +20,13 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,7 +37,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class EntryFormActivity extends BaseActivity {
+public class EntryFormActivity extends AppCompatActivity {
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
     private EditText etFormTitle;
     private EditText etFormDate;
     private EditText etFormTime;
@@ -52,8 +58,15 @@ public class EntryFormActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_entry_form);
+        /*
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_entry_form, contentFrameLayout);
+        */
+
+        //FirebaseAuth part
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
         TextView tvFormType = findViewById(R.id.tvFormType);
         etFormTitle = findViewById(R.id.etFormTitle);
