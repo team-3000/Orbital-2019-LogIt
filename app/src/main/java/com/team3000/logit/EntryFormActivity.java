@@ -38,7 +38,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class EntryFormActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
     private FirebaseUser user;
     private EditText etFormTitle;
     private EditText etFormDate;
@@ -65,9 +64,8 @@ public class EntryFormActivity extends AppCompatActivity {
         getLayoutInflater().inflate(R.layout.activity_entry_form, contentFrameLayout);
         */
 
-        //FirebaseAuth part
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
+        // Firebase user part
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Find all the necessary views
         TextView tvFormType = findViewById(R.id.tvFormType);
@@ -198,9 +196,10 @@ public class EntryFormActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
-        }
 
-        return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void preset(final String type, final EditText etFormTitle, final EditText etFormDate, final EditText etFormTime,
