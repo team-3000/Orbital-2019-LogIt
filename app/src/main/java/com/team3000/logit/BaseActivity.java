@@ -118,6 +118,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_calendar) {
             startActivity(new Intent(BaseActivity.this, CalendarActivity.class));
+            finish(); // destroy the current activity after finish
         } else if (id == R.id.nav_collections) {
 
         } else if (id == R.id.nav_eisen) {
@@ -131,7 +132,7 @@ public abstract class BaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_signOut) {
             mAuth.signOut();
             startActivity(new Intent(this, LoginActivity.class));
-            finish(); // destroy this activity
+            finish(); // destroy the current activity after finish
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
