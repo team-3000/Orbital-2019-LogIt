@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
@@ -12,7 +13,6 @@ import android.widget.Button;
 // import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -51,6 +51,7 @@ public class EntryFormActivity extends AppCompatActivity {
     private Button btnFormSubmit;
     private String oriDir;
     private String type;
+    private String typeCapitalised; // The type string with the first character capitalised
     private String entryId;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -68,6 +69,7 @@ public class EntryFormActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
+        // Find all the necessary views
         TextView tvFormType = findViewById(R.id.tvFormType);
         etFormTitle = findViewById(R.id.etFormTitle);
         etFormDate = findViewById(R.id.etFormDate);
@@ -83,6 +85,16 @@ public class EntryFormActivity extends AppCompatActivity {
         oriDir = getIntent().getStringExtra("oriDir");
         entryId = getIntent().getStringExtra("entryId");
 
+        // Set up the toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Set the title of the toolbar accoridngly
+        typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+        getSupportActionBar().setTitle("New " + typeCapitalised);
+
+        // Form logic
         tvFormType.setText(String.format(Locale.US, "Type: %s", type.toUpperCase()));
         if (!"task".equals(type)) {
             layoutPriority.setVisibility(View.GONE);
@@ -171,9 +183,24 @@ public class EntryFormActivity extends AppCompatActivity {
                     // Add to monthly log
 //                }
                     EntryFormActivity.this.finish();
+                    Toast.makeText(EntryFormActivity.this, typeCapitalised + " added", Toast.LENGTH_SHORT)
+                            .show();
                 }
             }
         });
+    }
+
+    // Set the logic of the back button on toolbar so that user can
+    // navigate back to the previous activity
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void preset(final String type, final EditText etFormTitle, final EditText etFormDate, final EditText etFormTime,
