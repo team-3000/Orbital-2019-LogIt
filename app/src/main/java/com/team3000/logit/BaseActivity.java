@@ -107,25 +107,24 @@ public abstract class BaseActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_today) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_this_month) {
 
         } else if (id == R.id.nav_calendar) {
             startActivity(new Intent(BaseActivity.this, CalendarActivity.class));
-            finish(); // destroy the current activity after finish
-
+            finish();
         } else if (id == R.id.new_collection){
             showNewCollectionDialog();
 
         } else if (id == R.id.nav_collections) {
-
+            startActivity(new Intent(BaseActivity.this, CollectionActivity.class));
+            finish();   // destroy the current activity after finish
         } else if (id == R.id.nav_eisen) {
 
         } else if (id == R.id.nav_signOut) {

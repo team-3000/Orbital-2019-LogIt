@@ -83,14 +83,7 @@ public class EntryFormActivity extends AppCompatActivity {
         oriDir = getIntent().getStringExtra("oriDir");
         entryId = getIntent().getStringExtra("entryId");
 
-        // Set up the toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Set the title of the toolbar accoridngly
-        typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
-        getSupportActionBar().setTitle("New " + typeCapitalised);
+        initialiseToolbar();
 
         // Form logic
         tvFormType.setText(String.format(Locale.US, "Type: %s", type.toUpperCase()));
@@ -201,6 +194,17 @@ public class EntryFormActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void initialiseToolbar() {
+        // Set up the toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Set the title of the toolbar accoridngly
+        typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+        getSupportActionBar().setTitle("New " + typeCapitalised);
     }
 
     private void preset(final String type, final EditText etFormTitle, final EditText etFormDate, final EditText etFormTime,
