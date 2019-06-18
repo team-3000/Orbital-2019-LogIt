@@ -193,6 +193,7 @@ public class EntryFormActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            // When the back button on the action bar is clicked
             case android.R.id.home:
                 onBackPressed();
                 return true;
