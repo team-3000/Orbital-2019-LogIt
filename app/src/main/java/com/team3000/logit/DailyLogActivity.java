@@ -1,46 +1,14 @@
 package com.team3000.logit;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
-import java.util.Calendar;
 import java.util.Locale;
 
-public class DailyLogActivity extends BaseActivity {
+public class DailyLogActivity extends BaseLogActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Load the content of the frame layout accordingly.
-        // The frame layout serves as a container for the content you want to put.
-        FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
-        getLayoutInflater().inflate(R.layout.activity_daily_log, contentFrameLayout);
-
-        /* ----------------Test, feel free to comment out -------------------------------------- */
-        TextView tvTest = findViewById(R.id.tvTest);
-        Calendar cal = Calendar.getInstance();
-        int today = cal.get(Calendar.DAY_OF_MONTH);
-        int monthNow = cal.get(Calendar.MONTH) + 1;
-        int yearNow = cal.get(Calendar.YEAR);
-        tvTest.setText(String.format(Locale.US, "%d/%d/%d", today, monthNow, yearNow));
-        tvTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Placeholder entryId, change here after all test Edit/Delete ops
-                String entryId = "CCVvhaumJvI00SAFMEud";
-                Intent intent = new Intent(DailyLogActivity.this, EntryActivity.class);
-                intent.putExtra("type", "task");
-                String directory = String.format(Locale.US, "users/%s/task/2019/Jun/%s",
-                        user.getUid(), entryId);
-                intent.putExtra("directory", directory);
-                intent.putExtra("entryId", entryId);
-                startActivity(intent);
-            }
-        });
-        /* --------------------------------------------------------------------------------------*/
     }
 }

@@ -22,42 +22,52 @@ public class CalendarActivity extends BaseActivity {
 
         Button btnCalToday = findViewById(R.id.btnCalToday);
         Button btnCalTomorrow = findViewById(R.id.btnCalTomorrow);
+        Button btnCalThisMonth = findViewById(R.id.btnCalThisMonth);
         CalendarView calendarView = findViewById(R.id.calendarView);
+        Calendar cal = Calendar.getInstance();
+        final int year = cal.get(Calendar.YEAR);
+        final int month = cal.get(Calendar.MONTH);
+        final int day = cal.get(Calendar.DAY_OF_MONTH);
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                String monthName = new DateFormatSymbols().getMonths()[month];
-                String monthNameShort = monthName.substring(0, 3);
-                Intent intent = new Intent(CalendarActivity.this, DailyLogActivity.class);
-                intent.putExtra("year", year);
-                intent.putExtra("month", monthNameShort);
-                intent.putExtra("day", dayOfMonth);
-                startActivity(intent);
+                goToDailyLog(year, month, dayOfMonth, 0);
             }
         });
 
         btnCalToday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToButtonDest(0);
+                goToDailyLog(year, month, day,0);
             }
         });
 
         btnCalTomorrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToButtonDest(1);
+                goToDailyLog(year, month, day, 1);
             }
         });
+
+//        btnCalThisMonth.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intentMonth = new Intent(CalendarActivity.this, MonthlyLogActivity.class);
+//                intentMonth.putExtra("year", year);
+//                intentMonth.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
+//                startActivity(intentMonth);
+//            }
+//        });
     }
 
-    private void goToButtonDest(int dayOffset) {
-        Calendar cal = Calendar.getInstance();
-        Intent intentBtn = new Intent(CalendarActivity.this, DailyLogActivity.class);
-        intentBtn.putExtra("year", cal.get(Calendar.YEAR));
-        intentBtn.putExtra("month", cal.get(Calendar.MONTH));
-        intentBtn.putExtra("day", cal.get(Calendar.DAY_OF_MONTH) + dayOffset);
-        startActivity(intentBtn);
+    private void goToDailyLog(int year, int month, int day, int dayOffset) {
+        String monthName = new DateFormatSymbols().getMonths()[month];
+        String monthNameShort = monthName.substring(0, 3);
+        Intent intentDaily = new Intent(CalendarActivity.this, DailyLogActivity.class);
+        intentDaily.putExtra("year", year);
+        intentDaily.putExtra("month", monthNameShort);
+        intentDaily.putExtra("day", day + dayOffset);
+        startActivity(intentDaily);
     }
 }

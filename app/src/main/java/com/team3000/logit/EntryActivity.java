@@ -56,18 +56,18 @@ public class EntryActivity extends BaseActivity {
         entryId = getIntent().getStringExtra("entryId");
         directory = getIntent().getStringExtra("directory");
         ref = db.document(directory);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         noteButton.setVisibility(View.GONE);
         taskButton.setVisibility(View.GONE);
         eventButton.setVisibility(View.GONE);
         if ("note".equals(type)) {
             tvEntryExtra.setVisibility(View.GONE);
         }
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

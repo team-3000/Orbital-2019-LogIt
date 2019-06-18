@@ -24,6 +24,10 @@
     <string name="nav_new">New</string>
     <string name="nav_sign_out">Sign out</string>
 
+    <string name="cal_today">Today</string>
+    <string name="cal_tomorrow">Tomorrow</string>
+    <string name="cal_this_month">This Month</string>
+
     <string name="form_type">Type</string>
     <string name="form_title">Title (required)</string>
     <string name="form_date">Date (required)</string>
