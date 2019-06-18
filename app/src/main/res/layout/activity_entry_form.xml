@@ -1,157 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EntryFormActivity">
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:focusable="true">
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/AppTheme.AppBarOverlay"/>
 
-        <TextView
-            android:id="@+id/tvFormType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_weight="1"
-            android:text="@string/form_type"
-            android:textSize="18sp" />
-
-        <EditText
-            android:id="@+id/etFormTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:ems="10"
-            android:hint="@string/form_title"
-            android:inputType="textPersonName"
-            android:textColor="#000000"
-            android:textSize="18sp" />
-
-        <EditText
-            android:id="@+id/etFormDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:ems="10"
-            android:hint="@string/form_date"
-            android:inputType="date"
-            android:textColor="#000000"
-            android:textSize="18sp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:context=".EntryFormActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:focusable="true">
+
+            <TextView
+                android:id="@+id/tvFormType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:text="@string/form_type"
+                android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/etFormTime"
-                android:layout_width="143dp"
+                android:id="@+id/etFormTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
                 android:ems="10"
-                android:hint="@string/form_time"
-                android:inputType="time"
+                android:hint="@string/form_title"
+                android:inputType="textPersonName"
                 android:textColor="#000000"
                 android:textSize="18sp" />
 
             <EditText
-                android:id="@+id/etFormLocation"
-                android:layout_width="wrap_content"
+                android:id="@+id/etFormDate"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
                 android:ems="10"
-                android:hint="@string/form_location"
-                android:inputType="textPersonName" />
+                android:hint="@string/form_date"
+                android:inputType="date"
+                android:textColor="#000000"
+                android:textSize="18sp"/>
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
 
-        <AutoCompleteTextView
-            android:id="@+id/actvCollection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:hint="@string/form_collection"
-            android:textColor="#000000"
-            android:textSize="18sp"
-            android:inputType="textAutoComplete"/>
+                <EditText
+                    android:id="@+id/etFormTime"
+                    android:layout_width="143dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/form_time"
+                    android:inputType="time"
+                    android:textColor="#000000"
+                    android:textSize="18sp" />
 
-        <LinearLayout
-            android:id="@+id/layoutPriority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/etFormLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:ems="10"
+                    android:hint="@string/form_location"
+                    android:inputType="textPersonName" />
 
-            <TextView
-                android:id="@+id/tvFormEisen"
+            </LinearLayout>
+
+            <AutoCompleteTextView
+                android:id="@+id/actvCollection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:hint="@string/form_collection"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:inputType="textAutoComplete"/>
+
+            <LinearLayout
+                android:id="@+id/layoutPriority"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_weight="1"
-                android:text="@string/form_priority"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvFormEisen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_weight="1"
+                    android:text="@string/form_priority"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/spnFormEisen"
+                    android:layout_width="187dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:dropDownWidth="wrap_content"
+                    android:entries="@array/form_eisen_array"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/etFormDesc"
+                android:layout_width="match_parent"
+                android:layout_height="135dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="#F1F1F1"
+                android:ems="10"
+                android:gravity="start|top"
+                android:hint="@string/form_description"
+                android:inputType="textMultiLine"
+                android:textColor="#000000"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:id="@+id/spnFormEisen"
-                android:layout_width="187dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:dropDownWidth="wrap_content"
-                android:entries="@array/form_eisen_array"
-                android:spinnerMode="dropdown" />
+            <CheckBox
+                android:id="@+id/cbAddToMonthLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:text="@string/form_monthlyLog"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnFormSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="100dp"
+                android:text="@string/form_submit" />
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/etFormDesc"
-            android:layout_width="match_parent"
-            android:layout_height="135dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="#F1F1F1"
-            android:ems="10"
-            android:gravity="start|top"
-            android:hint="@string/form_description"
-            android:inputType="textMultiLine"
-            android:textColor="#000000"
-            android:textSize="18sp" />
+    </ScrollView>
 
-        <CheckBox
-            android:id="@+id/cbAddToMonthLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:text="@string/form_monthlyLog"
-            android:textSize="18sp" />
+</LinearLayout>
 
-        <Button
-            android:id="@+id/btnFormSubmit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="100dp"
-            android:text="@string/form_submit" />
-    </LinearLayout>
-
-</ScrollView>
