@@ -18,8 +18,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import java.util.Calendar;
-
 public class EntryActivity extends BaseActivity {
     private BottomNavigationView navView;
     private TextView tvEntryTitle;
@@ -118,14 +116,6 @@ public class EntryActivity extends BaseActivity {
                     return true;
                 case R.id.entry_nav_calendar:
                     startActivity(new Intent(EntryActivity.this, CalendarActivity.class));
-                    return true;
-                case R.id.entry_nav_today:
-                    Calendar cal = Calendar.getInstance();
-                    Intent intentToday = new Intent(EntryActivity.this, DailyLogActivity.class);
-                    intentToday.putExtra("year", cal.get(Calendar.YEAR));
-                    intentToday.putExtra("month", cal.get(Calendar.MONTH));
-                    intentToday.putExtra("day", cal.get(Calendar.DAY_OF_MONTH));
-                    startActivity(intentToday);
                     return true;
                 default:
                     break;
