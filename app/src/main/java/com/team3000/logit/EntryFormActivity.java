@@ -5,9 +5,11 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 // import android.widget.CheckBox;
@@ -30,14 +32,18 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class EntryFormActivity extends AppCompatActivity {
+    private static final String TAG = "EntryFormActivity";
     private FirebaseUser user;
     private EditText etFormTitle;
     private EditText etFormDate;
@@ -136,6 +142,8 @@ public class EntryFormActivity extends AppCompatActivity {
             }
         });
 
+        // Initialise the collections AutoCompleteTextView
+        initializeAutoCompleteTextView();
     }
 
     @Override
@@ -261,6 +269,36 @@ public class EntryFormActivity extends AppCompatActivity {
                     }
                 }, hour, minutes, false);
         picker.show();
+    }
+
+    private void initializeAutoCompleteTextView() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String dbpath = String.format("users/%s/collections", user.getUid());
+
+        // Retrieve all the collections' name and use them to set up the
+        // collection AutoCompleteTextView
+        FirebaseFirestore.getInstance().collection(dbpath).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ArrayList<String> names = new ArrayList<>();
+
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                String name = (String) doc.get("name");
+                                names.add(name);
+                            }
+
+                            String[] container = new String[names.size()];
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
+                                , android.R.layout.simple_dropdown_item_1line, names.toArray(container));
+                            actvCollection.setAdapter(adapter);
+                        } else {
+                            Log.e(TAG, "Fail to load collections for form's AutoCompleteTextView!");
+                        }
+                    }
+                });
     }
 
     private void fillEntryData(Map<String, String> entryData, String title, String date, String time,
