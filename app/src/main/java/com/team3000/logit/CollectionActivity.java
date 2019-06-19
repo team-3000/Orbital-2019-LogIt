@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,7 +51,7 @@ public class CollectionActivity extends BaseActivity {
                 .setQuery(query, CollectionItem.class)
                 .build();
 
-        adapter = new CollectionItemAdapter(options, this, new CollectionItemAdapter.OnItemClickListener() {
+        adapter = new CollectionItemAdapter(options, new CollectionItemAdapter.OnItemClickListener() {
             @Override
             public void onItemClick() {
                 Toast.makeText(CollectionActivity.this, "This is clicked!", Toast.LENGTH_SHORT)
@@ -59,7 +60,12 @@ public class CollectionActivity extends BaseActivity {
         });
 
         RecyclerView list = findViewById(R.id.collections_list);
-        list.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this,
+                layoutManager.getOrientation());
+
+        list.setLayoutManager(layoutManager);
         list.setAdapter(adapter);
+        list.addItemDecoration(dividerItemDecoration);
     }
 }
