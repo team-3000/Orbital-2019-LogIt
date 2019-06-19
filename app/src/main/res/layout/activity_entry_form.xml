@@ -100,10 +100,15 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:hint="@string/form_collection"
-                android:completionHint="@string/form_completion_hint"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:inputType="textAutoComplete"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="Hint: New collection will be created if it hasn't exist."/>
 
             <LinearLayout
                 android:id="@+id/layoutPriority"

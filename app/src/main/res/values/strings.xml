@@ -29,8 +29,7 @@
     <string name="form_date">Date (required)</string>
     <string name="form_time">Time (required)</string>
     <string name="form_location">Location</string>
-    <string name="form_collection">Collection - Personal Category</string>
-    <string name="form_completion_hint">New collection will be created if it doesn\'t exist</string>
+    <string name="form_collection">Collection</string>
     <string name="form_priority">Priority:</string>
     <string name="form_description">Description</string>
     <string name="form_monthlyLog">Add to Monthly Log</string>

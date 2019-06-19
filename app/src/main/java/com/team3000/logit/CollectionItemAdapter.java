@@ -1,6 +1,5 @@
 package com.team3000.logit;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
