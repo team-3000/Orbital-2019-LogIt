@@ -54,6 +54,8 @@ public class EntryActivity extends BaseActivity {
         entryId = getIntent().getStringExtra("entryId");
         directory = getIntent().getStringExtra("directory");
         ref = db.document(directory);
+        String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+        getSupportActionBar().setTitle(typeCapitalised);
     }
 
     @Override

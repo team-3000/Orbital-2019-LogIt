@@ -50,15 +50,15 @@ public class CalendarActivity extends BaseActivity {
             }
         });
 
-//        btnCalThisMonth.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intentMonth = new Intent(CalendarActivity.this, MonthlyLogActivity.class);
-//                intentMonth.putExtra("year", year);
-//                intentMonth.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
-//                startActivity(intentMonth);
-//            }
-//        });
+        btnCalThisMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentMonth = new Intent(CalendarActivity.this, MonthlyLogActivity.class);
+                intentMonth.putExtra("year", year);
+                intentMonth.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
+                startActivity(intentMonth);
+            }
+        });
     }
 
     private void goToDailyLog(int year, int month, int day, int dayOffset) {

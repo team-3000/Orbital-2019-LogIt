@@ -14,9 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".MonthlyLogActivity"></activity>
         <activity android:name=".BaseLogActivity" />
         <activity android:name=".EntryFormActivity" />
-        <activity android:name=".CalendarActivity" />
+        <activity
+            android:name=".CalendarActivity"
+            android:label="@string/title_calendar" />
         <activity
             android:name=".EntryActivity"
             android:label="@string/title_entry_task" />

@@ -1,9 +1,9 @@
 package com.team3000.logit;
 
+import androidx.annotation.NonNull;
+
 import android.os.Bundle;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -13,7 +13,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.Collections;
 import java.util.Locale;
 
-public class DailyLogActivity extends BaseLogActivity {
+public class MonthlyLogActivity extends BaseLogActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,17 +23,16 @@ public class DailyLogActivity extends BaseLogActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        String logDate = String.format(Locale.US, "%d %s %d", day, month, year);
-        tvLogTitle.setText(logDate);
+        String logMonth = String.format(Locale.US, "%s %d", month, year);
+        tvLogTitle.setText(logMonth);
         entries.clear();
-        addToEntriesList(taskDir, logDate);
-        addToEntriesList(eventDir, logDate);
-        addToEntriesList(noteDir, logDate);
+        addToEntriesList(taskDir);
+        addToEntriesList(eventDir);
+        addToEntriesList(noteDir);
     }
 
-    private void addToEntriesList(String directory, String logDate) {
+    private void addToEntriesList(String directory) {
         db.collection(directory)
-                .whereEqualTo("date", logDate)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
