@@ -184,7 +184,9 @@ public class EntryFormActivity extends AppCompatActivity {
                                     String docID = task.getResult().getId();
                                     String docPath = String.format(Locale.US, "%d/%s/%s", year, month
                                                             , docID);
-                                    addIntoCollection(collection, type, docPath);
+
+                                    new EntryManager(EntryFormActivity.this, TAG)
+                                            .addIntoCollection(collection, type, docPath, task.getResult());
                                 }
                             }
                         });
@@ -346,61 +348,11 @@ public class EntryFormActivity extends AppCompatActivity {
         }
     }
 
-    // Add a new entry into a collection(tag) if the collectionField is not empty
-    private void addIntoCollection(final String COLLECTIONNAME, final String TYPE, final String DBPATH) {
-        // Entry data
-        final HashMap<String, String> DATA = new HashMap<>();
-        DATA.put("dataPath", DBPATH);
-
-        // Listener used after the entry is added into a collection(tag)
-        final OnCompleteListener<DocumentReference> NEWENTRYLISTENER = new OnCompleteListener<DocumentReference>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentReference> task) {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(EntryFormActivity.this, "Fail to add to collection!", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Fail to add to collection!");
-            }
-        }};
-
-        if (!COLLECTIONNAME.isEmpty()) {
-            final DocumentReference DOCREFERENCE = database.document(
-                    String.format("users/%s/collections/%s", user.getUid(), COLLECTIONNAME));
-
-            DOCREFERENCE.set(new CollectionItem(COLLECTIONNAME)) // The collection(tag) will be created if it hasn't exist
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            // Add tne entry into the collection(tag)
-                            DOCREFERENCE.collection(String.format(Locale.US, "%s", TYPE))
-                                    .add(DATA)
-                                    .addOnCompleteListener(NEWENTRYLISTENER);
-                        }
-                    });
-        }
-    }
-
-    private void addIntoCollectionForExistingDoc(final String collection, final String type, final String dbPath, DocumentReference ref) {
-        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    String oldCollection = (String) task.getResult().get("collection");
-                    addIntoCollectionForExistingDoc(oldCollection, collection, type, dbPath);
-                } else {
-                    Log.e(TAG, "Fail to retrieve document!");
-                }
-            }
-        });
-    }
-
-    private void addIntoCollectionForExistingDoc(String oldCollection, String newCollection, String type, String dbPath) {
+    private void addIntoCollectionForExistingDoc(String newCollection, String type, String dbPath, DocumentReference entryRef) {
         if (newCollection.isEmpty()) {
-            // logic here
-            return;
-        }
 
-        if (!oldCollection.equals(newCollection)) {
-            // Delete from old collection and into new collection
+        } else {
+
         }
     }
 }
