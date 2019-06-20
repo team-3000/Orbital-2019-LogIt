@@ -7,10 +7,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -19,15 +21,28 @@ import java.util.Locale;
 
 public class EntryManager {
     private Context context;
-    private String Tag;
+    private String tag;
     private FirebaseFirestore firestore;
     private FirebaseUser user;
 
     public EntryManager(Context context, String Tag) {
         this.context = context;
-        this.Tag = Tag;
+        this.tag = Tag;
         this.firestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public void updateEntry(DocumentReference doc, HashMap<String, String> newData) {
+        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    String old_collection_path = (String) task.getResult().get("collection_path");
+
+
+                }
+            }
+        });
     }
 
     // Add a new entry into a collection(tag) if the collectionField is not empty
@@ -43,7 +58,7 @@ public class EntryManager {
             public void onComplete(@NonNull Task<Void> task) {
                 if (!task.isSuccessful()) {
                     Toast.makeText(context, "Fail to add to collection!", Toast.LENGTH_SHORT).show();
-                    Log.e(Tag, "Fail to add to collection!");
+                    Log.e(tag, "Fail to add to collection!");
                 }
             }
         };
@@ -62,26 +77,52 @@ public class EntryManager {
                             ref.set(DATA).addOnCompleteListener(LISTENER1);
 
                             // Attach the id in collection to the existing entry
-                            String collection_entry_path = String.format(Locale.US, "%s/%s/%s",
+                            String collection_path = String.format(Locale.US, "%s/%s/%s",
                                     COLLECTIONNAME, TYPE, ref.getId());
                             HashMap<String, String > add_on = new HashMap<>();
-                            add_on.put("collection_entry_path", collection_entry_path);
+                            add_on.put("collection_path", collection_path);
                             ENTRYREF.set(add_on, SetOptions.merge());
                         }
                     });
         }
     }
 
-    public void addIntoCollectionForExistingDoc(String newCollection, String type, String dbPath, DocumentReference entryRef) {
+    public void addIntoCollectionForExistingDoc(String newCollection, String oldCollection, String type,
+                                                String docPath, DocumentReference entryRef,
+                                                String curr_collection_path) {
         if (newCollection.isEmpty()) {
-
-        } else {
-
+            Log.e(tag, "In adding into collection for existing doc");
+            deleteFromCollection(curr_collection_path, null);
         }
+
+        /*
+        if (newCollection.isEmpty()) {
+            Log.e(tag, "In adding into collection for existing doc");
+            Log.e(tag, entryRef.getPath());
+            entryRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        String collection_entry_path = (String) task.getResult().get("collection_entry_path");
+                        Log.e(tag, collection_entry_path);
+                        deleteFromCollection(collection_entry_path, null);
+                    }
+                }
+            });
+        } else {
+            // Complete the logic here
+        }
+        */
     }
 
-    public void deleteFromCollection(String id) {
-        String dbPath = String.format("users/%s/collections");
-
+    public void deleteFromCollection(String partialdbPath, OnCompleteListener<Void> listener) {
+        Log.e(tag, "In deleting from collection");
+        String dbPath = String.format("/users/%s/collections/%s",user.getUid(), partialdbPath);
+        firestore.document(dbPath).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.e(tag, "Successfully delete from collection");
+            }
+        });
     }
 }

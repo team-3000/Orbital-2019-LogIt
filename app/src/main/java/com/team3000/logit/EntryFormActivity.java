@@ -62,6 +62,10 @@ public class EntryFormActivity extends AppCompatActivity {
     private String typeCapitalised; // The type string with the first character capitalised
     private String entryId;
 
+    // new stuff here
+    private String curr_collection;
+    private String curr_collection_path;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +94,8 @@ public class EntryFormActivity extends AppCompatActivity {
         type = getIntent().getStringExtra("type");
         oriDir = getIntent().getStringExtra("oriDir");
         entryId = getIntent().getStringExtra("entryId");
+
+        curr_collection_path = ""; // new stuff here
 
         initialiseToolbar();
 
@@ -172,7 +178,10 @@ public class EntryFormActivity extends AppCompatActivity {
                     final int year = Integer.parseInt(dateArr[2]);
                     final String month = dateArr[1];
 
-                    String dbPath = String.format(Locale.US, "users/%s/%s/%d/%s", user.getUid(), type, year, month);
+                    final String dbPath_middle = String.format(Locale.US, "%s/%d/%s", type, year, month);
+                    final String dbPath = String.format(Locale.US, "users/%s/%s", user.getUid(), dbPath_middle);
+
+                    // final String dbPath = String.format(Locale.US, "users/%s/%s/%d/%s", user.getUid(), type, year, month);
                     CollectionReference ref = database.collection(dbPath);
 
                     if (oriDir == null) {
@@ -195,9 +204,37 @@ public class EntryFormActivity extends AppCompatActivity {
                         doc.set(entryData).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                addIntoCollectionForExistingDoc(collection, type, entryId, doc);
+                                String docPath = String.format(Locale.US, "/%s/%s",
+                                        dbPath_middle, entryId);
+                                new EntryManager(EntryFormActivity.this, TAG)
+                                        .addIntoCollectionForExistingDoc(collection, curr_collection, type, docPath, doc,
+                                                curr_collection_path);
                             }
                         });
+
+                        /*
+                        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    String old_collection_path = (String) task.getResult().get("collection_path");
+
+
+                                }
+                            }
+                        });
+                        */
+
+                        /*
+                        doc.set(entryData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                new EntryManager(EntryFormActivity.this, TAG)
+                                        .addIntoCollectionForExistingDoc(collection, type, dbPath, doc);
+                            }
+                        });
+                        Log.e(TAG, "The path is " + doc.getPath());
+                        */
                     }
 
 //                if (cbAddToMonthLog.isChecked()) {
@@ -247,7 +284,12 @@ public class EntryFormActivity extends AppCompatActivity {
                 etFormTitle.setText(doc.getString("title"));
                 etFormDate.setText(doc.getString("date"));
                 etFormTime.setText(doc.getString("time"));
-                actvCollection.setText(doc.getString("collection"));
+
+                // New stuff here
+                curr_collection = doc.getString("collection");
+                actvCollection.setText(curr_collection);
+                curr_collection_path = doc.getString("collection_path");
+
                 if ("event".equals(type)) {
                     etFormLocation.setText(doc.getString("location"));
                 }
@@ -330,13 +372,17 @@ public class EntryFormActivity extends AppCompatActivity {
         entryData.put("title", title);
         entryData.put("date", date);
         entryData.put("time", time);
+        // entryData.put("collection_path", curr_collection_path);
+
         if ("event".equals(type)) {
             entryData.put("location", location);
         }
         if ("".equals(collection)) {
             entryData.put("collection", "");
+            entryData.put("collection_path", "");
         } else {
             entryData.put("collection", collection);
+            entryData.put("collection_path", curr_collection_path);
         }
         if ("task".equals(type)) {
             entryData.put("eisen", eisen);
@@ -345,14 +391,6 @@ public class EntryFormActivity extends AppCompatActivity {
             entryData.put("desc", "");
         } else {
             entryData.put("desc", desc);
-        }
-    }
-
-    private void addIntoCollectionForExistingDoc(String newCollection, String type, String dbPath, DocumentReference entryRef) {
-        if (newCollection.isEmpty()) {
-
-        } else {
-
         }
     }
 }
