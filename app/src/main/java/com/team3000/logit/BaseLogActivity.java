@@ -81,7 +81,7 @@ public class BaseLogActivity extends BaseActivity {
 
             @Override
             public void onLongClick(View view, int position) {
-
+                // Pop-up with quick options if desired
             }
         }));
     }
