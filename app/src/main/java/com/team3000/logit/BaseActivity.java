@@ -113,9 +113,15 @@ public abstract class BaseActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_today) {
-
+            Intent intentToday = new Intent(BaseActivity.this, DailyLogActivity.class);
+            intentToday.putExtra("year", 0);
+            finish();
+            startActivity(intentToday);
         } else if (id == R.id.nav_this_month) {
-
+            Intent intentThisMonth = new Intent(BaseActivity.this, MonthlyLogActivity.class);
+            intentThisMonth.putExtra("year", 0);
+            finish();
+            startActivity(intentThisMonth);
         } else if (id == R.id.nav_calendar) {
             startActivity(new Intent(BaseActivity.this, CalendarActivity.class));
             finish();

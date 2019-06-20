@@ -16,11 +16,17 @@
         android:theme="@style/AppTheme">
         <activity android:name=".TestActivity"></activity>
         <activity android:name=".CollectionActivity" />
+        <activity android:name=".BaseLogActivity" />
         <activity android:name=".EntryFormActivity" />
-        <activity android:name=".CalendarActivity" />
+        <activity
+            android:name=".CalendarActivity"
+            android:label="@string/title_calendar" />
         <activity
             android:name=".EntryActivity"
             android:label="@string/title_entry_task" />
+        <activity
+            android:name=".MonthlyLogActivity"
+            android:label="Monthly Log"/>
         <activity
             android:name=".DailyLogActivity"
             android:label="@string/title_activity_daily_log"
