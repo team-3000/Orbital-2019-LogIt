@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -44,7 +45,9 @@ import java.util.Map;
 
 public class EntryFormActivity extends AppCompatActivity {
     private static final String TAG = "EntryFormActivity";
+    private FirebaseFirestore database;
     private FirebaseUser user;
+
     private EditText etFormTitle;
     private EditText etFormDate;
     private EditText etFormTime;
@@ -59,8 +62,6 @@ public class EntryFormActivity extends AppCompatActivity {
     private String typeCapitalised; // The type string with the first character capitalised
     private String entryId;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +71,8 @@ public class EntryFormActivity extends AppCompatActivity {
         getLayoutInflater().inflate(R.layout.activity_entry_form, contentFrameLayout);
         */
 
-        // Firebase user part
+        // Firebase part
+        database = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Find all the necessary views
@@ -156,31 +158,50 @@ public class EntryFormActivity extends AppCompatActivity {
                 String date = etFormDate.getText().toString();
                 String time = etFormTime.getText().toString();
                 String location = etFormLocation.getText().toString();
-                String collection = actvCollection.getText().toString();
+                final String collection = actvCollection.getText().toString();
                 String eisen = spnFormEisen.getSelectedItem().toString();
                 String desc = etFormDesc.getText().toString();
 
                 if ("".equals(title) || "".equals(date) || "".equals(time)) {
                     Toast.makeText(EntryFormActivity.this, "Please fill in required fields", Toast.LENGTH_SHORT).show();
                 } else {
-                    Map<String, String> entryData = new HashMap<>();
+                    final Map<String, String> entryData = new HashMap<>();
                     fillEntryData(entryData, title, date, time, location, collection, eisen, desc);
 
                     String[] dateArr = date.split(" ");
-                    int year = Integer.parseInt(dateArr[2]);
-                    String month = dateArr[1];
+                    final int year = Integer.parseInt(dateArr[2]);
+                    final String month = dateArr[1];
+
                     String dbPath = String.format(Locale.US, "users/%s/%s/%d/%s", user.getUid(), type, year, month);
-                    CollectionReference ref = db.collection(dbPath);
+                    CollectionReference ref = database.collection(dbPath);
 
                     if (oriDir == null) {
-                        ref.add(entryData);
+                        ref.add(entryData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                // Add entry into collection if collection is specified
+                                if (task.isSuccessful()) {
+                                    String docID = task.getResult().getId();
+                                    String docPath = String.format(Locale.US, "%d/%s/%s", year, month
+                                                            , docID);
+                                    addIntoCollection(collection, type, docPath);
+                                }
+                            }
+                        });
                     } else {
-                        ref.document(entryId).set(entryData);
+                        final DocumentReference doc = ref.document(entryId);
+                        doc.set(entryData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                addIntoCollectionForExistingDoc(collection, type, entryId, doc);
+                            }
+                        });
                     }
 
 //                if (cbAddToMonthLog.isChecked()) {
                     // Add to monthly log
 //                }
+
                     EntryFormActivity.this.finish();
                     Toast.makeText(EntryFormActivity.this, typeCapitalised + " added", Toast.LENGTH_SHORT)
                             .show();
@@ -217,7 +238,7 @@ public class EntryFormActivity extends AppCompatActivity {
 
     private void preset(final String type, final EditText etFormTitle, final EditText etFormDate, final EditText etFormTime,
                         final AutoCompleteTextView actvCollection, final EditText etFormLocation, final EditText etFormDesc) {
-        db.document(oriDir).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        database.document(oriDir).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot doc = task.getResult();
@@ -277,7 +298,7 @@ public class EntryFormActivity extends AppCompatActivity {
 
         // Retrieve all the collections' name and use them to set up the
         // collection AutoCompleteTextView
-        FirebaseFirestore.getInstance().collection(dbpath).get()
+        database.collection(dbpath).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -322,6 +343,64 @@ public class EntryFormActivity extends AppCompatActivity {
             entryData.put("desc", "");
         } else {
             entryData.put("desc", desc);
+        }
+    }
+
+    // Add a new entry into a collection(tag) if the collectionField is not empty
+    private void addIntoCollection(final String COLLECTIONNAME, final String TYPE, final String DBPATH) {
+        // Entry data
+        final HashMap<String, String> DATA = new HashMap<>();
+        DATA.put("dataPath", DBPATH);
+
+        // Listener used after the entry is added into a collection(tag)
+        final OnCompleteListener<DocumentReference> NEWENTRYLISTENER = new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(EntryFormActivity.this, "Fail to add to collection!", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Fail to add to collection!");
+            }
+        }};
+
+        if (!COLLECTIONNAME.isEmpty()) {
+            final DocumentReference DOCREFERENCE = database.document(
+                    String.format("users/%s/collections/%s", user.getUid(), COLLECTIONNAME));
+
+            DOCREFERENCE.set(new CollectionItem(COLLECTIONNAME)) // The collection(tag) will be created if it hasn't exist
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            // Add tne entry into the collection(tag)
+                            DOCREFERENCE.collection(String.format(Locale.US, "%s", TYPE))
+                                    .add(DATA)
+                                    .addOnCompleteListener(NEWENTRYLISTENER);
+                        }
+                    });
+        }
+    }
+
+    private void addIntoCollectionForExistingDoc(final String collection, final String type, final String dbPath, DocumentReference ref) {
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    String oldCollection = (String) task.getResult().get("collection");
+                    addIntoCollectionForExistingDoc(oldCollection, collection, type, dbPath);
+                } else {
+                    Log.e(TAG, "Fail to retrieve document!");
+                }
+            }
+        });
+    }
+
+    private void addIntoCollectionForExistingDoc(String oldCollection, String newCollection, String type, String dbPath) {
+        if (newCollection.isEmpty()) {
+            // logic here
+            return;
+        }
+
+        if (!oldCollection.equals(newCollection)) {
+            // Delete from old collection and into new collection
         }
     }
 }
