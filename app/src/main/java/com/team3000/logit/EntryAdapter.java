@@ -14,10 +14,10 @@ public class EntryAdapter extends RecyclerView.Adapter<EntryAdapter.ViewHolder> 
     private List<Entry> entries;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvListTitle;
-        TextView tvListDate;
-        TextView tvListTime;
-        TextView tvListDesc;
+        private TextView tvListTitle;
+        private TextView tvListDate;
+        private TextView tvListTime;
+        private TextView tvListDesc;
 
         public ViewHolder(View itemView) {
             super(itemView);

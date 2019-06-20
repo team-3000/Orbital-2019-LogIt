@@ -1,6 +1,5 @@
 package com.team3000.logit;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,15 +23,13 @@ public class BaseLogActivity extends BaseActivity {
     protected int year;
     protected String month;
     protected int day;
-    String userId;
-    String taskDir;
-    String eventDir;
-    String noteDir;
+    private String userId;
+    protected String taskDir;
+    protected String eventDir;
+    protected String noteDir;
     protected List<Entry> entries = new ArrayList<>();
-    private RecyclerView recyclerView;
     protected RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    protected FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +40,7 @@ public class BaseLogActivity extends BaseActivity {
         getLayoutInflater().inflate(R.layout.activity_base_log, contentFrameLayout);
 
         tvLogTitle = findViewById(R.id.tvLogTitle);
+        userId = user.getUid();
         year = getIntent().getIntExtra("year", 0);
         month = getIntent().getStringExtra("month");
         day = getIntent().getIntExtra("day", 0);
@@ -54,14 +52,13 @@ public class BaseLogActivity extends BaseActivity {
             month = monthName.substring(0, 3);
             day = cal.get(Calendar.DAY_OF_MONTH);
         }
-        userId = user.getUid();
         taskDir = String.format(Locale.US, "users/%s/task/%d/%s", userId, year, month);
         eventDir = String.format(Locale.US, "users/%s/event/%d/%s", userId, year, month);
         noteDir = String.format(Locale.US, "users/%s/note/%d/%s", userId, year, month);
 
-        recyclerView = findViewById(R.id.rvLogRV);
+        RecyclerView recyclerView = findViewById(R.id.rvLogRV);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new EntryAdapter(entries);
         recyclerView.setAdapter(mAdapter);
@@ -79,6 +76,7 @@ public class BaseLogActivity extends BaseActivity {
                 intent.putExtra("entryId", entryId);
                 intent.putExtra("directory", directory);
                 startActivity(intent);
+                finish();
             }
 
             @Override

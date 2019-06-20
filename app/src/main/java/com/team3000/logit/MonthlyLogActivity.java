@@ -23,7 +23,7 @@ public class MonthlyLogActivity extends BaseLogActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        String logMonth = String.format(Locale.US, "%s %d", month, year);
+        String logMonth = String.format(Locale.US, "%s %d", month.toUpperCase(), year);
         tvLogTitle.setText(logMonth);
         entries.clear();
         addToEntriesList(taskDir);
@@ -33,6 +33,7 @@ public class MonthlyLogActivity extends BaseLogActivity {
 
     private void addToEntriesList(String directory) {
         db.collection(directory)
+                .whereEqualTo("monthlyLog", true)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
