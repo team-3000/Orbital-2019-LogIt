@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">LogIt</string>
 
-    <string name="title_entry_task">EntryActivity</string>
+    <string name="title_entry_task">Entry</string>
     <string name="title_calendar">Calendar</string>
     <string name="title_alltasks">All Tasks</string>
     <string name="title_today">Today</string>
     <string name="btnEdit">Edit</string>
 
-    <string name="title_activity_daily_log">DailyLogActivity</string>
+    <string name="title_activity_daily_log">Daily Log</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -23,6 +23,10 @@
     <string name="nav_tag_groups">Tag Groups</string>
     <string name="nav_new">New</string>
     <string name="nav_sign_out">Sign out</string>
+
+    <string name="cal_today">Today</string>
+    <string name="cal_tomorrow">Tomorrow</string>
+    <string name="cal_this_month">This Month</string>
 
     <string name="form_type">Type</string>
     <string name="form_title">Title (required)</string>

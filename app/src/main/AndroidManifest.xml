@@ -5,7 +5,7 @@
     android:versionCode="1"
     android:versionName="1.0">
 
-    <dist:module dist:instant="true" />'
+    <dist:module dist:instant="true" />
 
     <application
         android:allowBackup="true"
@@ -14,11 +14,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".BaseLogActivity" />
         <activity android:name=".EntryFormActivity" />
-        <activity android:name=".CalendarActivity" />
+        <activity
+            android:name=".CalendarActivity"
+            android:label="@string/title_calendar" />
         <activity
             android:name=".EntryActivity"
             android:label="@string/title_entry_task" />
+        <activity
+            android:name=".MonthlyLogActivity"
+            android:label="Monthly Log"/>
         <activity
             android:name=".DailyLogActivity"
             android:label="@string/title_activity_daily_log"

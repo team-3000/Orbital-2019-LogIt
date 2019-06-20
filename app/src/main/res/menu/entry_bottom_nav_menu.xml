@@ -10,9 +10,5 @@
         android:id="@+id/entry_nav_allentries"
         android:icon="@drawable/ic_format_list_bulleted_black_24dp"
         android:title="@string/title_alltasks" />
-    <item
-        android:id="@+id/entry_nav_today"
-        android:icon="@drawable/ic_format_list_bulleted_black_24dp"
-        android:title="@string/title_today" />
 
 </menu>

@@ -18,8 +18,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import java.util.Calendar;
-
 public class EntryActivity extends BaseActivity {
     private BottomNavigationView navView;
     private TextView tvEntryTitle;
@@ -56,18 +54,20 @@ public class EntryActivity extends BaseActivity {
         entryId = getIntent().getStringExtra("entryId");
         directory = getIntent().getStringExtra("directory");
         ref = db.document(directory);
+        String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+        getSupportActionBar().setTitle(typeCapitalised);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         noteButton.setVisibility(View.GONE);
         taskButton.setVisibility(View.GONE);
         eventButton.setVisibility(View.GONE);
         if ("note".equals(type)) {
             tvEntryExtra.setVisibility(View.GONE);
         }
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -118,14 +118,6 @@ public class EntryActivity extends BaseActivity {
                     return true;
                 case R.id.entry_nav_calendar:
                     startActivity(new Intent(EntryActivity.this, CalendarActivity.class));
-                    return true;
-                case R.id.entry_nav_today:
-                    Calendar cal = Calendar.getInstance();
-                    Intent intentToday = new Intent(EntryActivity.this, DailyLogActivity.class);
-                    intentToday.putExtra("year", cal.get(Calendar.YEAR));
-                    intentToday.putExtra("month", cal.get(Calendar.MONTH));
-                    intentToday.putExtra("day", cal.get(Calendar.DAY_OF_MONTH));
-                    startActivity(intentToday);
                     return true;
                 default:
                     break;
