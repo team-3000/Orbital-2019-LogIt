@@ -33,7 +33,7 @@ public class EntryActivity extends BaseActivity {
     private String type;
     private String entryId;
     private String directory;
-    private String collection_path; // new stuff
+    // private String collection_path; (may need it in future)
     private DocumentReference ref;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -85,8 +85,6 @@ public class EntryActivity extends BaseActivity {
                     tvEntryExtra.setText(doc.getString("location"));
                 }
                 tvEntryDesc.setText(doc.getString("desc"));
-
-                collection_path = doc.getString("collection_path"); // new stuff
             }
         });
 
@@ -106,18 +104,7 @@ public class EntryActivity extends BaseActivity {
         btnDeleteEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ref.delete().addOnCompleteListener((task -> {
-                    if (task.isSuccessful()) {
-                        new EntryManager(EntryActivity.this)
-                                .deleteFromCollection(collection_path, (nextTask) -> {
-                                    if (nextTask.isSuccessful()) {
-                                        Log.i(TAG, "Succesfully deleted from collection!");
-                                    } else {
-                                        Log.i(TAG, "Fail to delete from collection!");
-                                    }
-                                });
-                    }
-                }));
+                new EntryManager(EntryActivity.this).deleteEntry(ref);
             }
         });
     }

@@ -44,9 +44,28 @@ public class EntryManager {
         });
     }
 
+    public void deleteEntry(DocumentReference entryRef) {
+        entryRef.get().addOnCompleteListener((task -> {
+            if (task.isSuccessful()) {
+                String collection_path = task.getResult().getString("collection_path");
+                entryRef.delete().addOnCompleteListener((task2 -> {
+                    if (task2.isSuccessful() && !collection_path.isEmpty()) {
+                        deleteFromCollection(collection_path, (task3) -> {
+                            if (task3.isSuccessful()) {
+                                Log.i(TAG, "Succesfully deleted from collection!");
+                            } else {
+                                Log.i(TAG, "Fail to delete from collection!");
+                            }
+                        });
+                    }
+                }));
+            }
+        }));
+    }
+
     // Add a new entry into a collection(tag) if the collectionField is not empty
     public void addIntoCollection(final String COLLECTIONNAME, final String TYPE, final String DBPATH,
-                                   final DocumentReference ENTRYREF) {
+                                  final DocumentReference ENTRYREF) {
         // Entry data
         final HashMap<String, String> DATA = new HashMap<>();
         DATA.put("dataPath", DBPATH);
@@ -79,7 +98,7 @@ public class EntryManager {
                             // Attach the id in collection to the existing entry
                             String collection_path = String.format(Locale.US, "%s/%s/%s",
                                     COLLECTIONNAME, TYPE, ref.getId());
-                            HashMap<String, String > add_on = new HashMap<>();
+                            HashMap<String, String> add_on = new HashMap<>();
                             add_on.put("collection_path", collection_path);
                             ENTRYREF.set(add_on, SetOptions.merge());
                         }
@@ -103,7 +122,7 @@ public class EntryManager {
         } else if (!newCollection.equals(oldCollection)) {
             deleteFromCollection(curr_collection_path, (task -> {
                 if (task.isSuccessful()) {
-                    Log.i(TAG, "Deleted from old collection!");
+                    Log.i(TAG, "Deleted from old collection A!");
                     addIntoCollection(newCollection, type, docPath, entryRef);
                 }
             }));
@@ -112,7 +131,8 @@ public class EntryManager {
 
     public void deleteFromCollection(String partialdbPath, OnCompleteListener<Void> listener) {
         Log.i(TAG, "In deleting from collection");
-        String dbPath = String.format("/users/%s/collections/%s",user.getUid(), partialdbPath);
+        String dbPath = String.format("/users/%s/collections/%s", user.getUid(), partialdbPath);
+        // Log.i(TAG, dbPath); used for debugging
         firestore.document(dbPath).delete().addOnCompleteListener(listener);
     }
 }
