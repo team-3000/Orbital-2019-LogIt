@@ -1,16 +1,11 @@
 package com.team3000.logit;
 
-import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import android.os.Bundle;
-import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.Collections;
 import java.util.Locale;
 
 public class MonthlyLogActivity extends BaseLogActivity {
@@ -18,38 +13,44 @@ public class MonthlyLogActivity extends BaseLogActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         String logMonth = String.format(Locale.US, "%s %d", month.toUpperCase(), year);
-        tvLogTitle.setText(logMonth);
-        entries.clear();
-        addToEntriesList(taskDir);
-        addToEntriesList(eventDir);
-        addToEntriesList(noteDir);
+        getSupportActionBar().setTitle(logMonth);
+        mPager = findViewById(R.id.log_pager);
+        pagerAdapter = new BaseLogPagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(pagerAdapter);
     }
 
-    private void addToEntriesList(String directory) {
-        db.collection(directory)
-                .whereEqualTo("monthlyLog", true)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot d : task.getResult()) {
-                                entries.add(new Entry(d.getId(), d.getString("type"),
-                                        d.getString("title"), d.getString("date"),
-                                        d.getString("time"), d.getString("desc")));
-                            }
-                            Collections.sort(entries);
-                            mAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+    private class BaseLogPagerAdapter extends FragmentStatePagerAdapter {
+        public BaseLogPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Bundle bundle = new Bundle();
+            String logType = "monthly";
+            String entryType;
+            if (position == 0) {
+                entryType = "task";
+            } else if (position == 1) {
+                entryType = "event";
+            } else {
+                entryType = "note";
+            }
+            String directory = String.format(Locale.US, "users/%s/%s/%d/%s", userId, entryType, year, month);
+            String heading = entryType.substring(0, 1).toUpperCase() + entryType.substring(1) + "s";
+            bundle.putString("heading", heading);
+            bundle.putString("logType", logType);
+            bundle.putString("directory", directory);
+            bundle.putString("logDate", "");
+            BaseLogFragment blfrag = new BaseLogFragment();
+            blfrag.setArguments(bundle);
+            return blfrag;
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
     }
 }

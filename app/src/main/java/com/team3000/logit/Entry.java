@@ -7,10 +7,9 @@ public class Entry implements Comparable<Entry> {
     private String date;
     private String time;
     private String desc;
-    private int year;
-    private String month;
 
     public Entry() {
+        // Empty constructor needed for Firestore
     }
 
     public Entry(String id, String type, String title, String date, String time, String desc) {
@@ -21,8 +20,6 @@ public class Entry implements Comparable<Entry> {
         this.time = time;
         this.desc = desc;
         String[] dateArr = date.split(" ");
-        this.year = Integer.parseInt(dateArr[2]);
-        this.month = dateArr[1];
     }
 
     public String getId() {
@@ -50,11 +47,11 @@ public class Entry implements Comparable<Entry> {
     }
 
     public int getYear() {
-        return year;
+        return Integer.parseInt(date.split(" ")[2]);
     }
 
     public String getMonth() {
-        return month;
+        return date.split(" ")[1];
     }
 
     @Override
