@@ -20,8 +20,4 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         tvListTime = mView.findViewById(R.id.tvListTime);
         tvListDesc = mView.findViewById(R.id.tvListDesc);
     }
-
-    public View getmView() {
-        return mView;
-    }
 }

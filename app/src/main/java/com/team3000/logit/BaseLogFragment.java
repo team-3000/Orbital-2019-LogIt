@@ -22,16 +22,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class BaseLogFragment extends Fragment {
     private String userId;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirestoreRecyclerAdapter mAdapter;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirestoreRecyclerAdapter mAdapter;
 
     public BaseLogFragment() {
         // Required empty public constructor
@@ -84,7 +80,7 @@ public class BaseLogFragment extends Fragment {
                 holder.tvListTime.setText(entry.getTime());
                 holder.tvListDesc.setText(entry.getDesc());
                 final DocumentSnapshot doc = getSnapshots().getSnapshot(holder.getAdapterPosition());
-                holder.getmView().setOnClickListener(new View.OnClickListener() {
+                holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         String entryType = entry.getType();

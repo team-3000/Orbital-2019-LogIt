@@ -11,14 +11,10 @@ import java.util.Calendar;
 
 public class BaseLogActivity extends BaseActivity {
     protected static final int NUM_PAGES = 3;
-    protected static final String TAG = "LogActivity";
     protected int year;
     protected String month;
     protected int day;
     protected String userId;
-    protected String taskDir;
-    protected String eventDir;
-    protected String noteDir;
     protected ViewPager mPager;
     protected PagerAdapter pagerAdapter;
 
