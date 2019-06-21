@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class EntryActivity extends BaseActivity {
+    private static final String TAG = "EntryActivity";
     private BottomNavigationView navView;
     private TextView tvEntryTitle;
     private TextView tvEntryDate;
@@ -31,6 +33,7 @@ public class EntryActivity extends BaseActivity {
     private String type;
     private String entryId;
     private String directory;
+    private String collection_path; // new stuff
     private DocumentReference ref;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -82,6 +85,8 @@ public class EntryActivity extends BaseActivity {
                     tvEntryExtra.setText(doc.getString("location"));
                 }
                 tvEntryDesc.setText(doc.getString("desc"));
+
+                collection_path = doc.getString("collection_path"); // new stuff
             }
         });
 
@@ -101,7 +106,18 @@ public class EntryActivity extends BaseActivity {
         btnDeleteEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ref.delete();
+                ref.delete().addOnCompleteListener((task -> {
+                    if (task.isSuccessful()) {
+                        new EntryManager(EntryActivity.this)
+                                .deleteFromCollection(collection_path, (nextTask) -> {
+                                    if (nextTask.isSuccessful()) {
+                                        Log.i(TAG, "Succesfully deleted from collection!");
+                                    } else {
+                                        Log.i(TAG, "Fail to delete from collection!");
+                                    }
+                                });
+                    }
+                }));
             }
         });
     }

@@ -7,7 +7,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,14 +19,14 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class EntryManager {
+    private static final String TAG = "EntryManager";
     private Context context;
     private String tag;
     private FirebaseFirestore firestore;
     private FirebaseUser user;
 
-    public EntryManager(Context context, String Tag) {
+    public EntryManager(Context context) {
         this.context = context;
-        this.tag = Tag;
         this.firestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
     }
@@ -58,7 +57,7 @@ public class EntryManager {
             public void onComplete(@NonNull Task<Void> task) {
                 if (!task.isSuccessful()) {
                     Toast.makeText(context, "Fail to add to collection!", Toast.LENGTH_SHORT).show();
-                    Log.e(tag, "Fail to add to collection!");
+                    Log.e(TAG, "Fail to add to collection!");
                 }
             }
         };
@@ -71,6 +70,7 @@ public class EntryManager {
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            Log.i(TAG, "Added into new collection!");
                             // Add the entry into the collection(tag)
                             DocumentReference ref = DOCREFERENCE.collection(String.format(Locale.US, "%s", TYPE))
                                     .document();
@@ -87,42 +87,32 @@ public class EntryManager {
         }
     }
 
-    public void addIntoCollectionForExistingDoc(String newCollection, String oldCollection, String type,
-                                                String docPath, DocumentReference entryRef,
+    public void addIntoCollectionForExistingDoc(final String newCollection, String oldCollection, final String type,
+                                                final String docPath, final DocumentReference entryRef,
                                                 String curr_collection_path) {
-        if (newCollection.isEmpty()) {
-            Log.e(tag, "In adding into collection for existing doc");
-            deleteFromCollection(curr_collection_path, null);
-        }
-
-        /*
-        if (newCollection.isEmpty()) {
-            Log.e(tag, "In adding into collection for existing doc");
-            Log.e(tag, entryRef.getPath());
-            entryRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        String collection_entry_path = (String) task.getResult().get("collection_entry_path");
-                        Log.e(tag, collection_entry_path);
-                        deleteFromCollection(collection_entry_path, null);
-                    }
+        if (!oldCollection.isEmpty() && newCollection.isEmpty()) {
+            Log.i(TAG, "In adding into collection for existing doc");
+            deleteFromCollection(curr_collection_path, (task -> {
+                if (task.isSuccessful()) {
+                    Log.i(TAG, "Deleted from old collection!");
                 }
-            });
-        } else {
-            // Complete the logic here
+            }));
+        } else if (oldCollection.isEmpty() && !newCollection.isEmpty()) {
+            addIntoCollection(newCollection, type, docPath, entryRef);
+
+        } else if (!newCollection.equals(oldCollection)) {
+            deleteFromCollection(curr_collection_path, (task -> {
+                if (task.isSuccessful()) {
+                    Log.i(TAG, "Deleted from old collection!");
+                    addIntoCollection(newCollection, type, docPath, entryRef);
+                }
+            }));
         }
-        */
     }
 
     public void deleteFromCollection(String partialdbPath, OnCompleteListener<Void> listener) {
-        Log.e(tag, "In deleting from collection");
+        Log.i(TAG, "In deleting from collection");
         String dbPath = String.format("/users/%s/collections/%s",user.getUid(), partialdbPath);
-        firestore.document(dbPath).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.e(tag, "Successfully delete from collection");
-            }
-        });
+        firestore.document(dbPath).delete().addOnCompleteListener(listener);
     }
 }

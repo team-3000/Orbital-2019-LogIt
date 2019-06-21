@@ -194,7 +194,7 @@ public class EntryFormActivity extends AppCompatActivity {
                                     String docPath = String.format(Locale.US, "%d/%s/%s", year, month
                                                             , docID);
 
-                                    new EntryManager(EntryFormActivity.this, TAG)
+                                    new EntryManager(EntryFormActivity.this)
                                             .addIntoCollection(collection, type, docPath, task.getResult());
                                 }
                             }
@@ -206,7 +206,7 @@ public class EntryFormActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 String docPath = String.format(Locale.US, "/%s/%s",
                                         dbPath_middle, entryId);
-                                new EntryManager(EntryFormActivity.this, TAG)
+                                new EntryManager(EntryFormActivity.this)
                                         .addIntoCollectionForExistingDoc(collection, curr_collection, type, docPath, doc,
                                                 curr_collection_path);
                             }
