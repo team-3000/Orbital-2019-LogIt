@@ -102,6 +102,7 @@ public class EntryActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 ref.delete();
+                startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
             }
         });
     }
