@@ -129,7 +129,7 @@ public abstract class BaseActivity extends AppCompatActivity
             showNewCollectionDialog();
 
         } else if (id == R.id.nav_collections) {
-            startActivity(new Intent(BaseActivity.this, CollectionActivity.class));
+            startActivity(new Intent(BaseActivity.this, CollectionListActivity.class));
             finish();   // destroy the current activity after finish
         } else if (id == R.id.nav_eisen) {
 

@@ -11,7 +11,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -31,6 +30,7 @@ public class EntryManager {
         this.user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    /*
     public void updateEntry(DocumentReference doc, HashMap<String, String> newData) {
         doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -43,6 +43,7 @@ public class EntryManager {
             }
         });
     }
+    */
 
     public void deleteEntry(DocumentReference entryRef) {
         entryRef.get().addOnCompleteListener((task -> {

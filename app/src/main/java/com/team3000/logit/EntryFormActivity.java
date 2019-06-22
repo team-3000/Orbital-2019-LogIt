@@ -191,9 +191,11 @@ public class EntryFormActivity extends AppCompatActivity {
                                 // Add entry into collection if collection is specified
                                 if (task.isSuccessful()) {
                                     String docID = task.getResult().getId();
+                                    String docPath = String.format(Locale.US, "%s/%s", dbPath_middle, docID);
+                                    /*
                                     String docPath = String.format(Locale.US, "%d/%s/%s", year, month
                                                             , docID);
-
+                                    */
                                     new EntryManager(EntryFormActivity.this)
                                             .addIntoCollection(collection, type, docPath, task.getResult());
                                 }
@@ -204,7 +206,7 @@ public class EntryFormActivity extends AppCompatActivity {
                         doc.set(entryData).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                String docPath = String.format(Locale.US, "/%s/%s",
+                                String docPath = String.format(Locale.US, "%s/%s",
                                         dbPath_middle, entryId);
                                 new EntryManager(EntryFormActivity.this)
                                         .addIntoCollectionForExistingDoc(collection, curr_collection, type, docPath, doc,

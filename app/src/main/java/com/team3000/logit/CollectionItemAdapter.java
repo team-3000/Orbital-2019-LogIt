@@ -27,14 +27,14 @@ public class CollectionItemAdapter extends FirestoreRecyclerAdapter<CollectionIt
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick();
+                    listener.onItemClick(container);
                 }
             });
         }
     }
 
     public interface OnItemClickListener {
-        void onItemClick();
+        void onItemClick(View view);
     }
 
     public CollectionItemAdapter(@NonNull FirestoreRecyclerOptions<CollectionItem> options, OnItemClickListener listener) {
