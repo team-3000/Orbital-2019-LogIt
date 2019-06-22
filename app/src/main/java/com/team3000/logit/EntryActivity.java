@@ -104,7 +104,9 @@ public class EntryActivity extends BaseActivity {
         btnDeleteEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new EntryManager(EntryActivity.this).deleteEntry(ref);
+                // new EntryManager(EntryActivity.this).deleteEntry(ref);
+                ref.delete();
+                startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
             }
         });
     }
