@@ -190,14 +190,15 @@ public class EntryFormActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                 // Add entry into collection if collection is specified
                                 if (task.isSuccessful()) {
-                                    String docID = task.getResult().getId();
+                                    DocumentReference doc = task.getResult();
+                                    String docID = doc.getId();
                                     String docPath = String.format(Locale.US, "%s/%s", dbPath_middle, docID);
                                     /*
                                     String docPath = String.format(Locale.US, "%d/%s/%s", year, month
                                                             , docID);
                                     */
                                     new EntryManager(EntryFormActivity.this)
-                                            .addIntoCollection(collection, type, docPath, task.getResult());
+                                            .addIntoCollection(collection, type, docPath, doc);
                                 }
                             }
                         });

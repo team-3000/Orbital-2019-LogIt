@@ -24,7 +24,7 @@ public class BaseLogActivity extends BaseActivity {
         // Load the content of the frame layout accordingly.
         // The frame layout serves as a container for the content you want to put.
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
-        getLayoutInflater().inflate(R.layout.activity_base_log, contentFrameLayout);
+        getLayoutInflater().inflate(R.layout.activity_collection, contentFrameLayout);
 
         userId = user.getUid();
         year = getIntent().getIntExtra("year", 0);
