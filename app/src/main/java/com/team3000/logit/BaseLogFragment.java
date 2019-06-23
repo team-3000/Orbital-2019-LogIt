@@ -97,6 +97,7 @@ public class BaseLogFragment extends Fragment {
                         String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s", userId, entryType, entryYear, entryMonth, entryId);
                         Intent intent = new Intent(getContext(), EntryActivity.class);
                         intent.putExtra("type", entryType);
+                        intent.putExtra("month", entryMonth);
                         intent.putExtra("entryId", entryId);
                         intent.putExtra("directory", directory);
                         startActivity(intent);

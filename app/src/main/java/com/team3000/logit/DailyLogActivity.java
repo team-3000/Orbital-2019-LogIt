@@ -20,12 +20,11 @@ public class DailyLogActivity extends BaseLogActivity {
         logDate = String.format(Locale.US, "%d %s %d", day, month, year);
         getSupportActionBar().setTitle(logDate);
 
-        // mPager = findViewById(R.id.log_pager);
-        mPager = findViewById(R.id.viewPager);
+        mPager = findViewById(R.id.log_pager);
         pagerAdapter = new BaseLogPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(pagerAdapter);
 
-        TabLayout tabs = findViewById(R.id.tabs);
+        TabLayout tabs = findViewById(R.id.logTabLayout);
         tabs.setupWithViewPager(mPager);
     }
 
@@ -88,5 +87,4 @@ public class DailyLogActivity extends BaseLogActivity {
             }
         }
     }
-
 }

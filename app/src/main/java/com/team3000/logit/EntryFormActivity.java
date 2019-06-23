@@ -3,6 +3,7 @@ package com.team3000.logit;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -12,7 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-// import android.widget.CheckBox;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -55,12 +56,13 @@ public class EntryFormActivity extends AppCompatActivity {
     private AutoCompleteTextView actvCollection;
     private Spinner spnFormEisen;
     private EditText etFormDesc;
-    //    private CheckBox cbAddToMonthLog;
+    private CheckBox cbAddToMonthLog;
     private Button btnFormSubmit;
     private String oriDir;
     private String type;
     private String typeCapitalised; // The type string with the first character capitalised
     private String entryId;
+    private String oriMonth;
 
     // new stuff here
     private String curr_collection;
@@ -89,11 +91,12 @@ public class EntryFormActivity extends AppCompatActivity {
         LinearLayout layoutPriority = findViewById(R.id.layoutPriority);
         spnFormEisen = findViewById(R.id.spnFormEisen);
         etFormDesc = findViewById(R.id.etFormDesc);
-//        cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
+        cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
         btnFormSubmit = findViewById(R.id.btnFormSubmit);
         type = getIntent().getStringExtra("type");
         oriDir = getIntent().getStringExtra("oriDir");
         entryId = getIntent().getStringExtra("entryId");
+        oriMonth = getIntent().getStringExtra("oriMonth");
 
         curr_collection_path = ""; // new stuff here
 
@@ -109,7 +112,7 @@ public class EntryFormActivity extends AppCompatActivity {
         }
 
         if (oriDir != null) {
-            preset(type, etFormTitle, etFormDate, etFormTime, actvCollection, etFormLocation, etFormDesc);
+            preset(type, etFormTitle, etFormDate, etFormTime, actvCollection, etFormLocation, etFormDesc, cbAddToMonthLog);
         }
 
         // Open a DatePicker when Date EditText or keyboard "next" clicked
@@ -124,7 +127,7 @@ public class EntryFormActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(etFormDate.getWindowToken(), 0);
                     showDatePicker(etFormDate);
                 }
@@ -143,7 +146,7 @@ public class EntryFormActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(etFormTime.getWindowToken(), 0);
                     showTimePicker(etFormTime);
                 }
@@ -163,16 +166,17 @@ public class EntryFormActivity extends AppCompatActivity {
                 String title = etFormTitle.getText().toString();
                 String date = etFormDate.getText().toString();
                 String time = etFormTime.getText().toString();
-                String location = etFormLocation.getText().toString();
+                String location = "event".equals(type) ? etFormLocation.getText().toString() : null;
                 final String collection = actvCollection.getText().toString();
-                String eisen = spnFormEisen.getSelectedItem().toString();
+                String eisen = "task".equals(type) ? spnFormEisen.getSelectedItem().toString() : null;
                 String desc = etFormDesc.getText().toString();
+                boolean addToMonthLog = cbAddToMonthLog.isChecked();
 
                 if ("".equals(title) || "".equals(date) || "".equals(time)) {
                     Toast.makeText(EntryFormActivity.this, "Please fill in required fields", Toast.LENGTH_SHORT).show();
                 } else {
-                    final Map<String, String> entryData = new HashMap<>();
-                    fillEntryData(entryData, title, date, time, location, collection, eisen, desc);
+                    final Map<String, Object> entryData = new HashMap<>();
+                    fillEntryData(entryData, title, date, time, location, collection, eisen, desc, addToMonthLog);
 
                     String[] dateArr = date.split(" ");
                     final int year = Integer.parseInt(dateArr[2]);
@@ -214,6 +218,15 @@ public class EntryFormActivity extends AppCompatActivity {
                                                 curr_collection_path);
                             }
                         });
+                        if (!month.equals(oriMonth)) {
+                            database.document(oriDir).delete();
+                            Intent intent = new Intent(EntryFormActivity.this, EntryActivity.class);
+                            intent.putExtra("type", type);
+                            intent.putExtra("month", month);
+                            intent.putExtra("entryId", entryId);
+                            intent.putExtra("directory", String.format(Locale.US, "%s/%s", dbPath, entryId));
+                            startActivity(intent);
+                        }
 
                         /*
                         doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -279,9 +292,11 @@ public class EntryFormActivity extends AppCompatActivity {
     }
 
     private void preset(final String type, final EditText etFormTitle, final EditText etFormDate, final EditText etFormTime,
-                        final AutoCompleteTextView actvCollection, final EditText etFormLocation, final EditText etFormDesc) {
+                        final AutoCompleteTextView actvCollection, final EditText etFormLocation, final EditText etFormDesc,
+                        final CheckBox cbAddToMonthLog) {
         database.document(oriDir).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
+
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot doc = task.getResult();
                 etFormTitle.setText(doc.getString("title"));
@@ -297,6 +312,11 @@ public class EntryFormActivity extends AppCompatActivity {
                     etFormLocation.setText(doc.getString("location"));
                 }
                 etFormDesc.setText(doc.getString("desc"));
+                if (doc.get("monthlyLog") == null) {
+                    cbAddToMonthLog.setChecked(false);
+                } else {
+                    cbAddToMonthLog.setChecked(doc.getBoolean("monthlyLog"));
+                }
             }
         });
     }
@@ -312,7 +332,7 @@ public class EntryFormActivity extends AppCompatActivity {
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         String monthName = new DateFormatSymbols().getMonths()[month];
                         String monthNameShort = monthName.substring(0, 3);
-                        etFormDate.setText(String.format(Locale.US, "%02d %s %d", dayOfMonth, monthNameShort, year));
+                        etFormDate.setText(String.format(Locale.US, "%d %s %d", dayOfMonth, monthNameShort, year));
                     }
                 }, year, month, day);
         picker.show();
@@ -360,7 +380,7 @@ public class EntryFormActivity extends AppCompatActivity {
                             String[] container = new String[names.size()];
 
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
-                                , android.R.layout.simple_dropdown_item_1line, names.toArray(container));
+                                    , android.R.layout.simple_dropdown_item_1line, names.toArray(container));
                             actvCollection.setAdapter(adapter);
                         } else {
                             Log.e(TAG, "Fail to load collections for form's AutoCompleteTextView!");
@@ -369,17 +389,14 @@ public class EntryFormActivity extends AppCompatActivity {
                 });
     }
 
-    private void fillEntryData(Map<String, String> entryData, String title, String date, String time,
-                               String location, String collection, String eisen, String desc) {
+    private void fillEntryData(Map<String, Object> entryData, String title, String date, String time,
+                               String location, String collection, String eisen, String desc, boolean addToMonthLog) {
         entryData.put("type", type);
         entryData.put("title", title);
         entryData.put("date", date);
         entryData.put("time", time);
+        entryData.put("location", location);
         // entryData.put("collection_path", curr_collection_path);
-
-        if ("event".equals(type)) {
-            entryData.put("location", location);
-        }
         if ("".equals(collection)) {
             entryData.put("collection", "");
             entryData.put("collection_path", "");
@@ -387,13 +404,12 @@ public class EntryFormActivity extends AppCompatActivity {
             entryData.put("collection", collection);
             entryData.put("collection_path", curr_collection_path);
         }
-        if ("task".equals(type)) {
-            entryData.put("eisen", eisen);
-        }
+        entryData.put("eisen", eisen);
         if ("".equals(desc)) {
             entryData.put("desc", "");
         } else {
             entryData.put("desc", desc);
         }
+        entryData.put("monthlyLog", addToMonthLog);
     }
 }

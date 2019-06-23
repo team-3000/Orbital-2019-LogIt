@@ -27,6 +27,8 @@
     <string name="cal_today">Today</string>
     <string name="cal_tomorrow">Tomorrow</string>
     <string name="cal_this_month">This Month</string>
+    <string name="cal_last_month">Last Month</string>
+    <string name="cal_next_month">Next Month</string>
 
     <string name="form_type">Type</string>
     <string name="form_title">Title (required)</string>
@@ -36,7 +38,7 @@
     <string name="form_collection">Collection</string>
     <string name="form_priority">Priority:</string>
     <string name="form_description">Description</string>
-    <string name="form_monthlyLog">Add to Monthly Log</string>
+    <string name="form_monthlyLog">Monthly Log</string>
     <string name="form_submit">Submit</string>
 
     <string-array name="form_type_array">
