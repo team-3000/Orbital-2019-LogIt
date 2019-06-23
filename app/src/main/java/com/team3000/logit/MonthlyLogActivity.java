@@ -22,6 +22,7 @@ public class MonthlyLogActivity extends BaseLogActivity {
     }
 
     private class BaseLogPagerAdapter extends FragmentStatePagerAdapter {
+      
         private BaseLogPagerAdapter(FragmentManager fm) {
             super(fm);
         }
