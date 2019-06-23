@@ -104,6 +104,12 @@
                 android:textSize="18sp"
                 android:inputType="textAutoComplete"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="Hint: New collection will be created if it hasn't exist."/>
+
             <LinearLayout
                 android:id="@+id/layoutPriority"
                 android:layout_width="wrap_content"

@@ -1,6 +1,5 @@
 package com.team3000.logit;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -51,15 +50,31 @@ public class BaseLogFragment extends Fragment {
         Query query;
         if ("daily".equals(logType)) {
             query = db.collection(directory)
-                    .whereEqualTo("date", logDate)
+                    .whereEqualTo("date", getArguments().getString("logDate"))
                     .orderBy("time");
+            initaliseRecyclerView(view, query);
         } else {
             query = db.collection(directory)
                     .whereEqualTo("monthlyLog", true)
                     .orderBy("date")
                     .orderBy("time");
+            initaliseRecyclerView(view, query);
         }
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdapter.stopListening();
+    }
+
+    private void initaliseRecyclerView(View view, Query query)   {
         FirestoreRecyclerOptions<Entry> options = new FirestoreRecyclerOptions.Builder<Entry>()
                 .setQuery(query, Entry.class)
                 .build();
@@ -103,16 +118,5 @@ public class BaseLogFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAdapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mAdapter.stopListening();
-    }
 }
+

@@ -5,9 +5,11 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 // import android.widget.CheckBox;
@@ -28,17 +30,24 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class EntryFormActivity extends AppCompatActivity {
+    private static final String TAG = "EntryFormActivity";
+    private FirebaseFirestore database;
     private FirebaseUser user;
+
     private EditText etFormTitle;
     private EditText etFormDate;
     private EditText etFormTime;
@@ -53,7 +62,9 @@ public class EntryFormActivity extends AppCompatActivity {
     private String typeCapitalised; // The type string with the first character capitalised
     private String entryId;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    // new stuff here
+    private String curr_collection;
+    private String curr_collection_path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +75,8 @@ public class EntryFormActivity extends AppCompatActivity {
         getLayoutInflater().inflate(R.layout.activity_entry_form, contentFrameLayout);
         */
 
-        // Firebase user part
+        // Firebase part
+        database = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Find all the necessary views
@@ -83,14 +95,9 @@ public class EntryFormActivity extends AppCompatActivity {
         oriDir = getIntent().getStringExtra("oriDir");
         entryId = getIntent().getStringExtra("entryId");
 
-        // Set up the toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        curr_collection_path = ""; // new stuff here
 
-        // Set the title of the toolbar accoridngly
-        typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
-        getSupportActionBar().setTitle("New " + typeCapitalised);
+        initialiseToolbar();
 
         // Form logic
         tvFormType.setText(String.format(Locale.US, "Type: %s", type.toUpperCase()));
@@ -143,6 +150,8 @@ public class EntryFormActivity extends AppCompatActivity {
             }
         });
 
+        // Initialise the collections AutoCompleteTextView
+        initializeAutoCompleteTextView();
     }
 
     @Override
@@ -155,31 +164,86 @@ public class EntryFormActivity extends AppCompatActivity {
                 String date = etFormDate.getText().toString();
                 String time = etFormTime.getText().toString();
                 String location = etFormLocation.getText().toString();
-                String collection = actvCollection.getText().toString();
+                final String collection = actvCollection.getText().toString();
                 String eisen = spnFormEisen.getSelectedItem().toString();
                 String desc = etFormDesc.getText().toString();
 
                 if ("".equals(title) || "".equals(date) || "".equals(time)) {
                     Toast.makeText(EntryFormActivity.this, "Please fill in required fields", Toast.LENGTH_SHORT).show();
                 } else {
-                    Map<String, String> entryData = new HashMap<>();
+                    final Map<String, String> entryData = new HashMap<>();
                     fillEntryData(entryData, title, date, time, location, collection, eisen, desc);
 
                     String[] dateArr = date.split(" ");
-                    int year = Integer.parseInt(dateArr[2]);
-                    String month = dateArr[1];
-                    String dbPath = String.format(Locale.US, "users/%s/%s/%d/%s", user.getUid(), type, year, month);
-                    CollectionReference ref = db.collection(dbPath);
+                    final int year = Integer.parseInt(dateArr[2]);
+                    final String month = dateArr[1];
+
+                    final String dbPath_middle = String.format(Locale.US, "%s/%d/%s", type, year, month);
+                    final String dbPath = String.format(Locale.US, "users/%s/%s", user.getUid(), dbPath_middle);
+
+                    // final String dbPath = String.format(Locale.US, "users/%s/%s/%d/%s", user.getUid(), type, year, month);
+                    CollectionReference ref = database.collection(dbPath);
 
                     if (oriDir == null) {
-                        ref.add(entryData);
+                        ref.add(entryData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                // Add entry into collection if collection is specified
+                                if (task.isSuccessful()) {
+                                    DocumentReference doc = task.getResult();
+                                    String docID = doc.getId();
+                                    String docPath = String.format(Locale.US, "%s/%s", dbPath_middle, docID);
+                                    /*
+                                    String docPath = String.format(Locale.US, "%d/%s/%s", year, month
+                                                            , docID);
+                                    */
+                                    new EntryManager(EntryFormActivity.this)
+                                            .addIntoCollection(collection, type, docPath, doc);
+                                }
+                            }
+                        });
                     } else {
-                        ref.document(entryId).set(entryData);
+                        final DocumentReference doc = ref.document(entryId);
+                        doc.set(entryData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                String docPath = String.format(Locale.US, "%s/%s",
+                                        dbPath_middle, entryId);
+                                new EntryManager(EntryFormActivity.this)
+                                        .addIntoCollectionForExistingDoc(collection, curr_collection, type, docPath, doc,
+                                                curr_collection_path);
+                            }
+                        });
+
+                        /*
+                        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    String old_collection_path = (String) task.getResult().get("collection_path");
+
+
+                                }
+                            }
+                        });
+                        */
+
+                        /*
+                        doc.set(entryData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                new EntryManager(EntryFormActivity.this, TAG)
+                                        .addIntoCollectionForExistingDoc(collection, type, dbPath, doc);
+                            }
+                        });
+                        Log.e(TAG, "The path is " + doc.getPath());
+                        */
                     }
 
 //                if (cbAddToMonthLog.isChecked()) {
                     // Add to monthly log
 //                }
+
                     EntryFormActivity.this.finish();
                     Toast.makeText(EntryFormActivity.this, typeCapitalised + " added", Toast.LENGTH_SHORT)
                             .show();
@@ -193,6 +257,7 @@ public class EntryFormActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            // When the back button on the action bar is clicked
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -202,16 +267,32 @@ public class EntryFormActivity extends AppCompatActivity {
         }
     }
 
+    private void initialiseToolbar() {
+        // Set up the toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Set the title of the toolbar accoridngly
+        typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+        getSupportActionBar().setTitle("New " + typeCapitalised);
+    }
+
     private void preset(final String type, final EditText etFormTitle, final EditText etFormDate, final EditText etFormTime,
                         final AutoCompleteTextView actvCollection, final EditText etFormLocation, final EditText etFormDesc) {
-        db.document(oriDir).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        database.document(oriDir).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot doc = task.getResult();
                 etFormTitle.setText(doc.getString("title"));
                 etFormDate.setText(doc.getString("date"));
                 etFormTime.setText(doc.getString("time"));
-                actvCollection.setText(doc.getString("collection"));
+
+                // New stuff here
+                curr_collection = doc.getString("collection");
+                actvCollection.setText(curr_collection);
+                curr_collection_path = doc.getString("collection_path");
+
                 if ("event".equals(type)) {
                     etFormLocation.setText(doc.getString("location"));
                 }
@@ -258,19 +339,53 @@ public class EntryFormActivity extends AppCompatActivity {
         picker.show();
     }
 
+    private void initializeAutoCompleteTextView() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String dbpath = String.format("users/%s/collections", user.getUid());
+
+        // Retrieve all the collections' name and use them to set up the
+        // collection AutoCompleteTextView
+        database.collection(dbpath).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ArrayList<String> names = new ArrayList<>();
+
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                String name = (String) doc.get("name");
+                                names.add(name);
+                            }
+
+                            String[] container = new String[names.size()];
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
+                                , android.R.layout.simple_dropdown_item_1line, names.toArray(container));
+                            actvCollection.setAdapter(adapter);
+                        } else {
+                            Log.e(TAG, "Fail to load collections for form's AutoCompleteTextView!");
+                        }
+                    }
+                });
+    }
+
     private void fillEntryData(Map<String, String> entryData, String title, String date, String time,
                                String location, String collection, String eisen, String desc) {
         entryData.put("type", type);
         entryData.put("title", title);
         entryData.put("date", date);
         entryData.put("time", time);
+        // entryData.put("collection_path", curr_collection_path);
+
         if ("event".equals(type)) {
             entryData.put("location", location);
         }
         if ("".equals(collection)) {
             entryData.put("collection", "");
+            entryData.put("collection_path", "");
         } else {
             entryData.put("collection", collection);
+            entryData.put("collection_path", curr_collection_path);
         }
         if ("task".equals(type)) {
             entryData.put("eisen", eisen);

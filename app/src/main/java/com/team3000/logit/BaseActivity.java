@@ -1,5 +1,7 @@
 package com.team3000.logit;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -105,7 +107,6 @@ public abstract class BaseActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -123,12 +124,14 @@ public abstract class BaseActivity extends AppCompatActivity
             startActivity(intentThisMonth);
         } else if (id == R.id.nav_calendar) {
             startActivity(new Intent(BaseActivity.this, CalendarActivity.class));
-            finish(); // destroy the current activity after finish
+            finish();
+        } else if (id == R.id.new_collection){
+            showNewCollectionDialog();
+
         } else if (id == R.id.nav_collections) {
-
+            startActivity(new Intent(BaseActivity.this, CollectionListActivity.class));
+            finish();   // destroy the current activity after finish
         } else if (id == R.id.nav_eisen) {
-
-        } else if (id == R.id.nav_new) {
 
         } else if (id == R.id.nav_signOut) {
             mAuth.signOut();
@@ -173,5 +176,19 @@ public abstract class BaseActivity extends AppCompatActivity
                 startActivity(intentNew);
             }
         });
+    }
+
+    private void showNewCollectionDialog() {
+        // Handle Fragment transaction & backstack stuff
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog fragment
+        NewCollectionFragment fragment = new NewCollectionFragment();
+        fragment.show(getSupportFragmentManager(), "dialog");
     }
 }
