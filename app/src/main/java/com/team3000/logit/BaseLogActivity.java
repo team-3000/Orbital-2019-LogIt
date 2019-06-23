@@ -5,7 +5,6 @@ import android.widget.FrameLayout;
 
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
 import com.google.android.material.tabs.TabLayout;
 
 import java.text.DateFormatSymbols;
