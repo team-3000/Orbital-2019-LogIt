@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,13 +48,10 @@ public class BaseLogFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String heading = getArguments().getString("heading");
+
         String logType = getArguments().getString("logType");
         String directory = getArguments().getString("directory");
         String logDate = getArguments().getString("logDate");
-
-        TextView tvLogTitle = view.findViewById(R.id.tvLogTitle);
-        tvLogTitle.setText(heading);
 
         Query query;
         if ("daily".equals(logType)) {

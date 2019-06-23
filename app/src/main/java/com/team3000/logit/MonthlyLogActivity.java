@@ -1,5 +1,6 @@
 package com.team3000.logit;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -21,7 +22,7 @@ public class MonthlyLogActivity extends BaseLogActivity {
     }
 
     private class BaseLogPagerAdapter extends FragmentStatePagerAdapter {
-        public BaseLogPagerAdapter(FragmentManager fm) {
+        private BaseLogPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -38,8 +39,6 @@ public class MonthlyLogActivity extends BaseLogActivity {
                 entryType = "note";
             }
             String directory = String.format(Locale.US, "users/%s/%s/%d/%s", userId, entryType, year, month);
-            String heading = entryType.substring(0, 1).toUpperCase() + entryType.substring(1) + "s";
-            bundle.putString("heading", heading);
             bundle.putString("logType", logType);
             bundle.putString("directory", directory);
             bundle.putString("logDate", "");
@@ -51,6 +50,12 @@ public class MonthlyLogActivity extends BaseLogActivity {
         @Override
         public int getCount() {
             return NUM_PAGES;
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return (position == 0) ? "Tasks" : ((position == 1) ? "Events" : "Notes");
         }
     }
 }
