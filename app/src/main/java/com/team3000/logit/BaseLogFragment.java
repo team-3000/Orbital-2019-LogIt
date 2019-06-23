@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -24,7 +23,6 @@ import com.google.firebase.firestore.Query;
 import java.util.Locale;
 
 public class BaseLogFragment extends Fragment {
-    private static final String TAG = "BaseLogFragment";
     private String userId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirestoreRecyclerAdapter mAdapter;

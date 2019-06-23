@@ -23,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 
 public class NewCollectionFragment extends DialogFragment {
-    View dialog;
+    private View dialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

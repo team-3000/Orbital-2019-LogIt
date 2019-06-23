@@ -20,7 +20,6 @@ import java.util.Locale;
 public class EntryManager {
     private static final String TAG = "EntryManager";
     private Context context;
-    private String tag;
     private FirebaseFirestore firestore;
     private FirebaseUser user;
 

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,7 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 public class CollectionListActivity extends BaseActivity {
-    FirestoreRecyclerAdapter<CollectionItem, CollectionItemAdapter.CollectionViewHolder> adapter;
+    private FirestoreRecyclerAdapter<CollectionItem, CollectionItemAdapter.CollectionViewHolder> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

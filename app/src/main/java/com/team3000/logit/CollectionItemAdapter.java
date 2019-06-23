@@ -15,7 +15,7 @@ public class CollectionItemAdapter extends FirestoreRecyclerAdapter<CollectionIt
     private OnItemClickListener listener;
 
     public static class CollectionViewHolder extends RecyclerView.ViewHolder {
-        AppCompatTextView container;
+        private AppCompatTextView container;
 
         public CollectionViewHolder(@NonNull View itemView) {
             super(itemView);

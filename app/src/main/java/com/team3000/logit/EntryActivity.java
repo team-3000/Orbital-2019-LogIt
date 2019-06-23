@@ -12,7 +12,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class EntryActivity extends BaseActivity {
-    private static final String TAG = "EntryActivity";
     private BottomNavigationView navView;
     private TextView tvEntryTitle;
     private TextView tvEntryDate;

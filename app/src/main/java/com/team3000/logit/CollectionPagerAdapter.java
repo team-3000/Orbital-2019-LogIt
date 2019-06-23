@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 public class CollectionPagerAdapter extends FragmentPagerAdapter {
-    private static final String TAG = "CollectionPagerAdapter";
     private String collectionName;
 
     public CollectionPagerAdapter(FragmentManager fm, String collectionName) {
