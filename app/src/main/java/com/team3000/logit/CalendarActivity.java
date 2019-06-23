@@ -22,7 +22,9 @@ public class CalendarActivity extends BaseActivity {
 
         Button btnCalToday = findViewById(R.id.btnCalToday);
         Button btnCalTomorrow = findViewById(R.id.btnCalTomorrow);
+        Button btnCalLastMonth = findViewById(R.id.btnCalLastMonth);
         Button btnCalThisMonth = findViewById(R.id.btnCalThisMonth);
+        Button btnCalNextMonth = findViewById(R.id.btnCalNextMonth);
         CalendarView calendarView = findViewById(R.id.calendarView);
         Calendar cal = Calendar.getInstance();
         final int year = cal.get(Calendar.YEAR);
@@ -50,24 +52,58 @@ public class CalendarActivity extends BaseActivity {
             }
         });
 
+        btnCalLastMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int lastMonth;
+                int adjYear;
+                if (month == 1) {
+                    lastMonth = 12;
+                    adjYear = year - 1;
+                } else {
+                    lastMonth = month - 1;
+                    adjYear = year;
+                }
+                goToMonthlyLog(adjYear, lastMonth);
+            }
+        });
+
         btnCalThisMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentMonth = new Intent(CalendarActivity.this, MonthlyLogActivity.class);
-                intentMonth.putExtra("year", year);
-                intentMonth.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
-                startActivity(intentMonth);
+                goToMonthlyLog(year, month);
+            }
+        });
+
+        btnCalNextMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int nextMonth;
+                int adjYear;
+                if (month == 12) {
+                    nextMonth = 1;
+                    adjYear = year + 1;
+                } else {
+                    nextMonth = month + 1;
+                    adjYear = year;
+                }
+                goToMonthlyLog(adjYear, nextMonth);
             }
         });
     }
 
     private void goToDailyLog(int year, int month, int day, int dayOffset) {
-        String monthName = new DateFormatSymbols().getMonths()[month];
-        String monthNameShort = monthName.substring(0, 3);
         Intent intentDaily = new Intent(CalendarActivity.this, DailyLogActivity.class);
         intentDaily.putExtra("year", year);
-        intentDaily.putExtra("month", monthNameShort);
+        intentDaily.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
         intentDaily.putExtra("day", day + dayOffset);
         startActivity(intentDaily);
+    }
+
+    private void goToMonthlyLog(int year, int month) {
+        Intent intentMonth = new Intent(CalendarActivity.this, MonthlyLogActivity.class);
+        intentMonth.putExtra("year", year);
+        intentMonth.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
+        startActivity(intentMonth);
     }
 }

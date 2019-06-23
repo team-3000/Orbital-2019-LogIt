@@ -29,6 +29,7 @@ public class EntryActivity extends BaseActivity {
     private Button btnEditEntry;
     private Button btnDeleteEntry;
     private String type;
+    private String month;
     private String entryId;
     private String directory;
     private DocumentReference ref;
@@ -51,6 +52,7 @@ public class EntryActivity extends BaseActivity {
         btnEditEntry = findViewById(R.id.btnEditEntry);
         btnDeleteEntry = findViewById(R.id.btnDeleteEntry);
         type = getIntent().getStringExtra("type");
+        month = getIntent().getStringExtra("month");
         entryId = getIntent().getStringExtra("entryId");
         directory = getIntent().getStringExtra("directory");
         ref = db.document(directory);
@@ -92,6 +94,7 @@ public class EntryActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intentEdit = new Intent(EntryActivity.this, EntryFormActivity.class);
                 intentEdit.putExtra("type", type);
+                intentEdit.putExtra("oriMonth", month);
                 intentEdit.putExtra("oriDir", directory);
                 intentEdit.putExtra("entryId", entryId);
                 startActivity(intentEdit);
