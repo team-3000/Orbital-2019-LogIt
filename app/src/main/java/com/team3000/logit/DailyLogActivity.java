@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.Locale;
 
 public class DailyLogActivity extends BaseLogActivity {
@@ -17,9 +19,13 @@ public class DailyLogActivity extends BaseLogActivity {
         super.onCreate(savedInstanceState);
         logDate = String.format(Locale.US, "%d %s %d", day, month, year);
         getSupportActionBar().setTitle(logDate);
+
         mPager = findViewById(R.id.log_pager);
         pagerAdapter = new BaseLogPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(pagerAdapter);
+
+        TabLayout tabs = findViewById(R.id.logTabLayout);
+        tabs.setupWithViewPager(mPager);
     }
 
     @Override
@@ -46,11 +52,11 @@ public class DailyLogActivity extends BaseLogActivity {
             String logType = "daily";
             String entryType;
             if (position == 0) {
-                entryType = "task";
-            } else if (position == 1) {
-                entryType = "event";
-            } else {
                 entryType = "note";
+            } else if (position == 1) {
+                entryType = "task";
+            } else {
+                entryType = "event";
             }
             String directory = String.format(Locale.US, "users/%s/%s/%d/%s", userId, entryType, year, month);
             bundle.putString("logType", logType);
@@ -69,8 +75,16 @@ public class DailyLogActivity extends BaseLogActivity {
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
-            return (position == 0) ? "Tasks" : ((position == 1) ? "Events" : "Notes");
+            switch (position) {
+                case 0 :
+                    return "Notes";
+                case 1 :
+                    return "Tasks";
+                case 2 :
+                    return "Events";
+                default :
+                    return null;
+            }
         }
     }
-
 }
