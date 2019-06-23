@@ -312,7 +312,11 @@ public class EntryFormActivity extends AppCompatActivity {
                     etFormLocation.setText(doc.getString("location"));
                 }
                 etFormDesc.setText(doc.getString("desc"));
-                cbAddToMonthLog.setChecked(doc.getBoolean("monthlyLog"));
+                if (doc.get("monthlyLog") == null) {
+                    cbAddToMonthLog.setChecked(false);
+                } else {
+                    cbAddToMonthLog.setChecked(doc.getBoolean("monthlyLog"));
+                }
             }
         });
     }
