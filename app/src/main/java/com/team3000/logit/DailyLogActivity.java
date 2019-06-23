@@ -42,7 +42,8 @@ public class DailyLogActivity extends BaseLogActivity {
     }
 
     private class BaseLogPagerAdapter extends FragmentStatePagerAdapter {
-        public BaseLogPagerAdapter(FragmentManager fm) {
+      
+        private BaseLogPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -59,8 +60,6 @@ public class DailyLogActivity extends BaseLogActivity {
                 entryType = "event";
             }
             String directory = String.format(Locale.US, "users/%s/%s/%d/%s", userId, entryType, year, month);
-            String heading = entryType.substring(0, 1).toUpperCase() + entryType.substring(1) + "s";
-            bundle.putString("heading", heading);
             bundle.putString("logType", logType);
             bundle.putString("directory", directory);
             bundle.putString("logDate", logDate);

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,10 +27,6 @@ public class BaseLogFragment extends Fragment {
     private String userId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirestoreRecyclerAdapter mAdapter;
-
-    public BaseLogFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,10 +43,9 @@ public class BaseLogFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String heading = getArguments().getString("heading");
         String logType = getArguments().getString("logType");
         String directory = getArguments().getString("directory");
-        // String logDate = getArguments().getString("logDate");
+        String logDate = getArguments().getString("logDate");
 
         Query query;
         if ("daily".equals(logType)) {

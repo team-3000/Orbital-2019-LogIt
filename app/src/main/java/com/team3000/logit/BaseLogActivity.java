@@ -5,6 +5,7 @@ import android.widget.FrameLayout;
 
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import com.google.android.material.tabs.TabLayout;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
@@ -24,7 +25,9 @@ public class BaseLogActivity extends BaseActivity {
         // Load the content of the frame layout accordingly.
         // The frame layout serves as a container for the content you want to put.
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
-        getLayoutInflater().inflate(R.layout.activity_collection, contentFrameLayout);
+        getLayoutInflater().inflate(R.layout.activity_base_log, contentFrameLayout);
+        TabLayout tabLayout = findViewById(R.id.logTabLayout);
+        tabLayout.setupWithViewPager(mPager);
 
         userId = user.getUid();
         year = getIntent().getIntExtra("year", 0);
