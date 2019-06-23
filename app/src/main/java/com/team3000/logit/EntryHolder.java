@@ -6,11 +6,11 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EntryHolder extends RecyclerView.ViewHolder {
-    View mView;
-    TextView tvListTitle;
-    TextView tvListDate;
-    TextView tvListTime;
-    TextView tvListDesc;
+    protected View mView;
+    protected TextView tvListTitle;
+    protected TextView tvListDate;
+    protected TextView tvListTime;
+    protected TextView tvListDesc;
 
     public EntryHolder(View itemView) {
         super(itemView);
