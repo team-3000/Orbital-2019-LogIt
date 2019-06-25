@@ -17,6 +17,12 @@ public class DailyLogActivity extends BaseLogActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // For today's daily log
+        if (getIntent().getIntExtra("year", 1) == 0) {
+            super.currPosition = R.id.nav_today;
+        }
+
         logDate = String.format(Locale.US, "%d %s %d", day, month, year);
         getSupportActionBar().setTitle(logDate);
 

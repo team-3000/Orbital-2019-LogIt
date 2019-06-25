@@ -58,8 +58,7 @@ public class EntryManager {
                             } else {
                                 Log.i(TAG, "Fail to delete from collection!");
                             }
-
-                            activity.startActivity(new Intent(activity, DailyLogActivity.class));
+                            activity.finish();
                         });
                     }
                 }));

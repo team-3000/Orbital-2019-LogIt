@@ -22,6 +22,8 @@ public class CollectionListActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.currPosition = R.id.nav_collections;
+
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_collection_list, contentFrame);
 
@@ -58,6 +60,7 @@ public class CollectionListActivity extends BaseActivity {
             Intent i = new Intent(CollectionListActivity.this, CollectionActivity.class)
                     .putExtra("collection_name", title);
             startActivity(i);
+            activityStack.push(CollectionListActivity.this);
         }));
 
         RecyclerView list = findViewById(R.id.collections_list);

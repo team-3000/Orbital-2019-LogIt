@@ -14,6 +14,12 @@ public class MonthlyLogActivity extends BaseLogActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Prevent redirection of the same page when the user click on this month in the drawer
+        if (getIntent().getIntExtra("year", 1) == 0) {
+            super.currPosition = R.id.nav_this_month;
+        }
+
         String logMonth = String.format(Locale.US, "%s %d", month.toUpperCase(), year);
         getSupportActionBar().setTitle(logMonth);
         mPager = findViewById(R.id.log_pager);

@@ -17,6 +17,8 @@ public class CalendarActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.currPosition = R.id.nav_calendar;
+
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_calendar, contentFrameLayout);
 
