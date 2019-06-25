@@ -3,7 +3,7 @@
 
     <string name="title_entry_task">Entry</string>
     <string name="title_calendar">Calendar</string>
-    <string name="title_alltasks">All Entries Of This Type</string>
+    <string name="title_all_entries">All Entries Of This Type</string>
     <string name="title_today">Today</string>
     <string name="btnEdit">Edit</string>
 
