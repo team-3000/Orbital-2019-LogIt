@@ -7,15 +7,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_today"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_today"
             android:title="@string/menu_today" />
         <item
             android:id="@+id/nav_this_month"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_monthly_log"
             android:title="@string/menu_this_month" />
         <item
             android:id="@+id/nav_calendar"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_calendar"
             android:title="@string/menu_calendar" />
     </group>
 
@@ -23,23 +23,24 @@
         <menu>
             <item
                 android:id="@+id/nav_collections"
-                android:icon="@drawable/ic_menu_manage"
+                android:icon="@drawable/ic_collection"
                 android:title="@string/menu_collections"/>
 
             <item
                 android:id="@+id/new_collection"
-                android:icon="@drawable/ic_note_add_black_24dp"
+                android:icon="@drawable/ic_collection_new"
                 android:title="New Collection"/>
 
             <item
                 android:id="@+id/nav_eisen"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_eisenmatrix"
                 android:title="@string/menu_eisen" />
         </menu>
     </item>
 
     <item
         android:id="@+id/nav_signOut"
+        android:icon="@drawable/ic_logout"
         android:title="@string/nav_sign_out"/>
 
 </menu>
