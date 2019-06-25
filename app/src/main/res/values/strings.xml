@@ -3,7 +3,7 @@
 
     <string name="title_entry_task">Entry</string>
     <string name="title_calendar">Calendar</string>
-    <string name="title_alltasks">All Tasks</string>
+    <string name="title_alltasks">All Entries Of This Type</string>
     <string name="title_today">Today</string>
     <string name="btnEdit">Edit</string>
 
@@ -19,7 +19,7 @@
     <string name="menu_this_month">This Month</string>
     <string name="menu_calendar">Calendar</string>
     <string name="menu_collections">Collections</string>
-    <string name="menu_eisen">Eisenhower Matix</string>
+    <string name="menu_eisen">Eisenhower Matrix</string>
     <string name="nav_tag_groups">Tag Groups</string>
     <string name="nav_new">New</string>
     <string name="nav_sign_out">Sign out</string>
@@ -41,11 +41,11 @@
     <string name="form_monthlyLog">Monthly Log</string>
     <string name="form_submit">Submit</string>
 
-    <string-array name="form_type_array">
-        <item>Task</item>
-        <item>Event</item>
-        <item>Note</item>
-    </string-array>
+    <!--<string-array name="form_type_array">-->
+        <!--<item>Task</item>-->
+        <!--<item>Event</item>-->
+        <!--<item>Note</item>-->
+    <!--</string-array>-->
 
     <string-array name="form_eisen_array">
         <item>Important</item>

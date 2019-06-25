@@ -40,8 +40,8 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:drawableTop="@drawable/ic_action_note"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:text="Note" />
+                android:text="New Note"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
             <Button
                 android:id="@+id/task"
@@ -49,9 +49,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:drawableTop="@drawable/ic_action_task"
-                android:text="Task" />
+                android:text="New Task"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
             <Button
                 android:id="@+id/event"
@@ -59,9 +59,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 android:drawableTop="@drawable/ic_action_event"
-                android:text="Event" />
+                android:text="New Event"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
         </LinearLayout>
 
