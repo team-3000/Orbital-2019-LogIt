@@ -33,11 +33,11 @@ public class MonthlyLogActivity extends BaseLogActivity {
             String logType = "monthly";
             String entryType;
             if (position == 0) {
-                entryType = "task";
-            } else if (position == 1) {
-                entryType = "event";
-            } else {
                 entryType = "note";
+            } else if (position == 1) {
+                entryType = "task";
+            } else {
+                entryType = "event";
             }
             String directory = String.format(Locale.US, "users/%s/%s/%d/%s", userId, entryType, year, month);
             bundle.putString("logType", logType);
@@ -56,7 +56,7 @@ public class MonthlyLogActivity extends BaseLogActivity {
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
-            return (position == 0) ? "Tasks" : ((position == 1) ? "Events" : "Notes");
+            return (position == 0) ? "Notes" : ((position == 1) ? "Tasks" : "Events");
         }
     }
 }

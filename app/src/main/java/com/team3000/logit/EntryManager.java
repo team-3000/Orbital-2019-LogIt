@@ -1,6 +1,8 @@
 package com.team3000.logit;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,12 +21,12 @@ import java.util.Locale;
 
 public class EntryManager {
     private static final String TAG = "EntryManager";
-    private Context context;
+    private Activity activity;
     private FirebaseFirestore firestore;
     private FirebaseUser user;
 
-    public EntryManager(Context context) {
-        this.context = context;
+    public EntryManager(Activity activity) {
+        this.activity = activity;
         this.firestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
     }
@@ -56,6 +58,8 @@ public class EntryManager {
                             } else {
                                 Log.i(TAG, "Fail to delete from collection!");
                             }
+
+                            activity.startActivity(new Intent(activity, DailyLogActivity.class));
                         });
                     }
                 }));
@@ -75,7 +79,7 @@ public class EntryManager {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (!task.isSuccessful()) {
-                    Toast.makeText(context, "Fail to add to collection!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Fail to add to collection!", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Fail to add to collection!");
                 }
             }
