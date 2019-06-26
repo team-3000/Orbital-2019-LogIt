@@ -28,4 +28,8 @@ public class CollectionLogAdapter extends BaseLogAdapter {
     public int getItemCount() {
         return entries.size();
     }
+
+    public void setEntries(List<Pair<Entry, String>> entries) {
+        this.entries = entries;
+    }
 }

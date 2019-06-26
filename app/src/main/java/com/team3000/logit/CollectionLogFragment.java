@@ -35,6 +35,7 @@ public class CollectionLogFragment extends Fragment {
     private String directory;
     private String userID;
     private List<Pair<Entry, String>> entries;
+    private CollectionLogAdapter logAdapter;
 
     public CollectionLogFragment(String collectionName, String type) {
         this.collectionName = collectionName;
@@ -51,6 +52,11 @@ public class CollectionLogFragment extends Fragment {
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.directory = String.format(Locale.US, "users/%s/collections/%s/%s"
         , userID, collectionName, type);
+
+        // create the adapter with an empty list of entries data first, once the data is completely loaded
+        // call notifyDataSetChanged on the adapter (as shown in fetchRespectiveEntries()
+        this.logAdapter = new CollectionLogAdapter(getActivity(), entries);
+        loadEntriesData();
     }
 
     @Nullable
@@ -59,28 +65,15 @@ public class CollectionLogFragment extends Fragment {
         LinearLayout parentView = (LinearLayout) inflater.inflate(R.layout.fragment_entry_list,
                 container, false);
 
-        /*
-        // For debugging purpose
-        TextView titleView = parentView.findViewById(R.id.title);
-        titleView.setText(type);
-        */
-
         recyclerView = parentView.findViewById(R.id.rvLogRV);
-        initialiseEntryData(); // need to move the load the entries data part to onCreate
-                               // for performance issue, but need to figure out how to load the recyclerview
-                               // refer to BoostNote for more info (title is Performance
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(logAdapter);
 
         return parentView;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        entries.clear(); // Delete on the entries once the fragment's view is destroyed
-    }
-
-    private void initialiseEntryData() {
-        Log.i(TAG, "In initialiseEntryData");
+    private void loadEntriesData() {
+        Log.i(TAG, "In loadEntriesData");
         db.collection(directory).get().addOnCompleteListener((task) -> {
             if (task.isSuccessful()) {
                 Log.i(TAG, "Successfully fetch all collection entries");
@@ -115,31 +108,22 @@ public class CollectionLogFragment extends Fragment {
             Log.i(TAG, "All fetch tasks completes");
             List<Task<?>> tasks_list = task.getResult();
 
-            // List<Entry> entries = new LinkedList<>();
-
             for (Task<?> task1 : tasks_list) {
                 if (task1.isSuccessful()) {
                     DocumentSnapshot doc = (DocumentSnapshot) task1.getResult();
                     Entry entry = doc.toObject(Entry.class);
                     String entryID = doc.getId();
 
+                    // For debugging purpose
                     Log.i(TAG, entry.getTitle());
                     // Log.i(TAG, entry.getDesc());
                     // Log.i(TAG, entry.getDate());
 
                     entries.add(new Pair<>(entry, entryID));
-
-                    // entries.add(doc.toObject(Entry.class));
                 }
             }
 
-            initialiseRecyclerView(entries);
+            logAdapter.notifyDataSetChanged(); // new stuff here
         }  ));
-    }
-
-    private void initialiseRecyclerView(List<Pair<Entry, String>> entries) {
-        Log.i(TAG, "In initialiseRecyclerView");
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new CollectionLogAdapter(this.getActivity(), entries));
     }
 }
