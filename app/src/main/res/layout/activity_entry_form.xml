@@ -108,7 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:text="Hint: New collection will be created if it hasn't exist."/>
+                android:text="Hint: New collection will be created if it doesn't exist." />
 
             <LinearLayout
                 android:id="@+id/layoutPriority"
