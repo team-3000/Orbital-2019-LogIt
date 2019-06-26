@@ -1,8 +1,6 @@
 package com.team3000.logit;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,9 +11,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -137,5 +137,40 @@ public class EntryManager {
         String dbPath = String.format("/users/%s/collections/%s", user.getUid(), partialdbPath);
         // Log.i(TAG, dbPath); used for debugging
         firestore.document(dbPath).delete().addOnCompleteListener(listener);
+    }
+
+    protected void updateEntryTracker(String entryType, String updateDir, String oriDir) {
+        String trackerPath = String.format("users/%s", user.getUid());
+        firestore.document(trackerPath).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                ArrayList<String> temp;
+                if (task.getResult().get(entryType) == null) {
+                    temp = new ArrayList<>();
+                    Log.d(TAG, "New " + entryType + " array added");
+                } else {
+                    temp = (ArrayList<String>) task.getResult().get(entryType);
+                    if (temp.contains(oriDir)) {
+                        temp.remove(oriDir);
+                    }
+                    Log.d(TAG, entryType + " array updated");
+                }
+                temp.add(updateDir);
+                firestore.document(trackerPath).update(entryType, temp);
+            }
+        });
+    }
+
+    protected void deleteFromEntryTracker(String entryType, String entryDir) {
+        String trackerPath = String.format("users/%s", user.getUid());
+        firestore.document(trackerPath).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                ArrayList<String> temp = (ArrayList<String>)task.getResult().get(entryType);
+                temp.remove(entryDir);
+                firestore.document(trackerPath).update(entryType, temp);
+                Log.d(TAG, entryDir + " deleted from array " + entryType);
+            }
+        });
     }
 }
