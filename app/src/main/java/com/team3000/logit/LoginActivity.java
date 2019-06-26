@@ -149,7 +149,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        startActivity(new Intent(this, DailyLogActivity.class));
+        // Extra is put so that when the user clicks on today in drawer they won't be redirected to
+        // the same page again after they signed in and landed in the today's daily log page
+        Intent intentToday = new Intent(LoginActivity.this, DailyLogActivity.class)
+                .putExtra("year", 0);
+        startActivity(intentToday);
         finish(); // destroy this activity
     }
 }

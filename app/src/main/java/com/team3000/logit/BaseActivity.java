@@ -1,9 +1,11 @@
 package com.team3000.logit;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,13 +22,18 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Stack;
+
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    protected static Stack<Activity> activityStack = new Stack<>();
+    protected int currPosition; // indicates which activity of the navigation drawer that the user is currently at
     private FirebaseAuth mAuth;
     protected FirebaseUser user;
     protected Button noteButton;
     protected Button taskButton;
     protected Button eventButton;
+    protected boolean notAtDrawerOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +56,7 @@ public abstract class BaseActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        // this.currPosition = R.id.base_activity; // overriden in some children classes
 
         // Set the text of the welcome message in the navigation drawer
         View header = navigationView.getHeaderView(0);
@@ -111,35 +119,60 @@ public abstract class BaseActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
-        if (id == R.id.nav_today) {
-            Intent intentToday = new Intent(BaseActivity.this, DailyLogActivity.class);
-            intentToday.putExtra("year", 0);
-            finish();
-            startActivity(intentToday);
-        } else if (id == R.id.nav_this_month) {
-            Intent intentThisMonth = new Intent(BaseActivity.this, MonthlyLogActivity.class);
-            intentThisMonth.putExtra("year", 0);
-            finish();
-            startActivity(intentThisMonth);
-        } else if (id == R.id.nav_calendar) {
-            startActivity(new Intent(BaseActivity.this, CalendarActivity.class));
-            finish();
-        } else if (id == R.id.new_collection){
+        // Prevent app from sending intent to the same current activity when user click on the option
+        // which matches current activity
+        if (id == currPosition) {
+            drawer.closeDrawer(GravityCompat.START);
+            return false;
+        }
+
+        if (id == R.id.new_collection) {
             showNewCollectionDialog();
+            return true;
+        }
+
+        Intent intent = null;
+        if (id == R.id.nav_today) {
+            intent = new Intent(BaseActivity.this, DailyLogActivity.class)
+                    .putExtra("year", 0);
+
+        } else if (id == R.id.nav_this_month) {
+            intent = new Intent(BaseActivity.this, MonthlyLogActivity.class)
+                    .putExtra("year", 0);
+
+        } else if (id == R.id.nav_calendar) {
+            intent = new Intent(BaseActivity.this, CalendarActivity.class);
 
         } else if (id == R.id.nav_collections) {
-            startActivity(new Intent(BaseActivity.this, CollectionListActivity.class));
-            finish();   // destroy the current activity after finish
+            intent = new Intent(BaseActivity.this, CollectionListActivity.class);
+
         } else if (id == R.id.nav_eisen) {
 
         } else if (id == R.id.nav_signOut) {
             mAuth.signOut();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish(); // destroy the current activity after finish
+            intent = new Intent(this, LoginActivity.class);
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        // intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        /*
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        */
+
+        startActivity(intent);
+        finish();
+        if (notAtDrawerOptions) {
+            Log.i("BaseActivity", "In clearing stack");
+            int size = activityStack.size();
+            for (int i = 0; i < size; i++) {
+                Activity activity = activityStack.pop();
+                activity.finish();
+            }
+        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
