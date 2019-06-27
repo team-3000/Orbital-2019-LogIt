@@ -115,8 +115,10 @@ public class EntryActivity extends BaseActivity {
             public void onClick(View v) {
                 EntryManager entryManager = new EntryManager(EntryActivity.this);
                 entryManager.deleteEntry(ref, entryPosition);
-                entryManager.deleteFromTracker(type, directory);
-                entryManager.deleteFromTracker(eisen, directory);
+                entryManager.deleteFromTracker(type + "Store", directory);
+                if (eisen != null) {
+                    entryManager.deleteFromTracker(eisen, directory);
+                }
                 // ref.delete();
                 startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
                 // The EntryActivity will straightaway close once user click on the delete button
@@ -133,7 +135,7 @@ public class EntryActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.entry_nav_allentries:
                     Intent intentList = new Intent(EntryActivity.this, EntryListActivity.class);
-                    intentList.putExtra("trackType", type);
+                    intentList.putExtra("trackType", type + "Store");
                     startActivity(intentList);
                     return true;
                 case R.id.entry_nav_calendar:

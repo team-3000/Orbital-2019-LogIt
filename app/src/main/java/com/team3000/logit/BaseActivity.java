@@ -187,7 +187,7 @@ public abstract class BaseActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
-                intentNew.putExtra("trackType", "note");
+                intentNew.putExtra("trackType", "noteStore");
                 startActivity(intentNew);
             }
         });
@@ -196,7 +196,7 @@ public abstract class BaseActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
-                intentNew.putExtra("trackType", "task");
+                intentNew.putExtra("trackType", "taskStore");
                 startActivity(intentNew);
             }
         });
@@ -205,7 +205,7 @@ public abstract class BaseActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
-                intentNew.putExtra("trackType", "event");
+                intentNew.putExtra("trackType", "eventStore");
                 startActivity(intentNew);
             }
         });
