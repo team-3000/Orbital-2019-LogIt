@@ -63,7 +63,6 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
                 String entryMonth = entry.getMonth();
                 // String entryId = doc.getId();
                 String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s", userId, entryType, entryYear, entryMonth, entryId);
-
                 Intent entryIntent = new Intent(activity, EntryActivity.class);
                 entryIntent.putExtra("type", entryType);
                 entryIntent.putExtra("month", entryMonth);

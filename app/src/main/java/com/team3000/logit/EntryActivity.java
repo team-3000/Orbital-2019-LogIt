@@ -32,6 +32,7 @@ public class EntryActivity extends BaseActivity {
     private String month;
     private String entryId;
     private String directory;
+    private String eisen;
     private int entryPosition;
     // private String collection_path; (may need it in future)
     private DocumentReference ref;
@@ -85,7 +86,8 @@ public class EntryActivity extends BaseActivity {
                 tvEntryTime.setText(doc.getString("time"));
                 tvEntryCollection.setText(doc.getString("collection"));
                 if ("task".equals(type)) {
-                    tvEntryExtra.setText(doc.getString("eisen"));
+                    eisen = doc.getString("eisen");
+                    tvEntryExtra.setText(eisen);
                 } else if ("event".equals(type)) {
                     tvEntryExtra.setText(doc.getString("location"));
                 }
@@ -113,8 +115,10 @@ public class EntryActivity extends BaseActivity {
             public void onClick(View v) {
                 EntryManager entryManager = new EntryManager(EntryActivity.this);
                 entryManager.deleteEntry(ref, entryPosition);
-                entryManager.deleteFromEntryTracker(type, directory);
-              
+                entryManager.deleteFromTracker(type, directory);
+                entryManager.deleteFromTracker(eisen, directory);
+                // ref.delete();
+                startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
                 // The EntryActivity will straightaway close once user click on the delete button
                 EntryActivity.this.finish();
             }
