@@ -47,9 +47,16 @@ public class EntryListActivity extends BaseActivity {
         mAdapter = new EntryListAdapter(EntryListActivity.this, entries);
         db.document(directory).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
+            @SuppressWarnings("unchecked")
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 entries.clear();
                 entryRefs = (ArrayList<String>) task.getResult().get(type);
+
+                // newly added stuff
+                if (entryRefs == null) {
+                    entryRefs = new ArrayList<>();
+                }
+
                 for (String ref : entryRefs) {
                     db.document(ref).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override

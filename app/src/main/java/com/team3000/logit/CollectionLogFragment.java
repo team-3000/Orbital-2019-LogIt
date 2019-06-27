@@ -209,7 +209,7 @@ public class CollectionLogFragment extends Fragment {
                     String entryID = doc.getId();
 
                     // For debugging purpose
-                    Log.i(TAG, entry.getTitle());
+                    // Log.i(TAG, entry.getTitle());
                     // Log.i(TAG, entry.getDesc());
                     // Log.i(TAG, entry.getDate());
 
@@ -232,7 +232,7 @@ public class CollectionLogFragment extends Fragment {
                 Entry newEntry = doc.toObject(Entry.class);
                 String entryID = doc.getId();
 
-                entries.add(new Pair(newEntry, entryID));
+                entries.add(new Pair<>(newEntry, entryID));
                 logAdapter.notifyItemInserted(entries.size() - 1);
             } else {
                 Log.e(TAG, "Fail to add new entry!");

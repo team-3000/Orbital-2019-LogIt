@@ -13,13 +13,6 @@ public class CollectionLogAdapter extends BaseLogAdapter implements Serializable
     private static final String TAG = "CollectionLogAdapter";
     private List<Pair<Entry, String>> entries;
 
-    public class OnDestroyListener implements Serializable {
-        public void onDestroy(int entryPosition) {
-            entries.remove(entryPosition);
-            CollectionLogAdapter.this.notifyItemRemoved(entryPosition);
-        }
-    }
-
     public CollectionLogAdapter(Activity activity, List<Pair<Entry, String>> entries) {
         super(activity);
         this.entries = entries;
@@ -29,7 +22,7 @@ public class CollectionLogAdapter extends BaseLogAdapter implements Serializable
     public void onBindViewHolder(@NonNull EntryHolder holder, int position) {
         Log.i(TAG, "in CollectionLogAdapter onBindViewHolder");
         Pair<Entry, String> entryPair = entries.get(position);
-        super.fillUpEntryHolder(holder, entryPair.first, entryPair.second, position, new OnDestroyListener());
+        super.fillUpEntryHolder(holder, entryPair.first, entryPair.second);
     }
 
     @Override
