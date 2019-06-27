@@ -41,6 +41,11 @@
     <string name="form_monthlyLog">Monthly Log</string>
     <string name="form_submit">Submit</string>
 
+    <string name="eisen_do">Do</string>
+    <string name="eisen_decide">Decide</string>
+    <string name="eisen_delegate">Delegate</string>
+    <string name="eisen_eliminate">Eliminate</string>
+
     <!--<string-array name="form_type_array">-->
     <!--<item>Task</item>-->
     <!--<item>Event</item>-->

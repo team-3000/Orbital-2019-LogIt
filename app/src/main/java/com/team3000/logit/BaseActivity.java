@@ -149,7 +149,7 @@ public abstract class BaseActivity extends AppCompatActivity
             intent = new Intent(BaseActivity.this, CollectionListActivity.class);
 
         } else if (id == R.id.nav_eisen) {
-
+            intent = new Intent(BaseActivity.this, EisenhowerActivity.class);
         } else if (id == R.id.nav_signOut) {
             mAuth.signOut();
             intent = new Intent(this, LoginActivity.class);
