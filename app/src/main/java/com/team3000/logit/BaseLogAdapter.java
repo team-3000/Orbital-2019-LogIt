@@ -17,12 +17,13 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
     private static final String TAG = "BaseLogAdapter";
     private Activity activity;
     private String userId;
+    protected EntryListener.OnDestroyListener onDestroyListener;
 
-    public BaseLogAdapter(Activity activity) {
+    public BaseLogAdapter(Activity activity, EntryListener.OnDestroyListener listener) {
         this.activity = activity;
+        this.onDestroyListener = listener;
         this.userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
-
 
     @Override
     public EntryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -31,7 +32,7 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
         return new EntryHolder(mView);
     }
 
-    public void fillUpEntryHolder(EntryHolder holder, Entry entry, String entryId) {
+    public void fillUpEntryHolder(EntryHolder holder, Entry entry, String entryId, int position, CollectionLogAdapter.OnDestroyListener listener) {
         Log.i(TAG, "In fillUpEntryHolder");
         holder.tvListTitle.setText(entry.getTitle());
         holder.tvListDate.setText(entry.getDate());
@@ -41,17 +42,24 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG, "Attaching onDestroyListener");
+                EntryManager.addOnDestroyListener(onDestroyListener);
+
                 String entryType = entry.getType();
                 int entryYear = entry.getYear();
                 String entryMonth = entry.getMonth();
                 // String entryId = doc.getId();
                 String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s", userId, entryType, entryYear, entryMonth, entryId);
-                Intent intent = new Intent(activity, EntryActivity.class);
-                intent.putExtra("type", entryType);
-                intent.putExtra("entryId", entryId);
-                intent.putExtra("directory", directory);
-                activity.startActivity(intent);
-                activity.onBackPressed();
+
+
+                Intent entryIntent = new Intent(activity, EntryActivity.class);
+                entryIntent.putExtra("type", entryType);
+                entryIntent.putExtra("entryId", entryId);
+                entryIntent.putExtra("directory", directory);
+                entryIntent.putExtra("entry_position", position); // new stuff
+
+                activity.startActivity(entryIntent);
+                // activity.onBackPressed();
             }
         });
     }

@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class EntryActivity extends BaseActivity {
+    private Intent intent;
     private BottomNavigationView navView;
     private TextView tvEntryTitle;
     private TextView tvEntryDate;
@@ -32,6 +33,7 @@ public class EntryActivity extends BaseActivity {
     private String month;
     private String entryId;
     private String directory;
+    private int entryPosition;
     // private String collection_path; (may need it in future)
     private DocumentReference ref;
 
@@ -42,6 +44,8 @@ public class EntryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_entry, contentFrameLayout);
+
+        intent = getIntent();
 
         navView = findViewById(R.id.nav_view);
         tvEntryTitle = findViewById(R.id.tvEntryTitle);
@@ -59,6 +63,9 @@ public class EntryActivity extends BaseActivity {
         ref = db.document(directory);
         String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
         getSupportActionBar().setTitle(typeCapitalised);
+
+        entryPosition = getIntent().getIntExtra("entry_position", -1);
+        // Log.i("EntryActivity", String.valueOf(position));
     }
 
     @Override
@@ -105,7 +112,11 @@ public class EntryActivity extends BaseActivity {
         btnDeleteEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new EntryManager(EntryActivity.this).deleteEntry(ref);
+                new EntryManager(EntryActivity.this).deleteEntry(ref, entryPosition);
+
+                // The EntryActivity will straightaway close once user click on the delete button
+                EntryActivity.this.finish();
+
                 // ref.delete();
                 // startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
             }

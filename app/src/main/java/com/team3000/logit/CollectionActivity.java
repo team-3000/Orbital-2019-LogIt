@@ -1,6 +1,7 @@
 package com.team3000.logit;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.viewpager.widget.ViewPager;
@@ -35,6 +36,7 @@ public class CollectionActivity extends BaseActivity {
         super.onDestroy();
     }
 
+
     @Override
     public void onBackPressed() {
         if (mPager.getCurrentItem() == 0) {
@@ -43,6 +45,9 @@ public class CollectionActivity extends BaseActivity {
             super.onBackPressed();
         } else {
             // Otherwise, select the previous page.
+            // mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+
+            // Select the current page instead (try removing -1)
             mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
     }

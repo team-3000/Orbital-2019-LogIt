@@ -36,17 +36,30 @@ public class CollectionLogFragment extends Fragment {
     private String userID;
     private List<Pair<Entry, String>> entries;
     private CollectionLogAdapter logAdapter;
+    private EntryListener.OnDestroyListener onDestroyListener;
+
+    public class OnDestroyListener implements EntryListener.OnDestroyListener {
+        @Override
+        public void onDestroy(int entryPosition) {
+            Log.i(TAG, "In OnDestroyListener");
+            entries.remove(entryPosition);
+            logAdapter.notifyItemRemoved(entryPosition);
+        }
+    }
+
+    // For system's use
+    public CollectionLogFragment() {}
 
     public CollectionLogFragment(String collectionName, String type) {
         this.collectionName = collectionName;
         this.type = type;
-        this.entries = new LinkedList<>();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.entries = new LinkedList<>();
         this.db = FirebaseFirestore.getInstance();
 
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -55,7 +68,9 @@ public class CollectionLogFragment extends Fragment {
 
         // create the adapter with an empty list of entries data first, once the data is completely loaded
         // call notifyDataSetChanged on the adapter (as shown in fetchRespectiveEntries()
-        this.logAdapter = new CollectionLogAdapter(getActivity(), entries);
+        this.onDestroyListener = new OnDestroyListener();
+        this.logAdapter = new CollectionLogAdapter(getActivity(), entries, onDestroyListener);
+
         loadEntriesData();
     }
 

@@ -6,14 +6,22 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CollectionLogAdapter extends BaseLogAdapter {
+public class CollectionLogAdapter extends BaseLogAdapter implements Serializable{
     private static final String TAG = "CollectionLogAdapter";
     private List<Pair<Entry, String>> entries;
 
-    public CollectionLogAdapter(Activity activity, List<Pair<Entry, String>> entries) {
-        super(activity);
+    public class OnDestroyListener implements Serializable {
+        public void onDestroy(int entryPosition) {
+            entries.remove(entryPosition);
+            CollectionLogAdapter.this.notifyItemRemoved(entryPosition);
+        }
+    }
+
+    public CollectionLogAdapter(Activity activity, List<Pair<Entry, String>> entries, EntryListener.OnDestroyListener listener) {
+        super(activity, listener);
         this.entries = entries;
     }
 
@@ -21,15 +29,11 @@ public class CollectionLogAdapter extends BaseLogAdapter {
     public void onBindViewHolder(@NonNull EntryHolder holder, int position) {
         Log.i(TAG, "in onBindViewHolder");
         Pair<Entry, String> entryPair = entries.get(position);
-        super.fillUpEntryHolder(holder, entryPair.first, entryPair.second);
+        super.fillUpEntryHolder(holder, entryPair.first, entryPair.second, position, new OnDestroyListener());
     }
 
     @Override
     public int getItemCount() {
         return entries.size();
-    }
-
-    public void setEntries(List<Pair<Entry, String>> entries) {
-        this.entries = entries;
     }
 }

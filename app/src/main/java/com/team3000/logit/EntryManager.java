@@ -1,8 +1,6 @@
 package com.team3000.logit;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +19,7 @@ import java.util.Locale;
 
 public class EntryManager {
     private static final String TAG = "EntryManager";
+    private static EntryListener.OnDestroyListener destroyListener;
     private Activity activity;
     private FirebaseFirestore firestore;
     private FirebaseUser user;
@@ -29,6 +28,10 @@ public class EntryManager {
         this.activity = activity;
         this.firestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public static void addOnDestroyListener(EntryListener.OnDestroyListener listener) {
+        destroyListener = listener;
     }
 
     /*
@@ -46,24 +49,31 @@ public class EntryManager {
     }
     */
 
-    public void deleteEntry(DocumentReference entryRef) {
+    public EntryManager deleteEntry(DocumentReference entryRef, int entryPosition) {
         entryRef.get().addOnCompleteListener((task -> {
             if (task.isSuccessful()) {
+                Log.i(TAG, "Entry deleted!");
+
                 String collection_path = task.getResult().getString("collection_path");
                 entryRef.delete().addOnCompleteListener((task2 -> {
                     if (task2.isSuccessful() && !collection_path.isEmpty()) {
                         deleteFromCollection(collection_path, (task3) -> {
                             if (task3.isSuccessful()) {
                                 Log.i(TAG, "Succesfully deleted from collection!");
+                                if (entryPosition != -1) {
+                                    destroyListener.onDestroy(entryPosition);
+                                }
                             } else {
                                 Log.i(TAG, "Fail to delete from collection!");
                             }
-                            activity.finish();
+                            // activity.finish(); (move to EntryActivity delete button's setOnClickListener)
                         });
                     }
                 }));
             }
         }));
+
+        return this;
     }
 
     // Add a new entry into a collection(tag) if the collectionField is not empty
@@ -125,7 +135,7 @@ public class EntryManager {
         } else if (!newCollection.equals(oldCollection)) {
             deleteFromCollection(curr_collection_path, (task -> {
                 if (task.isSuccessful()) {
-                    Log.i(TAG, "Deleted from old collection A!");
+                    Log.i(TAG, "A Deleted from old collection!");
                     addIntoCollection(newCollection, type, docPath, entryRef);
                 }
             }));
