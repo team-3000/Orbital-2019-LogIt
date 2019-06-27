@@ -51,7 +51,6 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
                 intent.putExtra("entryId", entryId);
                 intent.putExtra("directory", directory);
                 activity.startActivity(intent);
-                activity.onBackPressed();
             }
         });
     }

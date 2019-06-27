@@ -54,6 +54,10 @@ public class Entry implements Comparable<Entry> {
         return date.split(" ")[1];
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public int compareTo(Entry other) {
         String[] thisDateArr = this.date.split(" ");
