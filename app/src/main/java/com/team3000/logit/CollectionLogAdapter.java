@@ -6,9 +6,10 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CollectionLogAdapter extends BaseLogAdapter {
+public class CollectionLogAdapter extends BaseLogAdapter implements Serializable{
     private static final String TAG = "CollectionLogAdapter";
     private List<Pair<Entry, String>> entries;
 

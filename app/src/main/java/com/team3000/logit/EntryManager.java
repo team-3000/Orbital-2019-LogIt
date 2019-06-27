@@ -22,6 +22,8 @@ import java.util.Locale;
 
 public class EntryManager {
     private static final String TAG = "EntryManager";
+    private static EntryListener.OnDestroyListener onDestroyListener;
+    private static EntryListener.OnUpdateListener onUpdateListener;
     private Activity activity;
     private FirebaseFirestore firestore;
     private FirebaseUser user;
@@ -30,6 +32,14 @@ public class EntryManager {
         this.activity = activity;
         this.firestore = FirebaseFirestore.getInstance();
         this.user = FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public static void setOnDestroyListener(EntryListener.OnDestroyListener listener) {
+        onDestroyListener = listener;
+    }
+
+    public static void setOnUpdateListener(EntryListener.OnUpdateListener listener) {
+        onUpdateListener = listener;
     }
 
     /*
@@ -47,25 +57,33 @@ public class EntryManager {
     }
     */
 
-    public void deleteEntry(DocumentReference entryRef) {
+    public EntryManager deleteEntry(DocumentReference entryRef, int entryPosition) {
         entryRef.get().addOnCompleteListener((task -> {
             if (task.isSuccessful()) {
+                Log.i(TAG, "Entry deleted!");
+
                 String collection_path = task.getResult().getString("collection_path");
                 entryRef.delete().addOnCompleteListener((task2 -> {
                     if (task2.isSuccessful() && !collection_path.isEmpty()) {
                         deleteFromCollection(collection_path, (task3) -> {
                             if (task3.isSuccessful()) {
                                 Log.i(TAG, "Succesfully deleted from collection!");
+                                if (entryPosition != -1) { // for collection log
+                                    onDestroyListener.onDestroy(entryPosition);
+                                }
                             } else {
                                 Log.i(TAG, "Fail to delete from collection!");
                             }
-                            activity.startActivity(new Intent(activity, DailyLogActivity.class));
-                            activity.finish();
+                          
+                            // activity.startActivity(new Intent(activity, DailyLogActivity.class));
+                            // activity.finish(); (move to EntryActivity delete button's setOnClickListener)
                         });
                     }
                 }));
             }
         }));
+
+        return this;
     }
 
     // Add a new entry into a collection(tag) if the collectionField is not empty
@@ -113,24 +131,39 @@ public class EntryManager {
 
     public void addIntoCollectionForExistingDoc(final String newCollection, String oldCollection, final String type,
                                                 final String docPath, final DocumentReference entryRef,
-                                                String curr_collection_path) {
+                                                String curr_collection_path, int entryPosition) {
         if (!oldCollection.isEmpty() && newCollection.isEmpty()) {
             Log.i(TAG, "In adding into collection for existing doc");
             deleteFromCollection(curr_collection_path, (task -> {
                 if (task.isSuccessful()) {
                     Log.i(TAG, "Deleted from old collection!");
+                    if (entryPosition != -1) { // For collectionLog purpose
+                        onDestroyListener.onDestroy(entryPosition);
+                    }
                 }
             }));
+            activity.finish();
         } else if (oldCollection.isEmpty() && !newCollection.isEmpty()) {
             addIntoCollection(newCollection, type, docPath, entryRef);
 
         } else if (!newCollection.equals(oldCollection)) {
             deleteFromCollection(curr_collection_path, (task -> {
                 if (task.isSuccessful()) {
-                    Log.i(TAG, "Deleted from old collection A!");
+                    Log.i(TAG, "A Deleted from old collection!");
+                    if (entryPosition != -1) { // For collectionLog purpose
+                        onDestroyListener.onDestroy(entryPosition);
+                    }
                     addIntoCollection(newCollection, type, docPath, entryRef);
                 }
             }));
+        } else if ((!oldCollection.isEmpty() && !newCollection.isEmpty()) && newCollection.equals(oldCollection)
+            && entryPosition != -1){ // for collection log purpose
+            entryRef.get().addOnCompleteListener(task -> {
+               if (task.isSuccessful()) {
+                   Entry entry = task.getResult().toObject(Entry.class);
+                   onUpdateListener.onUpdate(entryPosition, entry);
+               }
+            });
         }
     }
 
