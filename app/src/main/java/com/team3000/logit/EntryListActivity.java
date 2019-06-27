@@ -37,8 +37,14 @@ public class EntryListActivity extends BaseActivity {
         fabAddEntryList = findViewById(R.id.fabAddEntryList);
         type = getIntent().getStringExtra("trackType");
         directory = String.format("users/%s", user.getUid());
-        String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1) + "s";
-        getSupportActionBar().setTitle(typeCapitalised);
+        if ("note".equals(type) || "task".equals(type) || "event".equals(type)) {
+            String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1) + "s";
+            getSupportActionBar().setTitle(typeCapitalised);
+        } else {
+            String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+            getSupportActionBar().setTitle(typeCapitalised);
+            fabAddEntryList.hide();
+        }
     }
 
     @Override
@@ -50,19 +56,23 @@ public class EntryListActivity extends BaseActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 entries.clear();
                 entryRefs = (ArrayList<String>) task.getResult().get(type);
-                for (String ref : entryRefs) {
-                    db.document(ref).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            DocumentSnapshot doc = task.getResult();
-                            Entry currEntry = doc.toObject(Entry.class);
-                            currEntry.setId(doc.getId());
-                            entries.add(currEntry);
-                            Collections.sort(entries);
-                            mAdapter.notifyDataSetChanged();
-                            Log.d(TAG, currEntry.getId());
-                        }
-                    });
+                if (entryRefs == null) {
+                    db.document(directory).update(type, new ArrayList<String>());
+                } else {
+                    for (String ref : entryRefs) {
+                        db.document(ref).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                DocumentSnapshot doc = task.getResult();
+                                Entry currEntry = doc.toObject(Entry.class);
+                                currEntry.setId(doc.getId());
+                                entries.add(currEntry);
+                                Collections.sort(entries);
+                                mAdapter.notifyDataSetChanged();
+                                Log.d(TAG, currEntry.getId());
+                            }
+                        });
+                    }
                 }
             }
         });
