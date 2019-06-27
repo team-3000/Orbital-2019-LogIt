@@ -36,7 +36,6 @@ public class CollectionActivity extends BaseActivity {
         super.onDestroy();
     }
 
-
     @Override
     public void onBackPressed() {
         if (mPager.getCurrentItem() == 0) {
