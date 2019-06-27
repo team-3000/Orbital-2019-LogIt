@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CollectionActivity"></activity>
+        <activity android:name=".EntryListActivity" />
+        <activity android:name=".CollectionActivity" />
         <activity android:name=".TestActivity" />
         <activity android:name=".CollectionListActivity" />
         <activity android:name=".BaseLogActivity" />
