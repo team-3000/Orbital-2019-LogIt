@@ -18,11 +18,21 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
     private Activity activity;
     private String userId;
     protected EntryListener.OnDestroyListener onDestroyListener;
+    protected EntryListener.OnUpdateListener onUpdateListener;
 
-    public BaseLogAdapter(Activity activity, EntryListener.OnDestroyListener listener) {
+    public BaseLogAdapter(Activity activity) {
         this.activity = activity;
-        this.onDestroyListener = listener;
         this.userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    public BaseLogAdapter setOnDestroyListener(EntryListener.OnDestroyListener onDestroyListener) {
+        this.onDestroyListener = onDestroyListener;
+        return this;
+    }
+
+    public BaseLogAdapter setOnUpdateListener(EntryListener.OnUpdateListener onUpdateListener) {
+        this.onUpdateListener = onUpdateListener;
+        return this;
     }
 
     @Override
@@ -34,6 +44,7 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
 
     public void fillUpEntryHolder(EntryHolder holder, Entry entry, String entryId, int position, CollectionLogAdapter.OnDestroyListener listener) {
         Log.i(TAG, "In fillUpEntryHolder");
+        Log.i(TAG, entryId);
         holder.tvListTitle.setText(entry.getTitle());
         holder.tvListDate.setText(entry.getDate());
         holder.tvListTime.setText(entry.getTime());
@@ -43,7 +54,9 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Attaching onDestroyListener");
-                EntryManager.addOnDestroyListener(onDestroyListener);
+                EntryManager.setOnDestroyListener(onDestroyListener);
+                EntryManager.setOnUpdateListener(onUpdateListener);
+
 
                 String entryType = entry.getType();
                 int entryYear = entry.getYear();
@@ -51,12 +64,12 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
                 // String entryId = doc.getId();
                 String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s", userId, entryType, entryYear, entryMonth, entryId);
 
-
                 Intent entryIntent = new Intent(activity, EntryActivity.class);
                 entryIntent.putExtra("type", entryType);
+                entryIntent.putExtra("month", entryMonth);
                 entryIntent.putExtra("entryId", entryId);
                 entryIntent.putExtra("directory", directory);
-                entryIntent.putExtra("entry_position", position); // new stuff
+                entryIntent.putExtra("entry_position", holder.getAdapterPosition()); // new stuff
 
                 activity.startActivity(entryIntent);
                 // activity.onBackPressed();

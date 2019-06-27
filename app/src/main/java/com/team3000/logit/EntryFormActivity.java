@@ -208,6 +208,11 @@ public class EntryFormActivity extends AppCompatActivity {
                         });
                     } else {
                         final DocumentReference doc = ref.document(entryId);
+                        Log.i(TAG, doc.getPath());
+                        int entryPosition = getIntent().getIntExtra("entry_position", - 1);
+
+                        Log.i(TAG, String.valueOf(entryData.isEmpty()));
+                        Log.i(TAG, (String) entryData.get("title"));
                         doc.set(entryData).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -215,9 +220,11 @@ public class EntryFormActivity extends AppCompatActivity {
                                         dbPath_middle, entryId);
                                 new EntryManager(EntryFormActivity.this)
                                         .addIntoCollectionForExistingDoc(collection, curr_collection, type, docPath, doc,
-                                                curr_collection_path);
+                                                curr_collection_path, entryPosition);
+
                             }
                         });
+
                         if (!month.equals(oriMonth)) {
                             database.document(oriDir).delete();
                             Intent intent = new Intent(EntryFormActivity.this, EntryActivity.class);

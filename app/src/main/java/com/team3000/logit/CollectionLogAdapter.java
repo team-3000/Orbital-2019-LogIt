@@ -20,8 +20,8 @@ public class CollectionLogAdapter extends BaseLogAdapter implements Serializable
         }
     }
 
-    public CollectionLogAdapter(Activity activity, List<Pair<Entry, String>> entries, EntryListener.OnDestroyListener listener) {
-        super(activity, listener);
+    public CollectionLogAdapter(Activity activity, List<Pair<Entry, String>> entries) {
+        super(activity);
         this.entries = entries;
     }
 

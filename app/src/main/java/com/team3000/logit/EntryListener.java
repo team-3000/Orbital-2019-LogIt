@@ -1,9 +1,11 @@
 package com.team3000.logit;
 
-import java.io.Serializable;
-
-public interface EntryListener extends Serializable {
-    interface OnDestroyListener extends Serializable {
+public interface EntryListener {
+    interface OnDestroyListener {
         void onDestroy(int entryPosition);
+    }
+
+    interface OnUpdateListener {
+        void onUpdate(int entryPosition, Entry updatedEntry);
     }
 }

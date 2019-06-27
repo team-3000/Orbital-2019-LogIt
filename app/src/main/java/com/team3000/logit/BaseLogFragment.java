@@ -101,7 +101,7 @@ public class BaseLogFragment extends Fragment {
                         intent.putExtra("entryId", entryId);
                         intent.putExtra("directory", directory);
                         startActivity(intent);
-                        getActivity().onBackPressed();
+                        // getActivity().onBackPressed();
                     }
                 });
             }

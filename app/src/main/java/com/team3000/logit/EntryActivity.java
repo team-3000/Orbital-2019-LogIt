@@ -64,6 +64,7 @@ public class EntryActivity extends BaseActivity {
         String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
         getSupportActionBar().setTitle(typeCapitalised);
 
+        // new stuff
         entryPosition = getIntent().getIntExtra("entry_position", -1);
         // Log.i("EntryActivity", String.valueOf(position));
     }
@@ -105,6 +106,7 @@ public class EntryActivity extends BaseActivity {
                 intentEdit.putExtra("oriMonth", month);
                 intentEdit.putExtra("oriDir", directory);
                 intentEdit.putExtra("entryId", entryId);
+                intentEdit.putExtra("entry_position", entryPosition);
                 startActivity(intentEdit);
             }
         });
