@@ -43,6 +43,9 @@ public class CollectionActivity extends BaseActivity {
             super.onBackPressed();
         } else {
             // Otherwise, select the previous page.
+            // mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+
+            // Select the current page instead (try removing -1)
             mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
     }

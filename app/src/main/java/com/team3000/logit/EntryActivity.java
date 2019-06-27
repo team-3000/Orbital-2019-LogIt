@@ -33,6 +33,7 @@ public class EntryActivity extends BaseActivity {
     private String entryId;
     private String directory;
     private String eisen;
+    private int entryPosition;
     // private String collection_path; (may need it in future)
     private DocumentReference ref;
 
@@ -60,6 +61,10 @@ public class EntryActivity extends BaseActivity {
         ref = db.document(directory);
         String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
         getSupportActionBar().setTitle(typeCapitalised);
+
+        // new stuff
+        entryPosition = getIntent().getIntExtra("entry_position", -1);
+        // Log.i("EntryActivity", String.valueOf(position));
     }
 
     @Override
@@ -100,6 +105,7 @@ public class EntryActivity extends BaseActivity {
                 intentEdit.putExtra("oriMonth", month);
                 intentEdit.putExtra("oriDir", directory);
                 intentEdit.putExtra("entryId", entryId);
+                intentEdit.putExtra("entry_position", entryPosition);
                 startActivity(intentEdit);
             }
         });
@@ -108,12 +114,13 @@ public class EntryActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 EntryManager entryManager = new EntryManager(EntryActivity.this);
-                entryManager.deleteEntry(ref);
+                entryManager.deleteEntry(ref, entryPosition);
                 entryManager.deleteFromTracker(type, directory);
                 entryManager.deleteFromTracker(eisen, directory);
                 // ref.delete();
                 startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
-                finish();
+                // The EntryActivity will straightaway close once user click on the delete button
+                EntryActivity.this.finish();
             }
         });
     }
