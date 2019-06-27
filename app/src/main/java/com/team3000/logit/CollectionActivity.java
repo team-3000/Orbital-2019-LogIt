@@ -1,7 +1,6 @@
 package com.team3000.logit;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.viewpager.widget.ViewPager;

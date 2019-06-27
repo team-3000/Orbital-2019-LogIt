@@ -111,6 +111,7 @@ public class CollectionLogFragment extends Fragment {
                                 Log.i(TAG, "onEvent");
                                 addNewEnty(dc.getDocument().getString("dataPath"));
                                 break;
+                            default:
                         }
                     }
                 }

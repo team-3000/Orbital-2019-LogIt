@@ -19,7 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class EntryActivity extends BaseActivity {
-    private Intent intent;
     private BottomNavigationView navView;
     private TextView tvEntryTitle;
     private TextView tvEntryDate;
@@ -44,8 +43,6 @@ public class EntryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_entry, contentFrameLayout);
-
-        intent = getIntent();
 
         navView = findViewById(R.id.nav_view);
         tvEntryTitle = findViewById(R.id.tvEntryTitle);
