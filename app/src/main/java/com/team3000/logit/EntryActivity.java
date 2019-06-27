@@ -111,13 +111,12 @@ public class EntryActivity extends BaseActivity {
         btnDeleteEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new EntryManager(EntryActivity.this).deleteEntry(ref, entryPosition);
-
+                EntryManager entryManager = new EntryManager(EntryActivity.this);
+                entryManager.deleteEntry(ref, entryPosition);
+                entryManager.deleteFromEntryTracker(type, directory);
+              
                 // The EntryActivity will straightaway close once user click on the delete button
                 EntryActivity.this.finish();
-
-                // ref.delete();
-                // startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
             }
         });
     }
@@ -129,8 +128,9 @@ public class EntryActivity extends BaseActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.entry_nav_allentries:
-//                    Intent taskListIntent = new Intent(EntryActivity.this, TaskListActivity.class);
-//                    startActivity(taskListIntent);
+                    Intent intentList = new Intent(EntryActivity.this, EntryListActivity.class);
+                    intentList.putExtra("trackType", type);
+                    startActivity(intentList);
                     return true;
                 case R.id.entry_nav_calendar:
                     startActivity(new Intent(EntryActivity.this, CalendarActivity.class));

@@ -24,20 +24,18 @@ import com.google.firebase.firestore.Query;
 import java.util.Locale;
 
 public class BaseLogFragment extends Fragment {
-    private String userId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirestoreRecyclerAdapter mAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_entry_list, container, false);
+        return inflater.inflate(R.layout.fragment_log_list, container, false);
     }
 
     @Override
@@ -45,7 +43,6 @@ public class BaseLogFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         String logType = getArguments().getString("logType");
         String directory = getArguments().getString("directory");
-        String logDate = getArguments().getString("logDate");
 
         Query query;
         if ("daily".equals(logType)) {
@@ -94,14 +91,14 @@ public class BaseLogFragment extends Fragment {
                         int entryYear = entry.getYear();
                         String entryMonth = entry.getMonth();
                         String entryId = doc.getId();
-                        String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s", userId, entryType, entryYear, entryMonth, entryId);
+                        String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s",
+                                FirebaseAuth.getInstance().getCurrentUser().getUid(), entryType, entryYear, entryMonth, entryId);
                         Intent intent = new Intent(getContext(), EntryActivity.class);
                         intent.putExtra("type", entryType);
                         intent.putExtra("month", entryMonth);
                         intent.putExtra("entryId", entryId);
                         intent.putExtra("directory", directory);
                         startActivity(intent);
-                        // getActivity().onBackPressed();
                     }
                 });
             }

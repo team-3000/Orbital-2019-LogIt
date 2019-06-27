@@ -156,7 +156,7 @@ public class CollectionLogFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout parentView = (LinearLayout) inflater.inflate(R.layout.fragment_entry_list,
+        LinearLayout parentView = (LinearLayout) inflater.inflate(R.layout.fragment_log_list,
                 container, false);
 
         recyclerView = parentView.findViewById(R.id.rvLogRV);

@@ -85,6 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     /**
      * Validate the signUp form
+     *
      * @return a boolean indicating whether the signUp form is valid
      */
     private boolean validateForm(String username, String email, String password, String confirmPassword) {

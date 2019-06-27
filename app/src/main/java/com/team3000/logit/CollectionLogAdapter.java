@@ -27,7 +27,7 @@ public class CollectionLogAdapter extends BaseLogAdapter implements Serializable
 
     @Override
     public void onBindViewHolder(@NonNull EntryHolder holder, int position) {
-        Log.i(TAG, "in onBindViewHolder");
+        Log.i(TAG, "in CollectionLogAdapter onBindViewHolder");
         Pair<Entry, String> entryPair = entries.get(position);
         super.fillUpEntryHolder(holder, entryPair.first, entryPair.second, position, new OnDestroyListener());
     }

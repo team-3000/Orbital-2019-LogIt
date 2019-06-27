@@ -186,8 +186,8 @@ public abstract class BaseActivity extends AppCompatActivity
         noteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentNew = new Intent(BaseActivity.this, EntryFormActivity.class);
-                intentNew.putExtra("type", "note");
+                Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
+                intentNew.putExtra("trackType", "note");
                 startActivity(intentNew);
             }
         });
@@ -195,8 +195,8 @@ public abstract class BaseActivity extends AppCompatActivity
         taskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentNew = new Intent(BaseActivity.this, EntryFormActivity.class);
-                intentNew.putExtra("type", "task");
+                Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
+                intentNew.putExtra("trackType", "task");
                 startActivity(intentNew);
             }
         });
@@ -204,8 +204,8 @@ public abstract class BaseActivity extends AppCompatActivity
         eventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentNew = new Intent(BaseActivity.this, EntryFormActivity.class);
-                intentNew.putExtra("type", "event");
+                Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
+                intentNew.putExtra("trackType", "event");
                 startActivity(intentNew);
             }
         });
