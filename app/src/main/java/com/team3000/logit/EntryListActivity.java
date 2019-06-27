@@ -22,8 +22,8 @@ import java.util.Collections;
 public class EntryListActivity extends BaseActivity {
     private String TAG = "EntryListActivity";
     private FloatingActionButton fabAddEntryList;
-    String type;
-    String directory;
+    private String type;
+    private String directory;
     private ArrayList<Entry> entries = new ArrayList<>();
     private ArrayList<String> entryRefs;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -37,6 +37,8 @@ public class EntryListActivity extends BaseActivity {
         fabAddEntryList = findViewById(R.id.fabAddEntryList);
         type = getIntent().getStringExtra("trackType");
         directory = String.format("users/%s", user.getUid());
+        String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1) + "s";
+        getSupportActionBar().setTitle(typeCapitalised);
     }
 
     @Override
@@ -77,6 +79,7 @@ public class EntryListActivity extends BaseActivity {
                 Intent intent = new Intent(EntryListActivity.this, EntryFormActivity.class);
                 intent.putExtra("type", type);
                 startActivity(intent);
+                finish();
             }
         });
     }

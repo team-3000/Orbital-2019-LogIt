@@ -109,7 +109,6 @@ public class EntryActivity extends BaseActivity {
                 entryManager.deleteEntry(ref);
                 entryManager.deleteFromEntryTracker(type, directory);
                 // ref.delete();
-                startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
             }
         });
     }
@@ -121,8 +120,9 @@ public class EntryActivity extends BaseActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.entry_nav_allentries:
-//                    Intent taskListIntent = new Intent(EntryActivity.this, TaskListActivity.class);
-//                    startActivity(taskListIntent);
+                    Intent intentList = new Intent(EntryActivity.this, EntryListActivity.class);
+                    intentList.putExtra("trackType", type);
+                    startActivity(intentList);
                     return true;
                 case R.id.entry_nav_calendar:
                     startActivity(new Intent(EntryActivity.this, CalendarActivity.class));

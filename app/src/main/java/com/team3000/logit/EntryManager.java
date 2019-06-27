@@ -1,6 +1,7 @@
 package com.team3000.logit;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -58,6 +59,7 @@ public class EntryManager {
                             } else {
                                 Log.i(TAG, "Fail to delete from collection!");
                             }
+                            activity.startActivity(new Intent(activity, DailyLogActivity.class));
                             activity.finish();
                         });
                     }
