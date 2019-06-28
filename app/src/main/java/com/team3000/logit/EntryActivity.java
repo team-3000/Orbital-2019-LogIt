@@ -87,14 +87,7 @@ public class EntryActivity extends BaseActivity {
                 tvEntryCollection.setText(doc.getString("collection"));
                 if ("task".equals(type)) {
                     eisen = doc.getString("eisen");
-                    String eisenToDisplay = "";
-
-                    if (!"".equals(eisen)) {
-                        eisenToDisplay = eisen.substring(0, 1).toUpperCase()
-                                + eisen.substring(1);
-                    }
-
-                    tvEntryExtra.setText(eisenToDisplay);
+                    tvEntryExtra.setText(eisen.toUpperCase());
                 } else if ("event".equals(type)) {
                     tvEntryExtra.setText(doc.getString("location"));
                 }
@@ -113,6 +106,7 @@ public class EntryActivity extends BaseActivity {
                 intentEdit.putExtra("oriDir", directory);
                 intentEdit.putExtra("entryId", entryId);
                 intentEdit.putExtra("entry_position", entryPosition);
+                intentEdit.putExtra("oriEisen", eisen);
                 startActivity(intentEdit);
             }
         });
@@ -122,8 +116,10 @@ public class EntryActivity extends BaseActivity {
             public void onClick(View v) {
                 EntryManager entryManager = new EntryManager(EntryActivity.this);
                 entryManager.deleteEntry(ref, entryPosition);
-                entryManager.deleteFromTracker(type, directory);
-                entryManager.deleteFromTracker(eisen, directory);
+                entryManager.deleteFromTracker(type + "Store", directory);
+                if (eisen != null) {
+                    entryManager.deleteFromTracker(eisen, directory);
+                }
                 // ref.delete();
                 startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
                 // The EntryActivity will straightaway close once user click on the delete button
@@ -140,7 +136,7 @@ public class EntryActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.entry_nav_allentries:
                     Intent intentList = new Intent(EntryActivity.this, EntryListActivity.class);
-                    intentList.putExtra("trackType", type);
+                    intentList.putExtra("trackType", type + "Store");
                     startActivity(intentList);
                     return true;
                 case R.id.entry_nav_calendar:

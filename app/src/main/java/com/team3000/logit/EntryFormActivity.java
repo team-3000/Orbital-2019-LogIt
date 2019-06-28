@@ -65,6 +65,7 @@ public class EntryFormActivity extends AppCompatActivity {
     private String typeCapitalised; // The type string with the first character capitalised
     private String entryId;
     private String oriMonth;
+    private String oriEisen;
 
     // new stuff here
     private String curr_collection;
@@ -100,6 +101,7 @@ public class EntryFormActivity extends AppCompatActivity {
         oriDir = getIntent().getStringExtra("oriDir");
         entryId = getIntent().getStringExtra("entryId");
         oriMonth = getIntent().getStringExtra("oriMonth");
+        oriEisen = getIntent().getStringExtra("oriEisen");
 
         curr_collection_path = ""; // new stuff here
 
@@ -223,13 +225,16 @@ public class EntryFormActivity extends AppCompatActivity {
                                     EntryManager manager = new EntryManager(EntryFormActivity.this);
                                     manager.addIntoCollection(collection, type, docPath, doc);
                                     String entryPath = String.format("%s/%s", dbPath, docID);
-                                    manager.updateTracker(type, entryPath, "No oriDir");
-                                    if (eisen != null && !eisen.equals("")) {
-                                        manager.updateTracker(eisen, entryPath, "No oriDir");
+                                    manager.updateTracker(type + "Store", entryPath);
+                                    if (!"".equals(eisen)) {
+                                        manager.updateTracker(eisen, entryPath);
                                     }
                                 }
                             }
                         });
+                        Intent intentNew = new Intent(EntryFormActivity.this, DailyLogActivity.class);
+                        startActivity(intentNew);
+                        finish();
                     } else {
                         final DocumentReference doc = ref.document(entryId);
                         Log.i(TAG, doc.getPath());
@@ -247,11 +252,20 @@ public class EntryFormActivity extends AppCompatActivity {
                                 manager.addIntoCollectionForExistingDoc(collection, curr_collection, type, docPath, doc,
                                                 curr_collection_path, entryPosition);
                                 String entryPath = String.format("%s/%s", dbPath, entryId);
-                                manager.updateTracker(type, entryPath, oriDir);
-                                if (eisen != null) {
-                                    // need to deal with the case that the user deselect the eisen,
-                                    // i.e. eisen is changed to NA
-                                    manager.updateTracker(eisen, entryPath, oriDir);
+                                // Add latest entry path & delete old entry path in corresponding Type store
+                                manager.updateTracker(type + "Store", entryPath);
+                                manager.deleteFromTracker(type + "Store", oriDir);
+                                /* For tasks, add latest entry path to latest Eisenhower store.
+                                   If Eisen tag changed, delete old path from old tag store;
+                                   else delete old path from same tag store.
+                                */
+                                if ("task".equals(type)) {
+                                    manager.updateTracker(eisen, entryPath);
+                                    if (!eisen.equals(oriEisen)) {
+                                        manager.deleteFromTracker(oriEisen, oriDir);
+                                    } else {
+                                        manager.deleteFromTracker(eisen, oriDir);
+                                    }
                                 }
                             }
                         });
@@ -259,6 +273,12 @@ public class EntryFormActivity extends AppCompatActivity {
                         if (!month.equals(oriMonth)) {
                             database.document(oriDir).delete();
                         }
+                        Intent intentEdit = new Intent(EntryFormActivity.this, EntryActivity.class);
+                        intentEdit.putExtra("type", type);
+                        intentEdit.putExtra("month", month);
+                        intentEdit.putExtra("entryId", entryId);
+                        intentEdit.putExtra("directory", String.format(Locale.US, "%s/%s", dbPath, entryId));
+                        startActivity(intentEdit);
 
                         /*
                         doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -288,11 +308,7 @@ public class EntryFormActivity extends AppCompatActivity {
 //                if (cbAddToMonthLog.isChecked()) {
                     // Add to monthly log
 //                }
-                    Intent intent = new Intent(EntryFormActivity.this, EntryActivity.class);
-                    intent.putExtra("type", type);
-                    intent.putExtra("month", month);
-                    intent.putExtra("entryId", entryId);
-                    intent.putExtra("directory", String.format(Locale.US, "%s/%s", dbPath, entryId));
+
                     finish();
                     Toast.makeText(EntryFormActivity.this, typeCapitalised + " added", Toast.LENGTH_SHORT)
                             .show();
