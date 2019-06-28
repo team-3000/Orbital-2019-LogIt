@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/eisenForm_importance"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/spinner_importance"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/form_eisen_importance" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/eisenForm_urgency"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/spinner_urgency"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:entries="@array/form_eisen_urgency" />
+
+    <Button
+        android:id="@+id/ok_button"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/eisenForm_ok" />
+
+    <Button
+        android:id="@+id/selectNone_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/eisenForm_selectNone" />
+
+</LinearLayout>

@@ -1,6 +1,8 @@
 package com.team3000.logit;
 
 import android.app.DatePickerDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -58,6 +60,7 @@ public class EntryFormActivity extends AppCompatActivity {
     private EditText etFormDesc;
     private CheckBox cbAddToMonthLog;
     private Button btnFormSubmit;
+    private TextView eisenField;
     private String oriDir;
     private String type;
     private String typeCapitalised; // The type string with the first character capitalised
@@ -93,6 +96,8 @@ public class EntryFormActivity extends AppCompatActivity {
         etFormDesc = findViewById(R.id.etFormDesc);
         cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
         btnFormSubmit = findViewById(R.id.btnFormSubmit);
+        eisenField = findViewById(R.id.eisenField);
+
         type = getIntent().getStringExtra("type");
         oriDir = getIntent().getStringExtra("oriDir");
         entryId = getIntent().getStringExtra("entryId");
@@ -151,6 +156,21 @@ public class EntryFormActivity extends AppCompatActivity {
                     showTimePicker(etFormTime);
                 }
             }
+        });
+
+        // Show the eisenSelection dialog
+        eisenField.setOnClickListener(v -> {
+            // Handle Fragment transaction & backstack stuff
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+
+            // Create and show the dialog fragment
+            EisenSelectionFragment fragment = new EisenSelectionFragment();
+            fragment.show(getSupportFragmentManager(), "dialog");
         });
 
         // Initialise the collections AutoCompleteTextView
