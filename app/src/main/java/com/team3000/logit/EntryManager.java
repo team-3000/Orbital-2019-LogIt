@@ -174,7 +174,7 @@ public class EntryManager {
     }
 
     protected void updateTracker(String trackType, String updateDir, String oriDir) {
-        if (!trackType.equals("")) { // temporary solution
+        if (!"".equals(trackType)) { // temporary solution
             Log.i(TAG, trackType);
             String trackerPath = String.format("users/%s", user.getUid());
             firestore.document(trackerPath).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

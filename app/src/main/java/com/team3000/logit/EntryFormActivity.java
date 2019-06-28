@@ -184,7 +184,8 @@ public class EntryFormActivity extends AppCompatActivity {
                     String lowercaseText = displayedText.substring(0, 1).toLowerCase()
                             + displayedText.substring(1);
 
-                    eisen = lowercaseText.equals("select Priority") ? "" : lowercaseText;
+                    eisen = "select Priority".equals(lowercaseText) ? "" : lowercaseText;
+
                     Log.i(TAG, eisen);
                 } else {
                     eisen = null;
@@ -356,7 +357,7 @@ public class EntryFormActivity extends AppCompatActivity {
                 // new stuff here
                 if ("task".equals(type)) {
                     String eisenTag = doc.getString("eisen");
-                    if (!eisenTag.equals("")) {
+                    if (!"".equals(eisenTag)) {
                         String textToDisplay = eisenTag.substring(0, 1).toUpperCase()
                                 + eisenTag.substring(1);
                         eisenField.setText(textToDisplay);

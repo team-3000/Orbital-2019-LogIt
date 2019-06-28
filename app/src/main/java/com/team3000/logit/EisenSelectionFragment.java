@@ -1,7 +1,6 @@
 package com.team3000.logit;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,10 +89,10 @@ public class EisenSelectionFragment extends DialogFragment {
     private String giveEisenTag(String importance, String urgency) {
         String eisenTag;
 
-        if (importance.equals("Important")) {
-            eisenTag = urgency.equals("Urgent") ? "Do" : "Decide";
+        if ("Important".equals(importance)) {
+            eisenTag = "Urgent".equals(urgency) ? "Do" : "Decide";
         } else {
-            eisenTag = urgency.equals("Urgent") ? "Delegate" : "Eliminate";
+            eisenTag = "Urgent".equals(urgency) ? "Delegate" : "Eliminate";
         }
 
         return eisenTag;

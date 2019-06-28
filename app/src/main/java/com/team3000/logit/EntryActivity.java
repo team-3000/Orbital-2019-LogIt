@@ -89,7 +89,7 @@ public class EntryActivity extends BaseActivity {
                     eisen = doc.getString("eisen");
                     String eisenToDisplay = "";
 
-                    if (eisen != "") {
+                    if (!"".equals(eisen)) {
                         eisenToDisplay = eisen.substring(0, 1).toUpperCase()
                                 + eisen.substring(1);
                     }
