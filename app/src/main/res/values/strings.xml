@@ -40,6 +40,12 @@
     <string name="form_description">Description</string>
     <string name="form_monthlyLog">Monthly Log</string>
     <string name="form_submit">Submit</string>
+    <string name="form_selectPriority">Select Priority</string>
+
+    <string name="eisenForm_importance">Importance</string>
+    <string name="eisenForm_urgency">Urgency</string>
+    <string name="eisenForm_ok">Ok</string>
+    <string name="eisenForm_selectNone">Clear</string>
 
     <string name="eisen_do">Do</string>
     <string name="eisen_decide">Decide</string>
@@ -57,6 +63,16 @@
         <item>decide</item>
         <item>delegate</item>
         <item>eliminate</item>
+    </string-array>
+
+    <string-array name="form_eisen_importance">
+        <item>Important</item>
+        <item>Not Important</item>
+    </string-array>
+
+    <string-array name="form_eisen_urgency">
+        <item>Urgent</item>
+        <item>Not Urgent</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
