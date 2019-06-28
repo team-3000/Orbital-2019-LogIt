@@ -174,25 +174,28 @@ public class EntryManager {
     }
 
     protected void updateTracker(String trackType, String updateDir, String oriDir) {
-        String trackerPath = String.format("users/%s", user.getUid());
-        firestore.document(trackerPath).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                ArrayList<String> temp;
-                if (task.getResult().get(trackType) == null) {
-                    temp = new ArrayList<>();
-                    Log.d(TAG, "New " + trackType + " array added");
-                } else {
-                    temp = (ArrayList<String>) task.getResult().get(trackType);
-                    if (temp.contains(oriDir)) {
-                        temp.remove(oriDir);
+        if (!trackType.equals("")) { // temporary solution
+            Log.i(TAG, trackType);
+            String trackerPath = String.format("users/%s", user.getUid());
+            firestore.document(trackerPath).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    ArrayList<String> temp;
+                    if (task.getResult().get(trackType) == null) {
+                        temp = new ArrayList<>();
+                        Log.d(TAG, "New " + trackType + " array added");
+                    } else {
+                        temp = (ArrayList<String>) task.getResult().get(trackType);
+                        if (temp.contains(oriDir)) {
+                            temp.remove(oriDir);
+                        }
+                        Log.d(TAG, trackType + " array updated");
                     }
-                    Log.d(TAG, trackType + " array updated");
+                    temp.add(updateDir);
+                    firestore.document(trackerPath).update(trackType, temp);
                 }
-                temp.add(updateDir);
-                firestore.document(trackerPath).update(trackType, temp);
-            }
-        });
+            });
+        }
     }
 
     protected void deleteFromTracker(String trackType, String entryDir) {

@@ -45,7 +45,7 @@
     <string name="eisenForm_importance">Importance</string>
     <string name="eisenForm_urgency">Urgency</string>
     <string name="eisenForm_ok">Ok</string>
-    <string name="eisenForm_selectNone">Select None</string>
+    <string name="eisenForm_selectNone">Clear</string>
 
     <!--<string-array name="form_type_array">-->
     <!--<item>Task</item>-->
@@ -62,12 +62,12 @@
 
     <string-array name="form_eisen_importance">
         <item>Important</item>
-        <item>Not important</item>
+        <item>Not Important</item>
     </string-array>
 
     <string-array name="form_eisen_urgency">
         <item>Urgent</item>
-        <item>Not urgent</item>
+        <item>Not Urgent</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->

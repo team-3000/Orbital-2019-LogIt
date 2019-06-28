@@ -111,19 +111,6 @@
                 android:layout_marginStart="24dp"
                 android:text="Hint: New collection will be created if it doesn't exist." />
 
-            <TextView
-                android:id="@+id/eisenField"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:text="@string/form_selectPriority"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:textSize="18sp" />
-
             <LinearLayout
                 android:id="@+id/layoutPriority"
                 android:layout_width="wrap_content"
@@ -134,7 +121,6 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tvFormEisen"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2dp"
@@ -142,15 +128,16 @@
                     android:text="@string/form_priority"
                     android:textSize="18sp" />
 
-                <Spinner
-                    android:id="@+id/spnFormEisen"
-                    android:layout_width="187dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:dropDownWidth="wrap_content"
-                    android:entries="@array/form_eisen_array"
-                    android:spinnerMode="dropdown" />
+                <TextView
+                    android:id="@+id/eisenField"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:clickable="true"
+                    android:text="@string/form_selectPriority"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="18sp" />
+
             </LinearLayout>
 
             <EditText

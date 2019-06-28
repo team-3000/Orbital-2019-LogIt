@@ -87,7 +87,14 @@ public class EntryActivity extends BaseActivity {
                 tvEntryCollection.setText(doc.getString("collection"));
                 if ("task".equals(type)) {
                     eisen = doc.getString("eisen");
-                    tvEntryExtra.setText(eisen);
+                    String eisenToDisplay = "";
+
+                    if (eisen != "") {
+                        eisenToDisplay = eisen.substring(0, 1).toUpperCase()
+                                + eisen.substring(1);
+                    }
+
+                    tvEntryExtra.setText(eisenToDisplay);
                 } else if ("event".equals(type)) {
                     tvEntryExtra.setText(doc.getString("location"));
                 }

@@ -44,8 +44,8 @@
         android:text="@string/eisenForm_ok" />
 
     <Button
-        android:id="@+id/selectNone_button"
-        android:layout_width="wrap_content"
+        android:id="@+id/clear_button"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="@string/eisenForm_selectNone" />

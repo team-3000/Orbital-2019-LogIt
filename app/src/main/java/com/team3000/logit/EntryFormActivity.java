@@ -56,7 +56,6 @@ public class EntryFormActivity extends AppCompatActivity {
     private EditText etFormTime;
     private EditText etFormLocation;
     private AutoCompleteTextView actvCollection;
-    private Spinner spnFormEisen;
     private EditText etFormDesc;
     private CheckBox cbAddToMonthLog;
     private Button btnFormSubmit;
@@ -92,11 +91,10 @@ public class EntryFormActivity extends AppCompatActivity {
         etFormLocation = findViewById(R.id.etFormLocation);
         actvCollection = findViewById(R.id.actvCollection);
         LinearLayout layoutPriority = findViewById(R.id.layoutPriority);
-        spnFormEisen = findViewById(R.id.spnFormEisen);
+        eisenField = layoutPriority.findViewById(R.id.eisenField);
         etFormDesc = findViewById(R.id.etFormDesc);
         cbAddToMonthLog = findViewById(R.id.cbAddToMonthLog);
         btnFormSubmit = findViewById(R.id.btnFormSubmit);
-        eisenField = findViewById(R.id.eisenField);
 
         type = getIntent().getStringExtra("type");
         oriDir = getIntent().getStringExtra("oriDir");
@@ -159,19 +157,7 @@ public class EntryFormActivity extends AppCompatActivity {
         });
 
         // Show the eisenSelection dialog
-        eisenField.setOnClickListener(v -> {
-            // Handle Fragment transaction & backstack stuff
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-            if (prev != null) {
-                ft.remove(prev);
-            }
-            ft.addToBackStack(null);
-
-            // Create and show the dialog fragment
-            EisenSelectionFragment fragment = new EisenSelectionFragment();
-            fragment.show(getSupportFragmentManager(), "dialog");
-        });
+        eisenField.setOnClickListener(v -> showEisenSelectionFragment());
 
         // Initialise the collections AutoCompleteTextView
         initializeAutoCompleteTextView();
@@ -188,9 +174,21 @@ public class EntryFormActivity extends AppCompatActivity {
                 String time = etFormTime.getText().toString();
                 String location = "event".equals(type) ? etFormLocation.getText().toString() : null;
                 final String collection = actvCollection.getText().toString();
-                String eisen = "task".equals(type) ? spnFormEisen.getSelectedItem().toString() : null;
+                // String eisen = "task".equals(type) ? spnFormEisen.getSelectedItem().toString() : null;
                 String desc = etFormDesc.getText().toString();
                 boolean addToMonthLog = cbAddToMonthLog.isChecked();
+
+                String eisen;
+                if ("task".equals(type)) {
+                    String displayedText = eisenField.getText().toString();
+                    String lowercaseText = displayedText.substring(0, 1).toLowerCase()
+                            + displayedText.substring(1);
+
+                    eisen = lowercaseText.equals("select Priority") ? "" : lowercaseText;
+                    Log.i(TAG, eisen);
+                } else {
+                    eisen = null;
+                }
 
                 if ("".equals(title) || "".equals(date) || "".equals(time)) {
                     Toast.makeText(EntryFormActivity.this, "Please fill in required fields", Toast.LENGTH_SHORT).show();
@@ -225,7 +223,7 @@ public class EntryFormActivity extends AppCompatActivity {
                                     manager.addIntoCollection(collection, type, docPath, doc);
                                     String entryPath = String.format("%s/%s", dbPath, docID);
                                     manager.updateTracker(type, entryPath, "No oriDir");
-                                    if (eisen != null) {
+                                    if (eisen != null && !eisen.equals("")) {
                                         manager.updateTracker(eisen, entryPath, "No oriDir");
                                     }
                                 }
@@ -250,6 +248,8 @@ public class EntryFormActivity extends AppCompatActivity {
                                 String entryPath = String.format("%s/%s", dbPath, entryId);
                                 manager.updateTracker(type, entryPath, oriDir);
                                 if (eisen != null) {
+                                    // need to deal with the case that the user deselect the eisen,
+                                    // i.e. eisen is changed to NA
                                     manager.updateTracker(eisen, entryPath, oriDir);
                                 }
                             }
@@ -352,6 +352,16 @@ public class EntryFormActivity extends AppCompatActivity {
                 } else {
                     cbAddToMonthLog.setChecked(doc.getBoolean("monthlyLog"));
                 }
+
+                // new stuff here
+                if ("task".equals(type)) {
+                    String eisenTag = doc.getString("eisen");
+                    if (!eisenTag.equals("")) {
+                        String textToDisplay = eisenTag.substring(0, 1).toUpperCase()
+                                + eisenTag.substring(1);
+                        eisenField.setText(textToDisplay);
+                    }
+                }
             }
         });
     }
@@ -439,12 +449,37 @@ public class EntryFormActivity extends AppCompatActivity {
             entryData.put("collection", collection);
             entryData.put("collection_path", curr_collection_path);
         }
+
         entryData.put("eisen", eisen);
+
         if ("".equals(desc)) {
             entryData.put("desc", "");
         } else {
             entryData.put("desc", desc);
         }
         entryData.put("monthlyLog", addToMonthLog);
+    }
+
+    private void showEisenSelectionFragment() {
+        // Handle Fragment transaction & backstack stuff
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog fragment
+        // Note that the setOnDestroyListener must be chained together as it return
+        // a new eisenselectionfragment
+        EisenSelectionFragment fragment = new EisenSelectionFragment()
+                .setOnDestroyListener(new EisenSelectionFragment.onDestroyListener() {
+                    @Override
+                    public void onDestroy(String eisenTag) {
+                        eisenField.setText(eisenTag);
+                    }
+                });
+
+        fragment.show(getSupportFragmentManager(), "dialog");
     }
 }
