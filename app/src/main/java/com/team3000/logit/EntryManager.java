@@ -173,7 +173,7 @@ public class EntryManager {
         // Log.i(TAG, dbPath); used for debugging
         firestore.document(dbPath).delete().addOnCompleteListener(listener);
     }
-
+  
     protected void updateTracker(String trackType, String updateDir) {
         if (!"".equals(trackType)) {
             String trackerPath = String.format("users/%s/%s", user.getUid(), trackType);
