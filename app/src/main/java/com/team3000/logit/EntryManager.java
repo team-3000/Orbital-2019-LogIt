@@ -175,24 +175,28 @@ public class EntryManager {
     }
 
     protected void updateTracker(String trackType, String updateDir) {
+        if (!"".equals(trackType)) {
             String trackerPath = String.format("users/%s/%s", user.getUid(), trackType);
             Map<String, String> pathData = new HashMap<>();
             pathData.put("entryPath", updateDir);
             firestore.collection(trackerPath).add(pathData);
+        }
     }
 
     protected void deleteFromTracker(String trackType, String entryDir) {
-        String trackerPath = String.format("users/%s/%s", user.getUid(), trackType);
-        firestore.collection(trackerPath).whereEqualTo("entryPath", entryDir)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        List<DocumentSnapshot> ds = task.getResult().getDocuments();
-                        if (!ds.isEmpty()) {
-                            String trackerId = ds.get(0).getId();
-                            firestore.document(trackerPath + "/" + trackerId).delete();
-                        }
+        if (!"".equals(trackType)) {
+            String trackerPath = String.format("users/%s/%s", user.getUid(), trackType);
+            firestore.collection(trackerPath).whereEqualTo("entryPath", entryDir)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    List<DocumentSnapshot> ds = task.getResult().getDocuments();
+                    if (!ds.isEmpty()) {
+                        String trackerId = ds.get(0).getId();
+                        firestore.document(trackerPath + "/" + trackerId).delete();
                     }
-                });
+                }
+            });
+        }
     }
 }
