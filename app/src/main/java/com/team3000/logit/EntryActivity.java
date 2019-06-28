@@ -87,7 +87,7 @@ public class EntryActivity extends BaseActivity {
                 tvEntryCollection.setText(doc.getString("collection"));
                 if ("task".equals(type)) {
                     eisen = doc.getString("eisen");
-                    tvEntryExtra.setText(eisen);
+                    tvEntryExtra.setText(eisen.toUpperCase());
                 } else if ("event".equals(type)) {
                     tvEntryExtra.setText(doc.getString("location"));
                 }
@@ -106,6 +106,7 @@ public class EntryActivity extends BaseActivity {
                 intentEdit.putExtra("oriDir", directory);
                 intentEdit.putExtra("entryId", entryId);
                 intentEdit.putExtra("entry_position", entryPosition);
+                intentEdit.putExtra("oriEisen", eisen);
                 startActivity(intentEdit);
             }
         });
