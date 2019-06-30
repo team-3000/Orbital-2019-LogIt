@@ -190,7 +190,7 @@ public class EntryFormActivity extends AppCompatActivity {
 
                     Log.i(TAG, eisen);
                 } else {
-                    eisen = null;
+                    eisen = "";
                 }
 
                 if ("".equals(title) || "".equals(date) || "".equals(time)) {
