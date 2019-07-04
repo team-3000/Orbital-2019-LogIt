@@ -33,7 +33,6 @@ public abstract class BaseActivity extends AppCompatActivity
     protected Button noteButton;
     protected Button taskButton;
     protected Button eventButton;
-    protected boolean notAtDrawerOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +66,8 @@ public abstract class BaseActivity extends AppCompatActivity
             message.setText(String.format("Welcome %s!", user.getEmail()));
         }
 
-        // Bottom bar part
         setOnClickListeners();
+        manageBackStack();
     }
 
     // Check if user is logged in.
@@ -86,8 +85,21 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        boolean isPartOfBaseActivities = getIntent().getBooleanExtra("BaseActivities", false);
+        boolean isTodayDailyLog = getIntent().getBooleanExtra("isTodayDailyLog", false);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        }
+
+        // Always launch today's daily log if the current activity is part of the BaseActivities
+        if (isPartOfBaseActivities && !isTodayDailyLog) {
+            Intent intent = new Intent(BaseActivity.this, DailyLogActivity.class)
+                    .putExtra("year", 0)
+                    .putExtra("isTodayDailyLog", true)
+                    .putExtra("BaseActivities", true);
+
+            startActivity(intent); // don't need to call finish cuz this will be handled by the manageBackStack method
         } else {
             super.onBackPressed();
         }
@@ -130,13 +142,15 @@ public abstract class BaseActivity extends AppCompatActivity
 
         if (id == R.id.new_collection) {
             showNewCollectionDialog();
+            drawer.closeDrawer(GravityCompat.START);
             return true;
         }
 
         Intent intent = null;
         if (id == R.id.nav_today) {
             intent = new Intent(BaseActivity.this, DailyLogActivity.class)
-                    .putExtra("year", 0);
+                    .putExtra("year", 0)
+                    .putExtra("isTodayDailyLog", true);
 
         } else if (id == R.id.nav_this_month) {
             intent = new Intent(BaseActivity.this, MonthlyLogActivity.class)
@@ -155,24 +169,14 @@ public abstract class BaseActivity extends AppCompatActivity
             intent = new Intent(this, LoginActivity.class);
         }
 
-        // intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        /*
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        */
+        // new stuff (remember to reflect any newly added extra in the intent in onBackPressed method
+        // need to refactor the code later to prevent these hastle (can create a method call which
+        // takes in the intent and put necessary extras that are out of those if statements
+        intent.putExtra("BaseActivities", true);
 
         startActivity(intent);
         finish();
-        if (notAtDrawerOptions) {
-            Log.i("BaseActivity", "In clearing stack");
-            int size = activityStack.size();
-            for (int i = 0; i < size; i++) {
-                Activity activity = activityStack.pop();
-                activity.finish();
-            }
-        }
+
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -209,6 +213,25 @@ public abstract class BaseActivity extends AppCompatActivity
                 startActivity(intentNew);
             }
         });
+    }
+
+    // Ensure that a base activity (which is an activity launched from the option in the navigation menu)
+    // is always the bottom of the app's backstack
+    // This is done through managing a manual backstack
+    private void manageBackStack() {
+        Boolean isPartOfBaseActivities = getIntent().getBooleanExtra("BaseActivities", false);
+        if (isPartOfBaseActivities && !activityStack.isEmpty()) {
+            Log.i("BaseActivity", "In clearing stack");
+            int size = activityStack.size();
+            for (int i = 0; i < size; i++) {
+                Activity activity = activityStack.pop();
+                activity.finish();
+                Log.i("BaseActivity", "Destroy " + activity.getClass().getSimpleName());
+            }
+        }
+
+        activityStack.add(this);
+        Log.i("BaseActivity", "Added " + this.getClass().getSimpleName());
     }
 
     private void showNewCollectionDialog() {

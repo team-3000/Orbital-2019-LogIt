@@ -13,7 +13,6 @@ public class CollectionActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.notAtDrawerOptions = true;
 
         // Load the content of the frame layout accordingly.
         // The frame layout serves as a container for the content you want to put.

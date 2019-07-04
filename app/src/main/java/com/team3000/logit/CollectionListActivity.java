@@ -60,7 +60,7 @@ public class CollectionListActivity extends BaseActivity {
             Intent i = new Intent(CollectionListActivity.this, CollectionActivity.class)
                     .putExtra("collection_name", title);
             startActivity(i);
-            activityStack.push(CollectionListActivity.this);
+            // activityStack.push(CollectionListActivity.this);
         }));
 
         RecyclerView list = findViewById(R.id.collections_list);
