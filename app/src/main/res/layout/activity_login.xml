@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/app_icon"
             android:layout_centerHorizontal="true"
-            android:text="LogIt"
+            android:text="@string/app_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
 
         <TextView
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/app_name"
             android:layout_centerHorizontal="true"
-            android:text="Your daily companion"
+            android:text="@string/app_caption"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
     </RelativeLayout>
@@ -49,7 +49,7 @@
             android:layout_gravity="center_horizontal"
             android:ems="12"
             android:gravity="center_horizontal"
-            android:hint="Enter email"
+            android:hint="@string/login_field_email"
             android:inputType="textEmailAddress"/>
 
         <EditText
@@ -59,7 +59,7 @@
             android:layout_gravity="center_horizontal"
             android:ems="12"
             android:gravity="center_horizontal"
-            android:hint="Enter password"
+            android:hint="@string/login_field_password"
             android:inputType="textPassword"/>
 
         <Button
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="5dp"
-            android:text="Login"/>
+            android:text="@string/login_button_login"/>
 
         <TextView
             android:id="@+id/signUpLink"
@@ -76,15 +76,23 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="5dp"
-            android:text="New user? Sign up here!" />
+            android:text="@string/login_signUp" />
+
+        <TextView
+            android:id="@+id/forgotPassWordLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:text="@string/login_forgotPassword"/>
 
         <TextView
             android:id="@+id/resendVerificationLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="80dp"
-            android:text="Did not receive verification email?"/>
+            android:layout_marginBottom="5dp"
+            android:text="@string/login_resendVerificationEmail"/>
 
     </LinearLayout>
 
