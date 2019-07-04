@@ -121,7 +121,7 @@ public class EntryActivity extends BaseActivity {
                     entryManager.deleteFromTracker(eisen, directory);
                 }
                 // ref.delete();
-                startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
+                // startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
                 // The EntryActivity will straightaway close once user click on the delete button
                 EntryActivity.this.finish();
             }

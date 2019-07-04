@@ -15,6 +15,8 @@ public class EisenhowerActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.currPosition = R.id.nav_eisen;
+
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_eisenhower, contentFrameLayout);
         btnDo = findViewById(R.id.btnDo);

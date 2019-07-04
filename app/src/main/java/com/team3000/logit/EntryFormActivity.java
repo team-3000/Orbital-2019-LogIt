@@ -232,8 +232,8 @@ public class EntryFormActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                        Intent intentNew = new Intent(EntryFormActivity.this, DailyLogActivity.class);
-                        startActivity(intentNew);
+                        // Intent intentNew = new Intent(EntryFormActivity.this, DailyLogActivity.class);
+                        // startActivity(intentNew);
                         finish();
                     } else {
                         final DocumentReference doc = ref.document(entryId);
