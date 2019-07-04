@@ -1,5 +1,17 @@
 <resources>
     <string name="app_name">LogIt</string>
+    <string name="app_caption">Your daily companion</string>
+
+    <string name="login_field_email">Enter email</string>
+    <string name="login_field_password">Enter password</string>
+    <string name="login_button_login">Login</string>
+    <string name="login_signUp">New user? Sign up here!</string>
+    <string name="login_resendVerificationEmail">Did not receive verification email?</string>
+    <string name="login_forgotPassword">Forgot your pasword?</string>
+
+    <string name="resetPW_Guide">Enter your email below</string>
+    <string name="resetPW_Hint">email</string>
+    <string name="resetPW_button">Send Password Reset Email</string>
 
     <string name="title_entry_task">Entry</string>
     <string name="title_calendar">Calendar</string>

@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private TextView signUpLink;
     private TextView resendVerificationLink;
+    private TextView forgotPasswordLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
         signUpLink = findViewById(R.id.signUpLink);
         resendVerificationLink = findViewById(R.id.resendVerificationLink);
+        forgotPasswordLink = findViewById(R.id.forgotPassWordLink);
 
         setClickListeners();
     }
@@ -87,6 +89,18 @@ public class LoginActivity extends AppCompatActivity {
                 ResendEmailFragment fragment = new ResendEmailFragment();
                 fragment.show(getSupportFragmentManager(), "dialog");
             }
+        });
+
+        forgotPasswordLink.setOnClickListener(v -> {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+
+            PasswordResetFragment fragment = new PasswordResetFragment();
+            fragment.show(getSupportFragmentManager(), "dialog");
         });
 
     }
