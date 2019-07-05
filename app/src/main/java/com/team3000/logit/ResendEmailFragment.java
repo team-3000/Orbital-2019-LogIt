@@ -35,7 +35,7 @@ public class ResendEmailFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View dialog = inflater.inflate(R.layout.resend_verification_dialog, container, false);
+        final View dialog = inflater.inflate(R.layout.fragment_resend_verification, container, false);
 
         // Set clickListener for the dialog
         final Button resendButton = dialog.findViewById(R.id.resendVerification_button);
