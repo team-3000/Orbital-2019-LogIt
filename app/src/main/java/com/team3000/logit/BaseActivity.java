@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -35,13 +34,11 @@ public abstract class BaseActivity extends AppCompatActivity
     protected Button noteButton;
     protected Button taskButton;
     protected Button eventButton;
-    protected boolean configChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-        Log.i("BaseActivity", "OnCreate");
 
         // FirebaseAuth part
         mAuth = FirebaseAuth.getInstance();
@@ -70,13 +67,7 @@ public abstract class BaseActivity extends AppCompatActivity
             message.setText(String.format("Welcome %s!", user.getEmail()));
         }
 
-        // Handle config changes
-        if (savedInstanceState != null) {
-            configChanged = savedInstanceState.getBoolean("configChanged", false);
-        }
-
         setOnClickListeners();
-        // manageBackStack();
 
         if (cameFromNavMenu) {
             manageBackStack();
@@ -96,26 +87,6 @@ public abstract class BaseActivity extends AppCompatActivity
         if (user == null || !user.isEmailVerified()) {
             startActivity(new Intent(this, LoginActivity.class));
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i("BaseActivity","onDestroy " + this.getClass().getSimpleName());
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Log.i("BaseActivity", "onConfigurationChange");
-        this.configChanged = true;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.i("BaseActivity", "onSaveInstanceState");
-        outState.putBoolean("configChanged", configChanged);
     }
 
     @Override
