@@ -45,7 +45,7 @@ public class EntryActivity extends BaseActivity {
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_entry, contentFrameLayout);
 
-        navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.bottom_navView);
         tvEntryTitle = findViewById(R.id.tvEntryTitle);
         tvEntryDate = findViewById(R.id.tvEntryDate);
         tvEntryTime = findViewById(R.id.tvEntryTime);

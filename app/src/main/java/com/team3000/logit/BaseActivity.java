@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +25,8 @@ import java.util.Stack;
 
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    protected static Stack<Activity> activityStack = new Stack<>();
+     protected static Stack<Activity> activityStack = new Stack<>();
+    protected static boolean cameFromNavMenu = false;
     protected int currPosition; // indicates which activity of the navigation drawer that the user is currently at
     private FirebaseAuth mAuth;
     protected FirebaseUser user;
@@ -66,8 +66,15 @@ public abstract class BaseActivity extends AppCompatActivity
             message.setText(String.format("Welcome %s!", user.getEmail()));
         }
 
+        // Set clickListeners
         setOnClickListeners();
-        manageBackStack();
+
+        // Handle backstack
+        if (cameFromNavMenu) {
+            manageBackStack();
+            cameFromNavMenu = false;
+        }
+        activityStack.add(this);
     }
 
     // Check if user is logged in.
@@ -85,6 +92,10 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        
+        // refactor this such that instead of passing the boolean to intent, create a superclass for
+        // all the activities in the option menu to extend from
+        // then put the boolean in that superclass
         boolean isPartOfBaseActivities = getIntent().getBooleanExtra("BaseActivities", false);
         boolean isTodayDailyLog = getIntent().getBooleanExtra("isTodayDailyLog", false);
 
@@ -92,7 +103,8 @@ public abstract class BaseActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         }
 
-        // Always launch today's daily log if the current activity is part of the BaseActivities
+        // Always redirect the user to today's daily log if the current activity is part of the activities
+        // in the navigation menu and not currrently at today's daily log
         if (isPartOfBaseActivities && !isTodayDailyLog) {
             Intent intent = new Intent(BaseActivity.this, DailyLogActivity.class)
                     .putExtra("year", 0)
@@ -100,6 +112,7 @@ public abstract class BaseActivity extends AppCompatActivity
                     .putExtra("BaseActivities", true);
 
             startActivity(intent); // don't need to call finish cuz this will be handled by the manageBackStack method
+            this.finish();
         } else {
             super.onBackPressed();
         }
@@ -174,9 +187,12 @@ public abstract class BaseActivity extends AppCompatActivity
         // takes in the intent and put necessary extras that are out of those if statements
         intent.putExtra("BaseActivities", true);
 
-        startActivity(intent);
-        finish();
+        // for managing backstack
+        if (id != R.id.nav_signOut) {
+            cameFromNavMenu = true;
+        }
 
+        startActivity(intent);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -215,23 +231,16 @@ public abstract class BaseActivity extends AppCompatActivity
         });
     }
 
-    // Ensure that a base activity (which is an activity launched from the option in the navigation menu)
-    // is always the bottom of the app's backstack
-    // This is done through managing a manual backstack
+    // Clear the activity backstack when user clicks on another option in the navigation menu
     private void manageBackStack() {
-        Boolean isPartOfBaseActivities = getIntent().getBooleanExtra("BaseActivities", false);
-        if (isPartOfBaseActivities && !activityStack.isEmpty()) {
-            Log.i("BaseActivity", "In clearing stack");
-            int size = activityStack.size();
-            for (int i = 0; i < size; i++) {
-                Activity activity = activityStack.pop();
+        int size = activityStack.size();
+
+        for (int i = 0; i < size; i++) {
+            Activity activity = activityStack.pop();
+            if (!activity.isDestroyed()) {
                 activity.finish();
-                Log.i("BaseActivity", "Destroy " + activity.getClass().getSimpleName());
             }
         }
-
-        activityStack.add(this);
-        Log.i("BaseActivity", "Added " + this.getClass().getSimpleName());
     }
 
     private void showNewCollectionDialog() {
