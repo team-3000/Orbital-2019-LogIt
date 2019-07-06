@@ -56,14 +56,24 @@ public class EntryListActivity extends BaseActivity {
                 List<DocumentSnapshot> storeSnaps = querySnapshot.getDocuments();
                 for (DocumentSnapshot store : storeSnaps) {
                     DocumentReference doc = db.document(store.getString("entryPath"));
-                    doc.get().addOnCompleteListener(task1 -> {
-                        Entry currEntry = task1.getResult().toObject(Entry.class);
-                        currEntry.setId(doc.getId());
-                        entries.add(currEntry);
-                        Collections.sort(entries);
-                        mAdapter.notifyDataSetChanged();
-                        Log.d(TAG, currEntry.getId());
-                    });
+
+                    // To handle cases where delete button is pressed which straightway closes the entryActivty
+                    // but the entry in, e.g. delegate node is not deleted yet, thus causing nullpointerexception
+                    // Mainly is because of the issue of different in speeds of asynchronous tasks
+                    if (doc != null) {
+                        doc.get().addOnCompleteListener(task1 -> {
+                            Entry currEntry = task1.getResult().toObject(Entry.class);
+
+                            // Same reason as above comment
+                            if (currEntry != null) {
+                                currEntry.setId(doc.getId());
+                                entries.add(currEntry);
+                                Collections.sort(entries);
+                                mAdapter.notifyDataSetChanged();
+                                Log.d(TAG, currEntry.getId());
+                            }
+                        });
+                    }
                 }
             }
         });
