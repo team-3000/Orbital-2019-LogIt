@@ -66,13 +66,14 @@ public abstract class BaseActivity extends AppCompatActivity
             message.setText(String.format("Welcome %s!", user.getEmail()));
         }
 
+        // Set clickListeners
         setOnClickListeners();
 
+        // Handle backstack
         if (cameFromNavMenu) {
             manageBackStack();
             cameFromNavMenu = false;
         }
-
         activityStack.add(this);
     }
 
@@ -102,7 +103,8 @@ public abstract class BaseActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         }
 
-        // Always launch today's daily log if the current activity is part of the BaseActivities
+        // Always redirect the user to today's daily log if the current activity is part of the activities
+        // in the navigation menu and not currrently at today's daily log
         if (isPartOfBaseActivities && !isTodayDailyLog) {
             Intent intent = new Intent(BaseActivity.this, DailyLogActivity.class)
                     .putExtra("year", 0)
@@ -229,9 +231,7 @@ public abstract class BaseActivity extends AppCompatActivity
         });
     }
 
-    // Ensure that a base activity (which is an activity launched from the option in the navigation menu)
-    // is always the bottom of the app's backstack
-    // This is done through managing a manual backstack
+    // Clear the activity backstack when user clicks on another option in the navigation menu
     private void manageBackStack() {
         int size = activityStack.size();
 
