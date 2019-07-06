@@ -50,32 +50,29 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
         holder.tvListTime.setText(entry.getTime());
         holder.tvListDesc.setText(entry.getDesc());
         // final DocumentSnapshot doc = getSnapshots().getSnapshot(holder.getAdapterPosition());
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "Attaching onDestroyListener");
-                EntryManager.setOnDestroyListener(onDestroyListener); // For collection log
-                EntryManager.setOnUpdateListener(onUpdateListener); // For collection log
+        holder.mView.setOnClickListener(v -> {
+            Log.i(TAG, "Attaching onDestroyListener");
+            EntryManager.setOnDestroyListener(onDestroyListener); // For collection log
+            EntryManager.setOnUpdateListener(onUpdateListener); // For collection log
 
 
-                String entryType = entry.getType();
-                int entryYear = entry.getYear();
-                String entryMonth = entry.getMonth();
-                // String entryId = doc.getId();
-                String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s", userId, entryType, entryYear, entryMonth, entryId);
-                Intent entryIntent = new Intent(activity, EntryActivity.class);
-                entryIntent.putExtra("type", entryType);
-                entryIntent.putExtra("month", entryMonth);
-                entryIntent.putExtra("entryId", entryId);
-                entryIntent.putExtra("directory", directory);
+            String entryType = entry.getType();
+            int entryYear = entry.getYear();
+            String entryMonth = entry.getMonth();
+            // String entryId = doc.getId();
+            String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s", userId, entryType, entryYear, entryMonth, entryId);
+            Intent entryIntent = new Intent(activity, EntryActivity.class);
+            entryIntent.putExtra("type", entryType);
+            entryIntent.putExtra("month", entryMonth);
+            entryIntent.putExtra("entryId", entryId);
+            entryIntent.putExtra("directory", directory);
 
-                if (onDestroyListener != null && onUpdateListener != null) {
-                    entryIntent.putExtra("entry_position", holder.getAdapterPosition()); // new stuff
-                }
-
-                activity.startActivity(entryIntent);
-                // activity.onBackPressed();
+            if (onDestroyListener != null && onUpdateListener != null) {
+                entryIntent.putExtra("entry_position", holder.getAdapterPosition()); // new stuff
             }
+
+            activity.startActivity(entryIntent);
+            // activity.onBackPressed();
         });
     }
 }

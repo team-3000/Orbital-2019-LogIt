@@ -4,16 +4,12 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
@@ -94,13 +90,10 @@ public class EntryManager {
         DATA.put("dataPath", DBPATH);
 
         // Listener used after the entry is added into a collection(tag)
-        final OnCompleteListener<Void> LISTENER1 = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(activity, "Fail to add to collection!", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Fail to add to collection!");
-                }
+        final OnCompleteListener<Void> LISTENER1 = task -> {
+            if (!task.isSuccessful()) {
+                Toast.makeText(activity, "Fail to add to collection!", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Fail to add to collection!");
             }
         };
 
@@ -109,22 +102,19 @@ public class EntryManager {
                     String.format("users/%s/collections/%s", user.getUid(), COLLECTIONNAME));
 
             DOCREFERENCE.set(new CollectionItem(COLLECTIONNAME)) // The collection(tag) will be created if it hasn't exist
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Log.i(TAG, "Added into new collection!");
-                            // Add the entry into the collection(tag)
-                            DocumentReference ref = DOCREFERENCE.collection(String.format(Locale.US, "%s", TYPE))
-                                    .document();
-                            ref.set(DATA).addOnCompleteListener(LISTENER1);
+                    .addOnCompleteListener(task -> {
+                        Log.i(TAG, "Added into new collection!");
+                        // Add the entry into the collection(tag)
+                        DocumentReference ref = DOCREFERENCE.collection(String.format(Locale.US, "%s", TYPE))
+                                .document();
+                        ref.set(DATA).addOnCompleteListener(LISTENER1);
 
-                            // Attach the id in collection to the existing entry
-                            String collection_path = String.format(Locale.US, "%s/%s/%s",
-                                    COLLECTIONNAME, TYPE, ref.getId());
-                            HashMap<String, String> add_on = new HashMap<>();
-                            add_on.put("collection_path", collection_path);
-                            ENTRYREF.set(add_on, SetOptions.merge());
-                        }
+                        // Attach the id in collection to the existing entry
+                        String collection_path = String.format(Locale.US, "%s/%s/%s",
+                                COLLECTIONNAME, TYPE, ref.getId());
+                        HashMap<String, String> add_on = new HashMap<>();
+                        add_on.put("collection_path", collection_path);
+                        ENTRYREF.set(add_on, SetOptions.merge());
                     });
         }
     }
@@ -187,16 +177,13 @@ public class EntryManager {
         if (!"".equals(trackType)) {
             String trackerPath = String.format("users/%s/%s", user.getUid(), trackType);
             firestore.collection(trackerPath).whereEqualTo("entryPath", entryDir)
-                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    List<DocumentSnapshot> ds = task.getResult().getDocuments();
-                    if (!ds.isEmpty()) {
-                        String trackerId = ds.get(0).getId();
-                        firestore.document(trackerPath + "/" + trackerId).delete();
-                    }
-                }
-            });
+                    .get().addOnCompleteListener(task -> {
+                        List<DocumentSnapshot> ds = task.getResult().getDocuments();
+                        if (!ds.isEmpty()) {
+                            String trackerId = ds.get(0).getId();
+                            firestore.document(trackerPath + "/" + trackerId).delete();
+                        }
+                    });
         }
     }
 }

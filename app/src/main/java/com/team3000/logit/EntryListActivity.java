@@ -3,15 +3,11 @@ package com.team3000.logit;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -54,26 +50,20 @@ public class EntryListActivity extends BaseActivity {
         super.onStart();
         entries.clear();
         mAdapter = new EntryListAdapter(EntryListActivity.this, entries);
-        db.collection(directory).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                QuerySnapshot querySnapshot = task.getResult();
-                if (querySnapshot != null) {
-                    List<DocumentSnapshot> storeSnaps = querySnapshot.getDocuments();
-                    for (DocumentSnapshot store : storeSnaps) {
-                        DocumentReference doc = db.document(store.getString("entryPath"));
-                        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                Entry currEntry = task.getResult().toObject(Entry.class);
-                                currEntry.setId(doc.getId());
-                                entries.add(currEntry);
-                                Collections.sort(entries);
-                                mAdapter.notifyDataSetChanged();
-                                Log.d(TAG, currEntry.getId());
-                            }
-                        });
-                    }
+        db.collection(directory).get().addOnCompleteListener(task -> {
+            QuerySnapshot querySnapshot = task.getResult();
+            if (querySnapshot != null) {
+                List<DocumentSnapshot> storeSnaps = querySnapshot.getDocuments();
+                for (DocumentSnapshot store : storeSnaps) {
+                    DocumentReference doc = db.document(store.getString("entryPath"));
+                    doc.get().addOnCompleteListener(task1 -> {
+                        Entry currEntry = task1.getResult().toObject(Entry.class);
+                        currEntry.setId(doc.getId());
+                        entries.add(currEntry);
+                        Collections.sort(entries);
+                        mAdapter.notifyDataSetChanged();
+                        Log.d(TAG, currEntry.getId());
+                    });
                 }
             }
         });
@@ -111,14 +101,11 @@ public class EntryListActivity extends BaseActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
 
-        fabAddEntryList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(EntryListActivity.this, EntryFormActivity.class);
-                intent.putExtra("type", type.replace("Store", ""));
-                startActivity(intent);
-                finish();
-            }
+        fabAddEntryList.setOnClickListener(v -> {
+            Intent intent = new Intent(EntryListActivity.this, EntryFormActivity.class);
+            intent.putExtra("type", type.replace("Store", ""));
+            startActivity(intent);
+            finish();
         });
     }
 }

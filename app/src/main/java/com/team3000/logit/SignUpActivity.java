@@ -1,19 +1,14 @@
 package com.team3000.logit;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -45,12 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void setClickListeners() {
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signUp();
-            }
-        });
+        signUpButton.setOnClickListener(v -> signUp());
     }
 
     private void signUp() {
@@ -63,21 +53,18 @@ public class SignUpActivity extends AppCompatActivity {
         // If the sign-up task is successful, send verification email to the user
         if (validateForm(username, email, password, confirmPassword)) {
             mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            // Sign up success, set user's name and send verification email
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "createUserWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                intialiseProfile(user, username);
-                                sendEmailVerification(user);
-                            } else {
-                                // If sign up fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(SignUpActivity.this, "Sign up failed :( Please try again",
-                                        Toast.LENGTH_SHORT).show();
-                            }
+                    .addOnCompleteListener(this, task -> {
+                        // Sign up success, set user's name and send verification email
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            intialiseProfile(user, username);
+                            sendEmailVerification(user);
+                        } else {
+                            // If sign up fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(SignUpActivity.this, "Sign up failed :( Please try again",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
         }
@@ -131,33 +118,27 @@ public class SignUpActivity extends AppCompatActivity {
                         .build();
 
         user.updateProfile(profileInitialization)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.i(TAG, "Username is initialised");
-                        } else {
-                            Log.e(TAG, "Fail to initialize username!");
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.i(TAG, "Username is initialised");
+                    } else {
+                        Log.e(TAG, "Fail to initialize username!");
                     }
                 });
     }
 
     private void sendEmailVerification(final FirebaseUser user) {
         user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(SignUpActivity.this,
-                                    "Verification email sent to " + user.getEmail(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "sendEmailVerification", task.getException());
-                            Toast.makeText(SignUpActivity.this,
-                                    "Failed to send verification email.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(SignUpActivity.this,
+                                "Verification email sent to " + user.getEmail(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e(TAG, "sendEmailVerification", task.getException());
+                        Toast.makeText(SignUpActivity.this,
+                                "Failed to send verification email.",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }

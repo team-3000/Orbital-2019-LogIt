@@ -14,9 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -39,17 +36,14 @@ public class ResendEmailFragment extends DialogFragment {
 
         // Set clickListener for the dialog
         final Button resendButton = dialog.findViewById(R.id.resendVerification_button);
-        resendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEmailField = dialog.findViewById(R.id.emailField);
-                mPasswordField = dialog.findViewById(R.id.passwordField);
+        resendButton.setOnClickListener(v -> {
+            mEmailField = dialog.findViewById(R.id.emailField);
+            mPasswordField = dialog.findViewById(R.id.passwordField);
 
-                String email = mEmailField.getText().toString().trim();
-                String password = mPasswordField.getText().toString();
+            String email = mEmailField.getText().toString().trim();
+            String password = mPasswordField.getText().toString();
 
-                logInAndResend(email, password);
-            }
+            logInAndResend(email, password);
         });
 
         return dialog;
@@ -72,15 +66,12 @@ public class ResendEmailFragment extends DialogFragment {
     private void logInAndResend(String email, String password) {
         if (validateForm(email, password)) {
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                resendEmailVerification();
-                            } else {
-                                Toast.makeText(getContext(), "Email and/or password is incorrect",
-                                        Toast.LENGTH_SHORT).show();
-                            }
+                    .addOnCompleteListener(getActivity(), task -> {
+                        if (task.isSuccessful()) {
+                            resendEmailVerification();
+                        } else {
+                            Toast.makeText(getContext(), "Email and/or password is incorrect",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
         }
@@ -90,16 +81,13 @@ public class ResendEmailFragment extends DialogFragment {
     private void resendEmailVerification() {
         FirebaseUser user = mAuth.getCurrentUser();
 
-        user.sendEmailVerification().addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    mAuth.signOut();
-                    ResendEmailFragment.this.dismiss();
-                    Toast.makeText(getContext(), "Successfully resend verification email", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "Fail to resend verification email", Toast.LENGTH_SHORT).show();
-                }
+        user.sendEmailVerification().addOnCompleteListener(getActivity(), task -> {
+            if (task.isSuccessful()) {
+                mAuth.signOut();
+                ResendEmailFragment.this.dismiss();
+                Toast.makeText(getContext(), "Successfully resend verification email", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Fail to resend verification email", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -3,8 +3,6 @@ package com.team3000.logit;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -77,54 +75,45 @@ public class EntryActivity extends BaseActivity {
             tvEntryExtra.setVisibility(View.GONE);
         }
 
-        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot doc = task.getResult();
-                tvEntryTitle.setText(doc.getString("title"));
-                tvEntryDate.setText(doc.getString("date"));
-                tvEntryTime.setText(doc.getString("time"));
-                tvEntryCollection.setText(doc.getString("collection"));
-                if ("task".equals(type)) {
-                    eisen = doc.getString("eisen");
-                    tvEntryExtra.setText(eisen.toUpperCase());
-                } else if ("event".equals(type)) {
-                    tvEntryExtra.setText(doc.getString("location"));
-                }
-                tvEntryDesc.setText(doc.getString("desc"));
+        ref.get().addOnCompleteListener(task -> {
+            DocumentSnapshot doc = task.getResult();
+            tvEntryTitle.setText(doc.getString("title"));
+            tvEntryDate.setText(doc.getString("date"));
+            tvEntryTime.setText(doc.getString("time"));
+            tvEntryCollection.setText(doc.getString("collection"));
+            if ("task".equals(type)) {
+                eisen = doc.getString("eisen");
+                tvEntryExtra.setText(eisen.toUpperCase());
+            } else if ("event".equals(type)) {
+                tvEntryExtra.setText(doc.getString("location"));
             }
+            tvEntryDesc.setText(doc.getString("desc"));
         });
 
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        btnEditEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentEdit = new Intent(EntryActivity.this, EntryFormActivity.class);
-                intentEdit.putExtra("type", type);
-                intentEdit.putExtra("oriMonth", month);
-                intentEdit.putExtra("oriDir", directory);
-                intentEdit.putExtra("entryId", entryId);
-                intentEdit.putExtra("entry_position", entryPosition);
-                intentEdit.putExtra("oriEisen", eisen);
-                startActivity(intentEdit);
-            }
+        btnEditEntry.setOnClickListener(v -> {
+            Intent intentEdit = new Intent(EntryActivity.this, EntryFormActivity.class);
+            intentEdit.putExtra("type", type);
+            intentEdit.putExtra("oriMonth", month);
+            intentEdit.putExtra("oriDir", directory);
+            intentEdit.putExtra("entryId", entryId);
+            intentEdit.putExtra("entry_position", entryPosition);
+            intentEdit.putExtra("oriEisen", eisen);
+            startActivity(intentEdit);
         });
 
-        btnDeleteEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EntryManager entryManager = new EntryManager(EntryActivity.this);
-                entryManager.deleteEntry(ref, entryPosition);
-                entryManager.deleteFromTracker(type + "Store", directory);
-                if (eisen != null) {
-                    entryManager.deleteFromTracker(eisen, directory);
-                }
-                // ref.delete();
-                // startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
-                // The EntryActivity will straightaway close once user click on the delete button
-                EntryActivity.this.finish();
+        btnDeleteEntry.setOnClickListener(v -> {
+            EntryManager entryManager = new EntryManager(EntryActivity.this);
+            entryManager.deleteEntry(ref, entryPosition);
+            entryManager.deleteFromTracker(type + "Store", directory);
+            if (eisen != null) {
+                entryManager.deleteFromTracker(eisen, directory);
             }
+            // ref.delete();
+            // startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
+            // The EntryActivity will straightaway close once user click on the delete button
+            EntryActivity.this.finish();
         });
     }
 

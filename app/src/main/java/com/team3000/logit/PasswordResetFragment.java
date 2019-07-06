@@ -52,9 +52,7 @@ public class PasswordResetFragment extends DialogFragment {
     }
 
     private void setClickListeners() {
-        buttonReset.setOnClickListener(v -> {
-            sendPassWordResetEmail();
-        });
+        buttonReset.setOnClickListener(v -> sendPassWordResetEmail());
     }
 
     private void sendPassWordResetEmail() {

@@ -20,9 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -96,23 +94,17 @@ public class CollectionLogFragment extends Fragment {
                 .setOnUpdateListener(new OnUpdateListener());
 
         firstLoad = true;
-        listenerRegistration = collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "listen:error", e);
-                    return;
-                }
+        listenerRegistration = collectionReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
+            if (e != null) {
+                Log.w(TAG, "listen:error", e);
+                return;
+            }
 
-                if (!firstLoad) {
-                    for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                        switch (dc.getType()) {
-                            case ADDED:
-                                Log.i(TAG, "onEvent");
-                                addNewEnty(dc.getDocument().getString("dataPath"));
-                                break;
-                            default:
-                        }
+            if (!firstLoad) {
+                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                    if (dc.getType() == DocumentChange.Type.ADDED) {
+                        Log.i(TAG, "onEvent");
+                        addNewEnty(dc.getDocument().getString("dataPath"));
                     }
                 }
             }
@@ -120,32 +112,6 @@ public class CollectionLogFragment extends Fragment {
 
         loadEntriesData();
     }
-
-    /*
-    // Attach event listener to listen to event where new collection entry is added
-    @Override
-    public void onStart() {
-        super.onStart();
-        listenerRegistration = collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "listen:error", e);
-                    return;
-                }
-
-                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
-                            Log.i(TAG, "onEvent");
-                            addNewEnty(dc.getDocument().getString("dataPath"));
-                            break;
-                    }
-                }
-            }
-        });
-    }
-    */
 
     @Override
     public void onDestroy() {
