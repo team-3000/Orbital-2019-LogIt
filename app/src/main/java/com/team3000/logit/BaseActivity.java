@@ -93,7 +93,7 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-
+        
         // refactor this such that instead of passing the boolean to intent, create a superclass for
         // all the activities in the option menu to extend from
         // then put the boolean in that superclass
