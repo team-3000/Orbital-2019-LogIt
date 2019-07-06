@@ -1,10 +1,7 @@
 package com.team3000.logit;
 
-import androidx.annotation.NonNull;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.FrameLayout;
@@ -33,64 +30,38 @@ public class CalendarActivity extends BaseActivity {
         final int month = cal.get(Calendar.MONTH);
         final int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                goToDailyLog(year, month, dayOfMonth, 0);
+        calendarView.setOnDateChangeListener((view, year1, month1, dayOfMonth) -> goToDailyLog(year1, month1, dayOfMonth, 0));
+
+        btnCalToday.setOnClickListener(v -> goToDailyLog(year, month, day,0));
+
+        btnCalTomorrow.setOnClickListener(v -> goToDailyLog(year, month, day, 1));
+
+        btnCalLastMonth.setOnClickListener(v -> {
+            int lastMonth;
+            int adjYear;
+            if (month == 1) {
+                lastMonth = 12;
+                adjYear = year - 1;
+            } else {
+                lastMonth = month - 1;
+                adjYear = year;
             }
+            goToMonthlyLog(adjYear, lastMonth);
         });
 
-        btnCalToday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToDailyLog(year, month, day,0);
-            }
-        });
+        btnCalThisMonth.setOnClickListener(v -> goToMonthlyLog(year, month));
 
-        btnCalTomorrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToDailyLog(year, month, day, 1);
+        btnCalNextMonth.setOnClickListener(v -> {
+            int nextMonth;
+            int adjYear;
+            if (month == 12) {
+                nextMonth = 1;
+                adjYear = year + 1;
+            } else {
+                nextMonth = month + 1;
+                adjYear = year;
             }
-        });
-
-        btnCalLastMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int lastMonth;
-                int adjYear;
-                if (month == 1) {
-                    lastMonth = 12;
-                    adjYear = year - 1;
-                } else {
-                    lastMonth = month - 1;
-                    adjYear = year;
-                }
-                goToMonthlyLog(adjYear, lastMonth);
-            }
-        });
-
-        btnCalThisMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToMonthlyLog(year, month);
-            }
-        });
-
-        btnCalNextMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int nextMonth;
-                int adjYear;
-                if (month == 12) {
-                    nextMonth = 1;
-                    adjYear = year + 1;
-                } else {
-                    nextMonth = month + 1;
-                    adjYear = year;
-                }
-                goToMonthlyLog(adjYear, nextMonth);
-            }
+            goToMonthlyLog(adjYear, nextMonth);
         });
     }
 

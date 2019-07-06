@@ -84,22 +84,19 @@ public class BaseLogFragment extends Fragment {
                 holder.tvListTime.setText(entry.getTime());
                 holder.tvListDesc.setText(entry.getDesc());
                 final DocumentSnapshot doc = getSnapshots().getSnapshot(holder.getAdapterPosition());
-                holder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String entryType = entry.getType();
-                        int entryYear = entry.getYear();
-                        String entryMonth = entry.getMonth();
-                        String entryId = doc.getId();
-                        String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s",
-                                FirebaseAuth.getInstance().getCurrentUser().getUid(), entryType, entryYear, entryMonth, entryId);
-                        Intent intent = new Intent(getContext(), EntryActivity.class);
-                        intent.putExtra("type", entryType);
-                        intent.putExtra("month", entryMonth);
-                        intent.putExtra("entryId", entryId);
-                        intent.putExtra("directory", directory);
-                        startActivity(intent);
-                    }
+                holder.mView.setOnClickListener(v -> {
+                    String entryType = entry.getType();
+                    int entryYear = entry.getYear();
+                    String entryMonth = entry.getMonth();
+                    String entryId = doc.getId();
+                    String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s",
+                            FirebaseAuth.getInstance().getCurrentUser().getUid(), entryType, entryYear, entryMonth, entryId);
+                    Intent intent = new Intent(getContext(), EntryActivity.class);
+                    intent.putExtra("type", entryType);
+                    intent.putExtra("month", entryMonth);
+                    intent.putExtra("entryId", entryId);
+                    intent.putExtra("directory", directory);
+                    startActivity(intent);
                 });
             }
 

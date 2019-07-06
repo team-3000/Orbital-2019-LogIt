@@ -24,7 +24,7 @@ public class CollectionListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         super.currPosition = R.id.nav_collections;
 
-        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
+        FrameLayout contentFrame = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_collection_list, contentFrame);
 
         getSupportActionBar().setTitle("Collections");

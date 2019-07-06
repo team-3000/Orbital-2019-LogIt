@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -141,7 +142,7 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -203,31 +204,22 @@ public abstract class BaseActivity extends AppCompatActivity
         taskButton = findViewById(R.id.task);
         eventButton = findViewById(R.id.event);
 
-        noteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
-                intentNew.putExtra("trackType", "noteStore");
-                startActivity(intentNew);
-            }
+        noteButton.setOnClickListener(v -> {
+            Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
+            intentNew.putExtra("trackType", "noteStore");
+            startActivity(intentNew);
         });
 
-        taskButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
-                intentNew.putExtra("trackType", "taskStore");
-                startActivity(intentNew);
-            }
+        taskButton.setOnClickListener(v -> {
+            Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
+            intentNew.putExtra("trackType", "taskStore");
+            startActivity(intentNew);
         });
 
-        eventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
-                intentNew.putExtra("trackType", "eventStore");
-                startActivity(intentNew);
-            }
+        eventButton.setOnClickListener(v -> {
+            Intent intentNew = new Intent(BaseActivity.this, EntryListActivity.class);
+            intentNew.putExtra("trackType", "eventStore");
+            startActivity(intentNew);
         });
     }
 

@@ -13,8 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -55,24 +53,20 @@ public class NewCollectionFragment extends DialogFragment {
         final EditText nameField = dialog.findViewById(R.id.name_field);
         Button submitButton = dialog.findViewById(R.id.submit_btn);
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                String collectionName = nameField.getText().toString().trim();
+        submitButton.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String collectionName = nameField.getText().toString().trim();
 
-                if (!collectionName.isEmpty()) {
-                    HashMap<String, String> data = new HashMap<>();
-                    data.put("name", collectionName);
+            if (!collectionName.isEmpty()) {
+                HashMap<String, String> data = new HashMap<>();
+                data.put("name", collectionName);
 
-                    String dbPath = String.format("users/%s/collections/", user.getUid());
-                    CollectionReference collections = FirebaseFirestore.getInstance().collection(dbPath);
+                String dbPath = String.format("users/%s/collections/", user.getUid());
+                CollectionReference collections = FirebaseFirestore.getInstance().collection(dbPath);
 
-                    // Add the new collection tag
-                    collections.document(collectionName).set(data)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
+                // Add the new collection tag
+                collections.document(collectionName).set(data)
+                        .addOnCompleteListener(task -> {
                             DialogFragment dialog = NewCollectionFragment.this;
                             String message;
 
@@ -85,11 +79,9 @@ public class NewCollectionFragment extends DialogFragment {
                             dialog.dismiss();
                             Toast.makeText(dialog.getContext(), message, Toast.LENGTH_SHORT)
                                     .show();
-                        }
-                    });
-                } else {
-                    nameField.setError("Required");
-                }
+                        });
+            } else {
+                nameField.setError("Required");
             }
         });
     }

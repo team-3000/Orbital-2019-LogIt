@@ -2,7 +2,6 @@ package com.team3000.logit;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
@@ -29,33 +28,10 @@ public class EisenhowerActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
 
-        btnDo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadEntryList("do");
-            }
-        });
-
-        btnDecide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadEntryList("decide");
-            }
-        });
-
-        btnDelegate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadEntryList("delegate");
-            }
-        });
-
-        btnEliminate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadEntryList("eliminate");
-            }
-        });
+        btnDo.setOnClickListener(v -> loadEntryList("do"));
+        btnDecide.setOnClickListener(v -> loadEntryList("decide"));
+        btnDelegate.setOnClickListener(v -> loadEntryList("delegate"));
+        btnEliminate.setOnClickListener(v -> loadEntryList("eliminate"));
     }
 
     private void loadEntryList(String trackType) {
