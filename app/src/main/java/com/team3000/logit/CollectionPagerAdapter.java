@@ -1,5 +1,7 @@
 package com.team3000.logit;
 
+import android.util.Log;q
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -15,6 +17,7 @@ public class CollectionPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        Log.i("CollectionPagerAdapter", "In getItem");
         switch (position) {
             case 0 :
                 return new CollectionLogFragment(collectionName, "note");

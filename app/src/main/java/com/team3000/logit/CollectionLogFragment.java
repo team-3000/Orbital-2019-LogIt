@@ -77,9 +77,17 @@ public class CollectionLogFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "OnCreate");
 
         this.entries = new LinkedList<>();
         this.db = FirebaseFirestore.getInstance();
+
+        // Deal with orientation change
+        // Must be put before forming the datapath or else the datapath is wrong
+        if (savedInstanceState != null) {
+            this.collectionName = savedInstanceState.getString("collectionName");
+            this.type = savedInstanceState.getString("type");
+        }
 
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.directory = String.format(Locale.US, "users/%s/collections/%s/%s"
@@ -117,6 +125,14 @@ public class CollectionLogFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         listenerRegistration.remove();
+        Log.i(TAG, "onDestroy " + type);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("collectionName", collectionName);
+        outState.putString("type", type);
     }
 
     @Nullable
@@ -133,7 +149,8 @@ public class CollectionLogFragment extends Fragment {
     }
 
     private void loadEntriesData() {
-        Log.i(TAG, "In loadEntriesData");
+        Log.i(TAG, "In loadEntriesData " + collectionName + " " + type);
+        Log.i(TAG, collectionReference.getPath());
         collectionReference.get().addOnCompleteListener((task) -> {
             if (task.isSuccessful()) {
                 Log.i(TAG, "Successfully fetch all collection entries");
@@ -173,7 +190,7 @@ public class CollectionLogFragment extends Fragment {
                     DocumentSnapshot doc = (DocumentSnapshot) task1.getResult();
                     Entry entry = doc.toObject(Entry.class);
                     String entryID = doc.getId();
-
+                    if (doc != null) Log.i(TAG, doc.getId());
                     // For debugging purpose
                     // Log.i(TAG, entry.getTitle());
                     // Log.i(TAG, entry.getDesc());
