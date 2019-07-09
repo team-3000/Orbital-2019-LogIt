@@ -3,7 +3,6 @@ package com.team3000.logit;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -42,7 +41,6 @@ public class CollectionPagerAdapter extends FragmentPagerAdapter {
         return fragment;
     }
 
-    @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
