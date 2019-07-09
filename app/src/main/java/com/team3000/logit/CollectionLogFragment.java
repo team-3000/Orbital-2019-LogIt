@@ -66,20 +66,18 @@ public class CollectionLogFragment extends Fragment {
         }
     }
 
-    // For system's use
-    public CollectionLogFragment() {}
-
-    public CollectionLogFragment(String collectionName, String type) {
-        this.collectionName = collectionName;
-        this.type = type;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle bundle = getArguments();
+
         this.entries = new LinkedList<>();
         this.db = FirebaseFirestore.getInstance();
+
+        // Always pass data to fragment in bundle, never create custom constructor for fragment
+        this.collectionName = bundle.getString("collectionName");
+        this.type = bundle.getString("logType");
 
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.directory = String.format(Locale.US, "users/%s/collections/%s/%s"
@@ -117,6 +115,12 @@ public class CollectionLogFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         listenerRegistration.remove();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i(TAG, "onSaveInstanceState");
     }
 
     @Nullable
