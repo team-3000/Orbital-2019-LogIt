@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -113,10 +114,11 @@ public abstract class BaseActivity extends AppCompatActivity
                     .putExtra("BaseActivities", true);
 
             startActivity(intent); // don't need to call finish cuz this will be handled by the manageBackStack method
-            this.finish();
         } else {
             super.onBackPressed();
         }
+        this.finish();
+        Log.i("BaseActivity", "After calling finish");
     }
 
     @Override
@@ -165,17 +167,13 @@ public abstract class BaseActivity extends AppCompatActivity
             intent = new Intent(BaseActivity.this, DailyLogActivity.class)
                     .putExtra("year", 0)
                     .putExtra("isTodayDailyLog", true);
-
         } else if (id == R.id.nav_this_month) {
             intent = new Intent(BaseActivity.this, MonthlyLogActivity.class)
                     .putExtra("year", 0);
-
         } else if (id == R.id.nav_calendar) {
             intent = new Intent(BaseActivity.this, CalendarActivity.class);
-
         } else if (id == R.id.nav_collections) {
             intent = new Intent(BaseActivity.this, CollectionListActivity.class);
-
         } else if (id == R.id.nav_eisen) {
             intent = new Intent(BaseActivity.this, EisenhowerActivity.class);
         } else if (id == R.id.nav_signOut) {
@@ -194,6 +192,11 @@ public abstract class BaseActivity extends AppCompatActivity
         }
 
         startActivity(intent);
+
+        if (id == R.id.nav_signOut) {
+            manageBackStack();
+        }
+
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

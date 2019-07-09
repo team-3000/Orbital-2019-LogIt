@@ -1,8 +1,8 @@
 package com.team3000.logit;
 
-import android.util.Log;q
+import android.os.Bundle;
+import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -18,41 +18,29 @@ public class CollectionPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Log.i("CollectionPagerAdapter", "In getItem");
-        switch (position) {
-            case 0 :
-                return new CollectionLogFragment(collectionName, "note");
-            case 1 :
-                return new CollectionLogFragment(collectionName, "task");
-            case 2 :
-                return new CollectionLogFragment(collectionName, "event");
-            default:
-                return null;
-        }
-        /* For debugging
-        CollectionLogFragment fragment;
+
+        Bundle bundle = new Bundle();
+        bundle.putString("collectionName", collectionName);
 
         switch (position) {
             case 0 :
-                Log.i(TAG, "In note fragment");
-                fragment = new CollectionLogFragment(collectionName, "note");
+                bundle.putString("logType", "note");
                 break;
             case 1 :
-                Log.i(TAG, "In task fragment");
-                fragment =  new CollectionLogFragment(collectionName, "task");
+                bundle.putString("logType", "task");
                 break;
             case 2 :
-                Log.i(TAG, "In event fragment");
-                fragment = new CollectionLogFragment(collectionName, "event");
+                bundle.putString("logType", "event");
                 break;
             default:
-                fragment = null;
         }
+
+        CollectionLogFragment fragment = new CollectionLogFragment();
+        fragment.setArguments(bundle);
 
         return fragment;
-        */
     }
 
-    @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {

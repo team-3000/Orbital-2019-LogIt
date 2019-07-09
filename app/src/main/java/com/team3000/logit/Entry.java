@@ -1,6 +1,9 @@
 package com.team3000.logit;
 
-public class Entry implements Comparable<Entry> {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Entry implements Comparable<Entry>, Parcelable {
     private String id;
     private String type;
     private String title;
@@ -87,4 +90,39 @@ public class Entry implements Comparable<Entry> {
             return thisDay - otherDay;
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(type);
+        dest.writeString(title);
+        dest.writeString(date);
+        dest.writeString(time);
+        dest.writeString(desc);
+    }
+
+    public static final Parcelable.Creator<Entry> CREATOR
+            = new Parcelable.Creator<Entry>() {
+        @Override
+        public Entry createFromParcel(Parcel source) {
+            String id = source.readString();
+            String type = source.readString();
+            String title = source.readString();
+            String date = source.readString();
+            String time = source.readString();
+            String desc = source.readString();
+
+            return new Entry(id, type, title, date, time, desc);
+        }
+
+        @Override
+        public Entry[] newArray(int size) {
+            return new Entry[size];
+        }
+    };
 }

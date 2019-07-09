@@ -25,6 +25,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -40,8 +41,10 @@ public class CollectionLogFragment extends Fragment {
     private String type;
     private String directory;
     private String userID;
-    private List<Pair<Entry, String>> entries;
-    private Boolean firstLoad;
+    private ArrayList<Pair<Entry, String>> entries;
+    private ArrayList<EntryPair> entriesTesting;
+    private boolean firstLoad;
+    private boolean finishedLoading;
 
     public class OnDestroyListener implements EntryListener.OnDestroyListener {
         @Override
@@ -66,28 +69,20 @@ public class CollectionLogFragment extends Fragment {
         }
     }
 
-    // For system's use
-    public CollectionLogFragment() {}
-
-    public CollectionLogFragment(String collectionName, String type) {
-        this.collectionName = collectionName;
-        this.type = type;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "OnCreate");
 
-        this.entries = new LinkedList<>();
+        Bundle bundle = getArguments();
+
+        this.entries = new ArrayList<>();
+        this.entriesTesting = new ArrayList<>();
         this.db = FirebaseFirestore.getInstance();
 
-        // Deal with orientation change
-        // Must be put before forming the datapath or else the datapath is wrong
-        if (savedInstanceState != null) {
-            this.collectionName = savedInstanceState.getString("collectionName");
-            this.type = savedInstanceState.getString("type");
-        }
+        // Always pass data to fragment in bundle, never create custom constructor for fragment
+        this.collectionName = bundle.getString("collectionName");
+        this.type = bundle.getString("logType");
 
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.directory = String.format(Locale.US, "users/%s/collections/%s/%s"
@@ -119,6 +114,16 @@ public class CollectionLogFragment extends Fragment {
         });
 
         loadEntriesData();
+
+        if (savedInstanceState != null) {
+            this.finishedLoading = savedInstanceState.getBoolean("finishedLoading");
+        }
+
+        if (finishedLoading) {
+            Log.i(TAG, "finishedLoading");
+            ArrayList<EntryPair> list = savedInstanceState.getParcelableArrayList("entryPairs");
+            if (list.size() > 0) Log.i(TAG, list.get(0).getEntry().getTitle());
+        }
     }
 
     @Override
@@ -131,8 +136,9 @@ public class CollectionLogFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("collectionName", collectionName);
-        outState.putString("type", type);
+        Log.i(TAG, "onSaveInstanceState");
+        outState.putBoolean("finishedLoading", finishedLoading);
+        outState.putParcelableArrayList("entryPairs", entriesTesting);
     }
 
     @Nullable
@@ -197,11 +203,15 @@ public class CollectionLogFragment extends Fragment {
                     // Log.i(TAG, entry.getDate());
 
                     entries.add(new Pair<>(entry, entryID));
+
+                    // For testing
+                    entriesTesting.add(new EntryPair(entry, entryID));
                 }
             }
 
             logAdapter.notifyDataSetChanged(); // new stuff here
             firstLoad = false;
+            finishedLoading = true;
         }  ));
     }
 
