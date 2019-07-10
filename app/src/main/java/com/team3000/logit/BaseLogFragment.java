@@ -49,13 +49,13 @@ public class BaseLogFragment extends Fragment {
             query = db.collection(directory)
                     .whereEqualTo("date", getArguments().getString("logDate"))
                     .orderBy("time");
-            initaliseRecyclerView(view, query);
+            initialiseRecyclerView(view, query);
         } else {
             query = db.collection(directory)
                     .whereEqualTo("monthlyLog", true)
                     .orderBy("date")
                     .orderBy("time");
-            initaliseRecyclerView(view, query);
+            initialiseRecyclerView(view, query);
         }
     }
 
@@ -71,7 +71,7 @@ public class BaseLogFragment extends Fragment {
         mAdapter.stopListening();
     }
 
-    private void initaliseRecyclerView(View view, Query query)   {
+    private void initialiseRecyclerView(View view, Query query)   {
         FirestoreRecyclerOptions<Entry> options = new FirestoreRecyclerOptions.Builder<Entry>()
                 .setQuery(query, Entry.class)
                 .build();
