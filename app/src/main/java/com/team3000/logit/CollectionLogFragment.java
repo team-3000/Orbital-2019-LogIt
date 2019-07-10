@@ -1,8 +1,8 @@
 package com.team3000.logit;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,10 +41,11 @@ public class CollectionLogFragment extends Fragment {
     private String type;
     private String directory;
     private String userID;
-    private ArrayList<Pair<Entry, String>> entries;
-    private ArrayList<EntryPair> entriesTesting;
+    // private ArrayList<Pair<Entry, String>> entries;
+    private ArrayList<EntryPair> entries;
     private boolean firstLoad;
-    private boolean finishedLoading;
+    private boolean activityRestarted;
+    private boolean configChanged;
 
     public class OnDestroyListener implements EntryListener.OnDestroyListener {
         @Override
@@ -61,10 +62,17 @@ public class CollectionLogFragment extends Fragment {
             Log.i(TAG, "In OnUpdateListener");
 
             // Try to use iterator later so that we won't have to tranverse the list twice
+            /*
             Pair<Entry, String> oldEntryPair = entries.get(entryPosition);
             String entryId = oldEntryPair.second;
 
             entries.set(entryPosition, new Pair<>(updatedEntry, entryId));
+            */
+
+            EntryPair oldEntryPair = entries.get(entryPosition);
+            String entryId = oldEntryPair.getEntryId();
+
+            entries.set(entryPosition, new EntryPair(updatedEntry, entryId));
             logAdapter.notifyItemChanged(entryPosition);
         }
     }
@@ -75,55 +83,70 @@ public class CollectionLogFragment extends Fragment {
         Log.i(TAG, "OnCreate");
 
         Bundle bundle = getArguments();
-
-        this.entries = new ArrayList<>();
-        this.entriesTesting = new ArrayList<>();
-        this.db = FirebaseFirestore.getInstance();
-
-        // Always pass data to fragment in bundle, never create custom constructor for fragment
         this.collectionName = bundle.getString("collectionName");
         this.type = bundle.getString("logType");
-
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        this.db = FirebaseFirestore.getInstance();
+        this.userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.directory = String.format(Locale.US, "users/%s/collections/%s/%s"
         , userID, collectionName, type);
-        collectionReference = db.collection(directory);
+        this.collectionReference = db.collection(directory);
 
-        // create the adapter with an empty list of entries data first, once the data is completely loaded
-        // call notifyDataSetChanged on the adapter (as shown in fetchRespectiveEntries()
-        // this.onDestroyListener =
+        // Handle screen load part
+        // must put here, regardless of savedInstanceState is null or not to prevent nullPointer exception
+        this.entries = new ArrayList<>();
+        if (savedInstanceState != null) {
+            /*
+            this.finishedLoading = savedInstanceState.getBoolean("finishedLoading", false);
+            if (configChanged && finishedLoading) {
+                this.entries = savedInstanceState.getParcelableArrayList("entryPairs");
+            }
+            */
+            this.configChanged = savedInstanceState.getBoolean("configChanged", false);
+            this.firstLoad = savedInstanceState.getBoolean("firstLoad", true);
+            this.activityRestarted = savedInstanceState.getBoolean("activityRestarted", false);
+            // Log.i(TAG, String.valueOf(configChanged));
+            // Log.i(TAG, String.valueOf(firstLoad));
+            if (configChanged && !firstLoad) {
+                ArrayList<EntryPair> entryPairs = savedInstanceState.getParcelableArrayList("entryPairs");
+                this.entries = (entryPairs == null) ? new ArrayList<>() : entryPairs;
+                if (this.entries == null) Log.i(TAG, "entries is null");
+            }
+        } else {
+            this.firstLoad = true;
+        }
+
         this.logAdapter = new CollectionLogAdapter(getActivity(), entries)
                 .setOnDestroyListener(new OnDestroyListener())
                 .setOnUpdateListener(new OnUpdateListener());
 
-        firstLoad = true;
-        listenerRegistration = collectionReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
+        this.listenerRegistration = collectionReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (e != null) {
                 Log.w(TAG, "listen:error", e);
                 return;
             }
+            Log.i(TAG, "in listener registration");
 
-            if (!firstLoad) {
+            if (firstLoad) {
+                Log.i(TAG, "in first load");
+                List<String> dbPaths = new ArrayList<>();
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                    if (dc.getType() == DocumentChange.Type.ADDED) {
-                        Log.i(TAG, "onEvent");
+                    if (dc.getType() == DocumentChange.Type.ADDED) { // later need to add a boolean here to detect that it is not first load
+                        dbPaths.add(dc.getDocument().getString("dataPath"));
+                    }
+                }
+                fetchRespectiveEntries(dbPaths);
+            } else if (!configChanged && !firstLoad){
+                Log.i(TAG, "in adding new entry");
+                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                    if (dc.getType() == DocumentChange.Type.ADDED) { // later need to add a boolean here to detect that it is not first load
                         addNewEnty(dc.getDocument().getString("dataPath"));
                     }
                 }
             }
+
+            Log.i(TAG, "activityRestarted " + String.valueOf(activityRestarted));
+            if (configChanged && activityRestarted) configChanged = false;
         });
-
-        loadEntriesData();
-
-        if (savedInstanceState != null) {
-            this.finishedLoading = savedInstanceState.getBoolean("finishedLoading");
-        }
-
-        if (finishedLoading) {
-            Log.i(TAG, "finishedLoading");
-            ArrayList<EntryPair> list = savedInstanceState.getParcelableArrayList("entryPairs");
-            if (list.size() > 0) Log.i(TAG, list.get(0).getEntry().getTitle());
-        }
     }
 
     @Override
@@ -134,11 +157,21 @@ public class CollectionLogFragment extends Fragment {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        this.configChanged = true;
+        this.activityRestarted = true;
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState");
-        outState.putBoolean("finishedLoading", finishedLoading);
-        outState.putParcelableArrayList("entryPairs", entriesTesting);
+        // outState.putBoolean("finishedLoading", finishedLoading);
+        outState.putBoolean("firstLoad", firstLoad);
+        outState.putBoolean("configChanged", configChanged);
+        outState.putBoolean("activityRestarted", activityRestarted);
+        outState.putParcelableArrayList("entryPairs", entries);
     }
 
     @Nullable
@@ -154,6 +187,12 @@ public class CollectionLogFragment extends Fragment {
         return parentView;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.i(TAG, "onDestroyView " + type);
+    }
+
     private void loadEntriesData() {
         Log.i(TAG, "In loadEntriesData " + collectionName + " " + type);
         Log.i(TAG, collectionReference.getPath());
@@ -167,13 +206,14 @@ public class CollectionLogFragment extends Fragment {
                     collection_entries.add(doc);
                 }
 
-                fetchRespectiveEntries(collection_entries);
+                // fetchRespectiveEntries(collection_entries);
             } else {
                 Log.e(TAG, "Fail to load collection entries!");
             }
         });
     }
 
+    /*
     private void fetchRespectiveEntries(List<QueryDocumentSnapshot> collection_entries) {
         Log.i(TAG, "In fetchRespectiveEntries");
 
@@ -202,10 +242,10 @@ public class CollectionLogFragment extends Fragment {
                     // Log.i(TAG, entry.getDesc());
                     // Log.i(TAG, entry.getDate());
 
-                    entries.add(new Pair<>(entry, entryID));
+                    // entries.add(new Pair<>(entry, entryID));
 
                     // For testing
-                    entriesTesting.add(new EntryPair(entry, entryID));
+                    entries.add(new EntryPair(entry, entryID));
                 }
             }
 
@@ -214,6 +254,7 @@ public class CollectionLogFragment extends Fragment {
             finishedLoading = true;
         }  ));
     }
+    */
 
     // Add new entry into the entry list of collection log
     private void addNewEnty(String partialdbPath) {
@@ -225,11 +266,59 @@ public class CollectionLogFragment extends Fragment {
                 Entry newEntry = doc.toObject(Entry.class);
                 String entryID = doc.getId();
 
-                entries.add(new Pair<>(newEntry, entryID));
+                // entries.add(new Pair<>(newEntry, entryID));
+                entries.add(new EntryPair(newEntry, entryID));
                 logAdapter.notifyItemInserted(entries.size() - 1);
             } else {
                 Log.e(TAG, "Fail to add new entry!");
             }
         });
+    }
+
+    private void onFinishLoading() {
+        logAdapter.notifyDataSetChanged(); // new stuff here
+        firstLoad = false;
+    }
+
+    private void fetchRespectiveEntries(List<String> directories) {
+        String partial_dbPath = String.format(Locale.US, "users/%s", userID);
+
+        List<Task<DocumentSnapshot>> tasks = new LinkedList<>();
+
+        // Spawn off fetching tasks
+        for (String directory : directories) {
+            String dbPath = String.format(Locale.US, "%s/%s",
+                    partial_dbPath, directory);
+            Log.i(TAG, dbPath);
+            tasks.add(db.document(dbPath).get());
+        }
+
+        // When all fetching tasks complete
+        Tasks.whenAllComplete(tasks).addOnCompleteListener((task -> {
+            Log.i(TAG, "All fetch tasks completes");
+            List<Task<?>> tasks_list = task.getResult();
+
+            for (Task<?> task1 : tasks_list) {
+                if (task1.isSuccessful()) {
+                    DocumentSnapshot doc = (DocumentSnapshot) task1.getResult();
+                    Entry entry = doc.toObject(Entry.class);
+                    String entryID = doc.getId();
+                    if (doc != null) Log.i(TAG, doc.getId());
+                    // For debugging purpose
+                    // Log.i(TAG, entry.getTitle());
+                    // Log.i(TAG, entry.getDesc());
+                    // Log.i(TAG, entry.getDate());
+
+                    // entries.add(new Pair<>(entry, entryID));
+
+                    // For testing
+                    entries.add(new EntryPair(entry, entryID));
+                }
+            }
+
+            logAdapter.notifyDataSetChanged(); // new stuff here
+            firstLoad = false;
+            // finishedLoading = true;
+        }  ));
     }
 }
