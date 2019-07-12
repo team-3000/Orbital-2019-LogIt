@@ -107,16 +107,15 @@ public class EntryActivity extends BaseActivity {
 
         btnDeleteEntry.setOnClickListener(v -> {
             EntryManager entryManager = new EntryManager(EntryActivity.this);
-            entryManager.deleteEntry(ref, entryPosition);
             entryManager.deleteFromTracker(type + "Store", directory);
             if (eisen != null) {
                 entryManager.deleteFromTracker(eisen, directory);
             }
             // ref.delete();
 //            startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
-            Log.d("Hoogashaka", "After delete");
-            // The EntryActivity will straightaway close once user click on the delete button
-            EntryActivity.this.finish();
+            // The EntryActivity will straightaway close once item is deleted in Firestore (handled in deleteEntry())
+            entryManager.deleteEntry(ref, entryPosition);
+//            EntryActivity.this.finish();
         });
     }
 
