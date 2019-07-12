@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -100,6 +101,7 @@ public class EntryActivity extends BaseActivity {
             intentEdit.putExtra("entryId", entryId);
             intentEdit.putExtra("entry_position", entryPosition);
             intentEdit.putExtra("oriEisen", eisen);
+            intentEdit.putExtra("redirect", getIntent().getStringExtra("redirect"));
             startActivity(intentEdit);
         });
 
@@ -111,7 +113,8 @@ public class EntryActivity extends BaseActivity {
                 entryManager.deleteFromTracker(eisen, directory);
             }
             // ref.delete();
-            // startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
+//            startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
+            Log.d("Hoogashaka", "After delete");
             // The EntryActivity will straightaway close once user click on the delete button
             EntryActivity.this.finish();
         });

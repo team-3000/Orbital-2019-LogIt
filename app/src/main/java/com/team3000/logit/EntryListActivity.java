@@ -115,6 +115,7 @@ public class EntryListActivity extends BaseActivity {
         fabAddEntryList.setOnClickListener(v -> {
             Intent intent = new Intent(EntryListActivity.this, EntryFormActivity.class);
             intent.putExtra("type", type.replace("Store", ""));
+            intent.putExtra("redirect", "entrylist");
             startActivity(intent);
             finish();
         });
