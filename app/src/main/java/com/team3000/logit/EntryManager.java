@@ -202,6 +202,8 @@ public class EntryManager {
                 intentNew = new Intent(activity, EntryListActivity.class);
                 intentNew.putExtra("trackType", type + "Store");
                 break;
+            default:
+                break;
         }
         activity.startActivity(intentNew);
     }
