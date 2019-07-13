@@ -42,6 +42,8 @@ public class EntryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_entry, contentFrameLayout);
+        FrameLayout flEntryContent = findViewById(R.id.flEntryContent);
+        getLayoutInflater().inflate(R.layout.activity_entry_scrollable_content, flEntryContent);
 
         navView = findViewById(R.id.bottom_navView);
         tvEntryTitle = findViewById(R.id.tvEntryTitle);
