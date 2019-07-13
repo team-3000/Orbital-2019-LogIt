@@ -1,6 +1,7 @@
 package com.team3000.logit;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -76,6 +77,7 @@ public class EntryManager {
                         });
                     }
                 }));
+                activity.finish();
             }
         }));
 
@@ -185,5 +187,24 @@ public class EntryManager {
                         }
                     });
         }
+    }
+
+    protected void redirectToPrecedingPage(String redirect, String type) {
+        Intent intentNew = new Intent();
+        switch (redirect) {
+            case "dailylog":
+                intentNew = new Intent(activity, DailyLogActivity.class);
+                break;
+            case "monthlylog":
+                intentNew = new Intent(activity, MonthlyLogActivity.class);
+                break;
+            case "entrylist":
+                intentNew = new Intent(activity, EntryListActivity.class);
+                intentNew.putExtra("trackType", type + "Store");
+                break;
+            default:
+                break;
+        }
+        activity.startActivity(intentNew);
     }
 }

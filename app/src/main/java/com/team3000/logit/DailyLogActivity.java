@@ -68,6 +68,7 @@ public class DailyLogActivity extends BaseLogActivity {
             bundle.putString("logType", logType);
             bundle.putString("directory", directory);
             bundle.putString("logDate", logDate);
+            bundle.putString("redirect", "dailylog");
             BaseLogFragment blfrag = new BaseLogFragment();
             blfrag.setArguments(bundle);
             return blfrag;

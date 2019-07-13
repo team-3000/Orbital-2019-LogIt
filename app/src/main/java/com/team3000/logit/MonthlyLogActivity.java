@@ -49,6 +49,7 @@ public class MonthlyLogActivity extends BaseLogActivity {
             bundle.putString("logType", logType);
             bundle.putString("directory", directory);
             bundle.putString("logDate", "");
+            bundle.putString("redirect", "monthlylog");
             BaseLogFragment blfrag = new BaseLogFragment();
             blfrag.setArguments(bundle);
             return blfrag;
