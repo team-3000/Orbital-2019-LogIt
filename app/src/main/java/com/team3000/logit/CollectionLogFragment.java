@@ -42,7 +42,7 @@ public class CollectionLogFragment extends Fragment {
     private String directory;
     private String userID;
     private ArrayList<EntryPair> entriesPairs;
-    private boolean firstLoad;
+    private boolean firstTimeLoading;
     private boolean startObservingNewEntry;
     private boolean configChanged;
 
@@ -103,7 +103,7 @@ public class CollectionLogFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState");
-        outState.putBoolean("firstLoad", firstLoad);
+        outState.putBoolean("firstTimeLoading", firstTimeLoading);
         outState.putBoolean("configChanged", configChanged);
         outState.putParcelableArrayList("entryPairs", entriesPairs);
     }
@@ -129,17 +129,17 @@ public class CollectionLogFragment extends Fragment {
         // Logic to handle orientation change.
         if (savedInstanceState != null) {
             this.configChanged = savedInstanceState.getBoolean("configChanged", false);
-            this.firstLoad = savedInstanceState.getBoolean("firstLoad", true);
+            this.firstTimeLoading = savedInstanceState.getBoolean("firstTimeLoading", true);
 
             // If data is fully loaded, then when orientation changes, the previously loaded data will
             // be used for the adapter instead of fetching all the data from the database again.
-            if (configChanged && !firstLoad) {
+            if (configChanged && !firstTimeLoading) {
                 ArrayList<EntryPair> entryPairs = savedInstanceState.getParcelableArrayList("entryPairs");
                 this.entriesPairs = (entryPairs == null) ? new ArrayList<>() : entryPairs;
             }
         } else {
             // First time loading data, so fetch from database
-            this.firstLoad = true;
+            this.firstTimeLoading = true;
         }
 
         this.logAdapter = new CollectionLogAdapter(getActivity(), entriesPairs)
@@ -155,7 +155,7 @@ public class CollectionLogFragment extends Fragment {
 
             // Fetch data from database if this is the first time loading all the data from database
             // The second if statement deals with event where new entry is added into the database
-            if (firstLoad) {
+            if (firstTimeLoading) {
                 Log.i(TAG, "in first load " + type);
                 List<String> dbPaths = new ArrayList<>();
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
@@ -226,7 +226,7 @@ public class CollectionLogFragment extends Fragment {
 
             // Use to prevent unnecessary fetching of data from the database, esp when orientation
             // changes.
-            firstLoad = false;
+            firstTimeLoading = false;
         }  ));
     }
 
