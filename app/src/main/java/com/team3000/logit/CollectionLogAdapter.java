@@ -11,9 +11,10 @@ import java.util.List;
 
 public class CollectionLogAdapter extends BaseLogAdapter implements Serializable{
     private static final String TAG = "CollectionLogAdapter";
-    private List<Pair<Entry, String>> entries;
+    // private List<Pair<Entry, String>> entries;
+    private List<EntryPair> entries;
 
-    public CollectionLogAdapter(Activity activity, List<Pair<Entry, String>> entries) {
+    public CollectionLogAdapter(Activity activity, List<EntryPair> entries) {
         super(activity);
         this.entries = entries;
     }
@@ -21,8 +22,10 @@ public class CollectionLogAdapter extends BaseLogAdapter implements Serializable
     @Override
     public void onBindViewHolder(@NonNull EntryHolder holder, int position) {
         Log.i(TAG, "in CollectionLogAdapter onBindViewHolder");
-        Pair<Entry, String> entryPair = entries.get(position);
-        super.fillUpEntryHolder(holder, entryPair.first, entryPair.second);
+        // Pair<Entry, String> entryPair = entries.get(position);
+        EntryPair entryPair = entries.get(position);
+        // super.fillUpEntryHolder(holder, entryPair.first, entryPair.second);
+        super.fillUpEntryHolder(holder, entryPair.getEntry(), entryPair.getEntryId());
     }
 
     @Override
