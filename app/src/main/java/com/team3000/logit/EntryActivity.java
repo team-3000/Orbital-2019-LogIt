@@ -42,6 +42,8 @@ public class EntryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_entry, contentFrameLayout);
+        FrameLayout flEntryContent = findViewById(R.id.flEntryContent);
+        getLayoutInflater().inflate(R.layout.activity_entry_scrollable_content, flEntryContent);
 
         navView = findViewById(R.id.bottom_navView);
         tvEntryTitle = findViewById(R.id.tvEntryTitle);
@@ -100,20 +102,21 @@ public class EntryActivity extends BaseActivity {
             intentEdit.putExtra("entryId", entryId);
             intentEdit.putExtra("entry_position", entryPosition);
             intentEdit.putExtra("oriEisen", eisen);
+            intentEdit.putExtra("redirect", getIntent().getStringExtra("redirect"));
             startActivity(intentEdit);
         });
 
         btnDeleteEntry.setOnClickListener(v -> {
             EntryManager entryManager = new EntryManager(EntryActivity.this);
-            entryManager.deleteEntry(ref, entryPosition);
             entryManager.deleteFromTracker(type + "Store", directory);
             if (eisen != null) {
                 entryManager.deleteFromTracker(eisen, directory);
             }
             // ref.delete();
-            // startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
-            // The EntryActivity will straightaway close once user click on the delete button
-            EntryActivity.this.finish();
+//            startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
+            // The EntryActivity will straightaway close once item is deleted in Firestore (handled in deleteEntry())
+            entryManager.deleteEntry(ref, entryPosition);
+//            EntryActivity.this.finish();
         });
     }
 

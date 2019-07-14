@@ -48,14 +48,15 @@ public class BaseLogFragment extends Fragment {
         if ("daily".equals(logType)) {
             query = db.collection(directory)
                     .whereEqualTo("date", getArguments().getString("logDate"))
+//                    Composite queries requires manual indexing via Firestore console, no programmatic way to set index
                     .orderBy("time");
-            initaliseRecyclerView(view, query);
+            initialiseRecyclerView(view, query);
         } else {
             query = db.collection(directory)
                     .whereEqualTo("monthlyLog", true)
                     .orderBy("date")
                     .orderBy("time");
-            initaliseRecyclerView(view, query);
+            initialiseRecyclerView(view, query);
         }
     }
 
@@ -71,7 +72,7 @@ public class BaseLogFragment extends Fragment {
         mAdapter.stopListening();
     }
 
-    private void initaliseRecyclerView(View view, Query query)   {
+    private void initialiseRecyclerView(View view, Query query)   {
         FirestoreRecyclerOptions<Entry> options = new FirestoreRecyclerOptions.Builder<Entry>()
                 .setQuery(query, Entry.class)
                 .build();
@@ -96,6 +97,7 @@ public class BaseLogFragment extends Fragment {
                     intent.putExtra("month", entryMonth);
                     intent.putExtra("entryId", entryId);
                     intent.putExtra("directory", directory);
+                    intent.putExtra("redirect", getArguments().getString("redirect"));
                     startActivity(intent);
                 });
             }

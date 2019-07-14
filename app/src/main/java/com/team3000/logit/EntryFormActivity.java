@@ -59,6 +59,7 @@ public class EntryFormActivity extends AppCompatActivity {
     private String entryId;
     private String oriMonth;
     private String oriEisen;
+    private String redirect;
 
     // new stuff here
     private String curr_collection;
@@ -95,6 +96,7 @@ public class EntryFormActivity extends AppCompatActivity {
         entryId = getIntent().getStringExtra("entryId");
         oriMonth = getIntent().getStringExtra("oriMonth");
         oriEisen = getIntent().getStringExtra("oriEisen");
+        redirect = getIntent().getStringExtra("redirect");
 
         curr_collection_path = ""; // new stuff here
 
@@ -202,11 +204,10 @@ public class EntryFormActivity extends AppCompatActivity {
                             if (!"".equals(eisen)) {
                                 manager.updateTracker(eisen, entryPath);
                             }
+                            new EntryManager(EntryFormActivity.this).redirectToPrecedingPage(redirect, type);
+                            finish();
                         }
                     });
-                    // Intent intentNew = new Intent(EntryFormActivity.this, DailyLogActivity.class);
-                    // startActivity(intentNew);
-                    finish();
                 } else {
                     final DocumentReference doc = ref.document(entryId);
                     Log.i(TAG, doc.getPath());
