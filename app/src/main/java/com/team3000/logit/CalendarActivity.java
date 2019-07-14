@@ -2,9 +2,14 @@ package com.team3000.logit;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
@@ -21,9 +26,9 @@ public class CalendarActivity extends BaseActivity {
 
         Button btnCalToday = findViewById(R.id.btnCalToday);
         Button btnCalTomorrow = findViewById(R.id.btnCalTomorrow);
-        Button btnCalLastMonth = findViewById(R.id.btnCalLastMonth);
-        Button btnCalThisMonth = findViewById(R.id.btnCalThisMonth);
-        Button btnCalNextMonth = findViewById(R.id.btnCalNextMonth);
+        Spinner spnMonthSelect = findViewById(R.id.spnMonthSelect);
+        EditText etYearSelect = findViewById(R.id.etYearSelect);
+        Button btnGoToMonth = findViewById(R.id.btnGoToMonth);
         CalendarView calendarView = findViewById(R.id.calendarView);
         Calendar cal = Calendar.getInstance();
         final int year = cal.get(Calendar.YEAR);
@@ -36,32 +41,20 @@ public class CalendarActivity extends BaseActivity {
 
         btnCalTomorrow.setOnClickListener(v -> goToDailyLog(year, month, day, 1));
 
-        btnCalLastMonth.setOnClickListener(v -> {
-            int lastMonth;
-            int adjYear;
-            if (month == 1) {
-                lastMonth = 12;
-                adjYear = year - 1;
-            } else {
-                lastMonth = month - 1;
-                adjYear = year;
-            }
-            goToMonthlyLog(adjYear, lastMonth);
-        });
+        ArrayAdapter<CharSequence> mAdapter = ArrayAdapter.createFromResource(this,
+                R.array.months_array, android.R.layout.simple_spinner_item);
+        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnMonthSelect.setAdapter(mAdapter);
+        spnMonthSelect.setSelection(0);
 
-        btnCalThisMonth.setOnClickListener(v -> goToMonthlyLog(year, month));
-
-        btnCalNextMonth.setOnClickListener(v -> {
-            int nextMonth;
-            int adjYear;
-            if (month == 12) {
-                nextMonth = 1;
-                adjYear = year + 1;
+        btnGoToMonth.setOnClickListener(v -> {
+            String monthGo = (String) spnMonthSelect.getSelectedItem();
+            int yearGo = Integer.parseInt(etYearSelect.getText().toString());
+            if ("Month".equals(monthGo) || "".equals(etYearSelect)) {
+                Toast.makeText(this, "Please select Month & Year to go to", Toast.LENGTH_SHORT).show();
             } else {
-                nextMonth = month + 1;
-                adjYear = year;
+                goToMonthlyLog(monthGo, yearGo);
             }
-            goToMonthlyLog(adjYear, nextMonth);
         });
     }
 
@@ -73,10 +66,10 @@ public class CalendarActivity extends BaseActivity {
         startActivity(intentDaily);
     }
 
-    private void goToMonthlyLog(int year, int month) {
+    private void goToMonthlyLog(String month, int year) {
         Intent intentMonth = new Intent(CalendarActivity.this, MonthlyLogActivity.class);
         intentMonth.putExtra("year", year);
-        intentMonth.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
+        intentMonth.putExtra("month", month);
         startActivity(intentMonth);
     }
 }

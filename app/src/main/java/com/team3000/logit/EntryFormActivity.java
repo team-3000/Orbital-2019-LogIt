@@ -243,12 +243,6 @@ public class EntryFormActivity extends AppCompatActivity {
                     if (!month.equals(oriMonth)) {
                         database.document(oriDir).delete();
                     }
-                    Intent intentEdit = new Intent(EntryFormActivity.this, EntryActivity.class);
-                    intentEdit.putExtra("type", type);
-                    intentEdit.putExtra("month", month);
-                    intentEdit.putExtra("entryId", entryId);
-                    intentEdit.putExtra("directory", String.format(Locale.US, "%s/%s", dbPath, entryId));
-                    startActivity(intentEdit);
                 }
 
 //                if (cbAddToMonthLog.isChecked()) {
