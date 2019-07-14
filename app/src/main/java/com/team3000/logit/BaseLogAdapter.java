@@ -17,17 +17,11 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
     private static final String TAG = "BaseLogAdapter";
     private Activity activity;
     private String userId;
-    protected EntryListener.OnDestroyListener onDestroyListener;
     protected EntryListener.OnUpdateListener onUpdateListener;
 
     public BaseLogAdapter(Activity activity) {
         this.activity = activity;
         this.userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    }
-
-    public BaseLogAdapter setOnDestroyListener(EntryListener.OnDestroyListener onDestroyListener) {
-        this.onDestroyListener = onDestroyListener;
-        return this;
     }
 
     public BaseLogAdapter setOnUpdateListener(EntryListener.OnUpdateListener onUpdateListener) {
@@ -52,7 +46,6 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
         // final DocumentSnapshot doc = getSnapshots().getSnapshot(holder.getAdapterPosition());
         holder.mView.setOnClickListener(v -> {
             Log.i(TAG, "Attaching onDestroyListener");
-            EntryManager.setOnDestroyListener(onDestroyListener); // For collection log
             EntryManager.setOnUpdateListener(onUpdateListener); // For collection log
 
 
@@ -67,7 +60,7 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
             entryIntent.putExtra("entryId", entryId);
             entryIntent.putExtra("directory", directory);
 
-            if (onDestroyListener != null && onUpdateListener != null) {
+            if (onUpdateListener != null) {
                 entryIntent.putExtra("entry_position", holder.getAdapterPosition()); // new stuff
             }
 

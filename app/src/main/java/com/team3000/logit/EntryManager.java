@@ -19,7 +19,6 @@ import java.util.Map;
 
 public class EntryManager {
     private static final String TAG = "EntryManager";
-    private static EntryListener.OnDestroyListener onDestroyListener;
     private static EntryListener.OnUpdateListener onUpdateListener;
     private Activity activity;
     private FirebaseFirestore firestore;
@@ -31,11 +30,8 @@ public class EntryManager {
         this.user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    public static void setOnDestroyListener(EntryListener.OnDestroyListener listener) {
-        onDestroyListener = listener;
-    }
-
     public static void setOnUpdateListener(EntryListener.OnUpdateListener listener) {
+        Log.i(TAG, "In attaching onUpdate Listener");
         onUpdateListener = listener;
     }
 
@@ -65,9 +61,6 @@ public class EntryManager {
                         deleteFromCollection(collection_path, (task3) -> {
                             if (task3.isSuccessful()) {
                                 Log.i(TAG, "Succesfully deleted from collection!");
-                                if (entryPosition != -1) { // for collection log
-                                    onDestroyListener.onDestroy(entryPosition);
-                                }
                             } else {
                                 Log.i(TAG, "Fail to delete from collection!");
                             }
@@ -122,14 +115,12 @@ public class EntryManager {
     public void addIntoCollectionForExistingDoc(final String newCollection, String oldCollection, final String type,
                                                 final String docPath, final DocumentReference entryRef,
                                                 String curr_collection_path, int entryPosition) {
+        Log.i(TAG, entryPosition + "");
         if (!oldCollection.isEmpty() && newCollection.isEmpty()) {
             Log.i(TAG, "In adding into collection for existing doc");
             deleteFromCollection(curr_collection_path, (task -> {
                 if (task.isSuccessful()) {
                     Log.i(TAG, "Deleted from old collection!");
-                    if (entryPosition != -1) { // For collectionLog purpose
-                        onDestroyListener.onDestroy(entryPosition);
-                    }
                 }
             }));
             activity.finish();
@@ -140,9 +131,6 @@ public class EntryManager {
             deleteFromCollection(curr_collection_path, (task -> {
                 if (task.isSuccessful()) {
                     Log.i(TAG, "A Deleted from old collection!");
-                    if (entryPosition != -1) { // For collectionLog purpose
-                        onDestroyListener.onDestroy(entryPosition);
-                    }
                     addIntoCollection(newCollection, type, docPath, entryRef);
                 }
             }));
@@ -150,6 +138,7 @@ public class EntryManager {
             && entryPosition != -1){ // for collection log purpose
             entryRef.get().addOnCompleteListener(task -> {
                if (task.isSuccessful()) {
+                   Log.i(TAG, "Collection Log onUpdate");
                    Entry entry = task.getResult().toObject(Entry.class);
                    onUpdateListener.onUpdate(entryPosition, entry);
                }
