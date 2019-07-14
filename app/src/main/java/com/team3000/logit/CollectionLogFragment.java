@@ -1,8 +1,8 @@
 package com.team3000.logit;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,14 +22,14 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
+// Represents a page(note, task or entry) in the Collection Log.
 public class CollectionLogFragment extends Fragment {
     private static final String TAG = "CollectionLogFragment";
     private FirebaseFirestore db;
@@ -41,19 +41,10 @@ public class CollectionLogFragment extends Fragment {
     private String type;
     private String directory;
     private String userID;
-    private ArrayList<Pair<Entry, String>> entries;
-    private ArrayList<EntryPair> entriesTesting;
+    private ArrayList<EntryPair> entriesPairs;
     private boolean firstLoad;
-    private boolean finishedLoading;
-
-    public class OnDestroyListener implements EntryListener.OnDestroyListener {
-        @Override
-        public void onDestroy(int entryPosition) {
-            Log.i(TAG, "In OnDestroyListener");
-            entries.remove(entryPosition);
-            logAdapter.notifyItemRemoved(entryPosition);
-        }
-    }
+    private boolean startObservingNewEntry;
+    private boolean configChanged;
 
     public class OnUpdateListener implements  EntryListener.OnUpdateListener {
         @Override
@@ -61,10 +52,17 @@ public class CollectionLogFragment extends Fragment {
             Log.i(TAG, "In OnUpdateListener");
 
             // Try to use iterator later so that we won't have to tranverse the list twice
-            Pair<Entry, String> oldEntryPair = entries.get(entryPosition);
+            /*
+            Pair<Entry, String> oldEntryPair = entriesPairs.get(entryPosition);
             String entryId = oldEntryPair.second;
 
-            entries.set(entryPosition, new Pair<>(updatedEntry, entryId));
+            entriesPairs.set(entryPosition, new Pair<>(updatedEntry, entryId));
+            */
+
+            EntryPair oldEntryPair = entriesPairs.get(entryPosition);
+            String entryId = oldEntryPair.getEntryId();
+
+            entriesPairs.set(entryPosition, new EntryPair(updatedEntry, entryId));
             logAdapter.notifyItemChanged(entryPosition);
         }
     }
@@ -75,55 +73,15 @@ public class CollectionLogFragment extends Fragment {
         Log.i(TAG, "OnCreate");
 
         Bundle bundle = getArguments();
-
-        this.entries = new ArrayList<>();
-        this.entriesTesting = new ArrayList<>();
-        this.db = FirebaseFirestore.getInstance();
-
-        // Always pass data to fragment in bundle, never create custom constructor for fragment
         this.collectionName = bundle.getString("collectionName");
         this.type = bundle.getString("logType");
-
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        this.db = FirebaseFirestore.getInstance();
+        this.userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.directory = String.format(Locale.US, "users/%s/collections/%s/%s"
         , userID, collectionName, type);
-        collectionReference = db.collection(directory);
+        this.collectionReference = db.collection(directory);
 
-        // create the adapter with an empty list of entries data first, once the data is completely loaded
-        // call notifyDataSetChanged on the adapter (as shown in fetchRespectiveEntries()
-        // this.onDestroyListener =
-        this.logAdapter = new CollectionLogAdapter(getActivity(), entries)
-                .setOnDestroyListener(new OnDestroyListener())
-                .setOnUpdateListener(new OnUpdateListener());
-
-        firstLoad = true;
-        listenerRegistration = collectionReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
-            if (e != null) {
-                Log.w(TAG, "listen:error", e);
-                return;
-            }
-
-            if (!firstLoad) {
-                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                    if (dc.getType() == DocumentChange.Type.ADDED) {
-                        Log.i(TAG, "onEvent");
-                        addNewEnty(dc.getDocument().getString("dataPath"));
-                    }
-                }
-            }
-        });
-
-        loadEntriesData();
-
-        if (savedInstanceState != null) {
-            this.finishedLoading = savedInstanceState.getBoolean("finishedLoading");
-        }
-
-        if (finishedLoading) {
-            Log.i(TAG, "finishedLoading");
-            ArrayList<EntryPair> list = savedInstanceState.getParcelableArrayList("entryPairs");
-            if (list.size() > 0) Log.i(TAG, list.get(0).getEntry().getTitle());
-        }
+        handleDisplayOfEntries(savedInstanceState);
     }
 
     @Override
@@ -134,11 +92,20 @@ public class CollectionLogFragment extends Fragment {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.i(TAG, "onConfigChanged " + type);
+        this.configChanged = true;
+    }
+
+    // Pass the loaded entry data to this activity upon restarting (e.g. when configuration changes)
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState");
-        outState.putBoolean("finishedLoading", finishedLoading);
-        outState.putParcelableArrayList("entryPairs", entriesTesting);
+        outState.putBoolean("firstLoad", firstLoad);
+        outState.putBoolean("configChanged", configChanged);
+        outState.putParcelableArrayList("entryPairs", entriesPairs);
     }
 
     @Nullable
@@ -154,39 +121,93 @@ public class CollectionLogFragment extends Fragment {
         return parentView;
     }
 
-    private void loadEntriesData() {
-        Log.i(TAG, "In loadEntriesData " + collectionName + " " + type);
-        Log.i(TAG, collectionReference.getPath());
-        collectionReference.get().addOnCompleteListener((task) -> {
-            if (task.isSuccessful()) {
-                Log.i(TAG, "Successfully fetch all collection entries");
-                QuerySnapshot result = task.getResult();
-                List<QueryDocumentSnapshot> collection_entries = new LinkedList<>();
+    // Handle the display of entries data in the recyclerview. It includes logic that deals with
+    // adding, reading, updating & deleting of entry.
+    private void handleDisplayOfEntries(Bundle savedInstanceState) {
+        this.entriesPairs = new ArrayList<>();
 
-                for (QueryDocumentSnapshot doc : result) {
-                    collection_entries.add(doc);
-                }
+        // Logic to handle orientation change.
+        if (savedInstanceState != null) {
+            this.configChanged = savedInstanceState.getBoolean("configChanged", false);
+            this.firstLoad = savedInstanceState.getBoolean("firstLoad", true);
 
-                fetchRespectiveEntries(collection_entries);
-            } else {
-                Log.e(TAG, "Fail to load collection entries!");
+            // If data is fully loaded, then when orientation changes, the previously loaded data will
+            // be used for the adapter instead of fetching all the data from the database again.
+            if (configChanged && !firstLoad) {
+                ArrayList<EntryPair> entryPairs = savedInstanceState.getParcelableArrayList("entryPairs");
+                this.entriesPairs = (entryPairs == null) ? new ArrayList<>() : entryPairs;
             }
+        } else {
+            // First time loading data, so fetch from database
+            this.firstLoad = true;
+        }
+
+        this.logAdapter = new CollectionLogAdapter(getActivity(), entriesPairs)
+                .setOnUpdateListener(new OnUpdateListener());
+
+        // Logic to load all existing entry data from database. Also loads new entry data from database.
+        this.listenerRegistration = collectionReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
+            if (e != null) {
+                Log.w(TAG, "listen:error", e);
+                return;
+            }
+            Log.i(TAG, "in listener registration " + type);
+
+            // Fetch data from database if this is the first time loading all the data from database
+            // The second if statement deals with event where new entry is added into the database
+            if (firstLoad) {
+                Log.i(TAG, "in first load " + type);
+                List<String> dbPaths = new ArrayList<>();
+                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                    if (dc.getType() == DocumentChange.Type.ADDED) {
+                        dbPaths.add(dc.getDocument().getString("dataPath"));
+                    }
+                }
+                fetchRespectiveEntries(dbPaths);
+            } else  if (startObservingNewEntry) {
+                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            Log.i(TAG, "in adding new entry " + type);
+                            addNewEnty(dc.getDocument().getString("dataPath"));
+                            break;
+                        case REMOVED:
+                            Log.i(TAG, "in removing new entry " + type);
+                            String entryID = dc.getDocument().getString("dataPath")
+                                    .split("/")[3];
+                            removeEntry(entryID);
+                            break;
+                        default:
+                    }
+                }
+            }
+
+            /*
+                Used to prevent the second if statement being triggered on orientation changes, which will
+                fetch all the data from database again and hence result in duplicated data.
+                It is disabled(i.e setting it to TRUE) after the listenerRegistration is triggered for the 1st time
+                to enable the logic that deals with adding & deleting of entry
+            */
+            startObservingNewEntry = true;
         });
     }
 
-    private void fetchRespectiveEntries(List<QueryDocumentSnapshot> collection_entries) {
-        Log.i(TAG, "In fetchRespectiveEntries");
-
+    // Fetch entries data from database and use it to load the recyclerview
+    private void fetchRespectiveEntries(List<String> directories) {
         String partial_dbPath = String.format(Locale.US, "users/%s", userID);
 
         List<Task<DocumentSnapshot>> tasks = new LinkedList<>();
-        for (QueryDocumentSnapshot collection_entry : collection_entries) {
+
+        // Spawn off fetching tasks
+        for (String directory : directories) {
             String dbPath = String.format(Locale.US, "%s/%s",
-                    partial_dbPath, collection_entry.getString("dataPath"));
+                    partial_dbPath, directory);
             Log.i(TAG, dbPath);
             tasks.add(db.document(dbPath).get());
         }
 
+        // When all fetching tasks complete, fill them up in the adapter's data set(list) and notify it
+        // that the data set is changed.
         Tasks.whenAllComplete(tasks).addOnCompleteListener((task -> {
             Log.i(TAG, "All fetch tasks completes");
             List<Task<?>> tasks_list = task.getResult();
@@ -196,26 +217,20 @@ public class CollectionLogFragment extends Fragment {
                     DocumentSnapshot doc = (DocumentSnapshot) task1.getResult();
                     Entry entry = doc.toObject(Entry.class);
                     String entryID = doc.getId();
-                    if (doc != null) Log.i(TAG, doc.getId());
-                    // For debugging purpose
-                    // Log.i(TAG, entry.getTitle());
-                    // Log.i(TAG, entry.getDesc());
-                    // Log.i(TAG, entry.getDate());
 
-                    entries.add(new Pair<>(entry, entryID));
-
-                    // For testing
-                    entriesTesting.add(new EntryPair(entry, entryID));
+                    entriesPairs.add(new EntryPair(entry, entryID));
                 }
             }
 
-            logAdapter.notifyDataSetChanged(); // new stuff here
+            logAdapter.notifyDataSetChanged();
+
+            // Use to prevent unnecessary fetching of data from the database, esp when orientation
+            // changes.
             firstLoad = false;
-            finishedLoading = true;
         }  ));
     }
 
-    // Add new entry into the entry list of collection log
+    // Add new entry into the entry list of collection log (Deal with displaying of data, not the database)
     private void addNewEnty(String partialdbPath) {
         String dbPath = String.format(Locale.US, "users/%s/%s", userID, partialdbPath);
         db.document(dbPath).get().addOnCompleteListener(task -> {
@@ -225,11 +240,28 @@ public class CollectionLogFragment extends Fragment {
                 Entry newEntry = doc.toObject(Entry.class);
                 String entryID = doc.getId();
 
-                entries.add(new Pair<>(newEntry, entryID));
-                logAdapter.notifyItemInserted(entries.size() - 1);
+                entriesPairs.add(new EntryPair(newEntry, entryID));
+                logAdapter.notifyItemInserted(entriesPairs.size() - 1);
             } else {
-                Log.e(TAG, "Fail to add new entry!");
+                Log.e(TAG, "Fail to add new entry into Collection Log's display!");
             }
         });
+    }
+
+    // Delete an entry from the entry list of collection log (Deal with displaying of data, not the database)
+    private void removeEntry(String entryID) {
+        int size  = entriesPairs.size();
+        ListIterator<EntryPair> iterator = entriesPairs.listIterator();
+
+        // Find the entry data from the adapter's data set using entry id, then delete it
+        // & finally notify the adapter that item is deleted.
+        for (int index = 0; index < size; index++) {
+            if (entryID.equals(iterator.next().getEntryId())) {
+                iterator.remove();
+                logAdapter.notifyItemRemoved(index);
+                Log.i(TAG, "Nofified item removed");
+                break;
+            }
+        }
     }
 }
