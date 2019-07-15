@@ -36,6 +36,9 @@
     <string name="nav_tag_groups">Tag Groups</string>
     <string name="nav_new">New</string>
     <string name="nav_sign_out">Sign out</string>
+    <string name="bottom_btn_notes">Notes</string>
+    <string name="bottom_btn_tasks">Tasks</string>
+    <string name="bottom_btn_events">Events</string>
 
     <string name="cal_year_hint">Year</string>
     <string name="cal_day_hint">Day</string>
