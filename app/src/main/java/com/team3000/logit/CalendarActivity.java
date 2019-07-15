@@ -2,6 +2,7 @@ package com.team3000.logit;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -23,22 +24,15 @@ public class CalendarActivity extends BaseActivity {
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_calendar, contentFrameLayout);
 
-        Button btnCalToday = findViewById(R.id.btnCalToday);
-        Button btnCalTomorrow = findViewById(R.id.btnCalTomorrow);
         Spinner spnMonthSelect = findViewById(R.id.spnMonthSelect);
         EditText etYearSelect = findViewById(R.id.etYearSelect);
         Button btnGoToMonth = findViewById(R.id.btnGoToMonth);
+        EditText etDaySelect = findViewById(R.id.etDaySelect);
+        Button btnGoToDay = findViewById(R.id.btnGoToDay);
         CalendarView calendarView = findViewById(R.id.calendarView);
-        Calendar cal = Calendar.getInstance();
-        final int year = cal.get(Calendar.YEAR);
-        final int month = cal.get(Calendar.MONTH);
-        final int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        calendarView.setOnDateChangeListener((view, year1, month1, dayOfMonth) -> goToDailyLog(year1, month1, dayOfMonth, 0));
-
-        btnCalToday.setOnClickListener(v -> goToDailyLog(year, month, day,0));
-
-        btnCalTomorrow.setOnClickListener(v -> goToDailyLog(year, month, day, 1));
+        calendarView.setOnDateChangeListener((view, year1, month1, dayOfMonth) -> goToDailyLog(year1,
+                new DateFormatSymbols().getMonths()[month1].substring(0, 3), dayOfMonth));
 
         ArrayAdapter<CharSequence> mAdapter = ArrayAdapter.createFromResource(this,
                 R.array.months_array, android.R.layout.simple_spinner_item);
@@ -48,20 +42,34 @@ public class CalendarActivity extends BaseActivity {
 
         btnGoToMonth.setOnClickListener(v -> {
             String monthGo = (String) spnMonthSelect.getSelectedItem();
-            int yearGo = Integer.parseInt(etYearSelect.getText().toString());
-            if ("Month".equals(monthGo) || "".equals(etYearSelect)) {
-                Toast.makeText(this, "Please select Month & Year to go to", Toast.LENGTH_SHORT).show();
+            String yearGoString = etYearSelect.getText().toString();
+            if ("Month".equals(monthGo) || "".equals(yearGoString)) {
+                Toast.makeText(this, "Please input Month & Year", Toast.LENGTH_SHORT).show();
             } else {
-                goToMonthlyLog(monthGo, yearGo);
+                goToMonthlyLog(monthGo, Integer.parseInt(yearGoString));
+            }
+        });
+
+        btnGoToDay.setOnClickListener(v -> {
+            String monthGo = (String) spnMonthSelect.getSelectedItem();
+            String yearGoString = etYearSelect.getText().toString();
+            String dayGoString = etDaySelect.getText().toString();
+            int dayGo = "".equals(dayGoString) ? 0 : Integer.parseInt(dayGoString);
+            if ("Month".equals(monthGo) || "".equals(yearGoString)) {
+                Toast.makeText(this, "Please input Month & Year", Toast.LENGTH_SHORT).show();
+            } else if (isValidDay(monthGo, dayGo)) {
+                goToDailyLog(Integer.parseInt(yearGoString), monthGo, dayGo);
+            } else {
+                Toast.makeText(this, "Please input a valid Day", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void goToDailyLog(int year, int month, int day, int dayOffset) {
+    private void goToDailyLog(int year, String month, int day) {
         Intent intentDaily = new Intent(CalendarActivity.this, DailyLogActivity.class);
         intentDaily.putExtra("year", year);
-        intentDaily.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
-        intentDaily.putExtra("day", day + dayOffset);
+        intentDaily.putExtra("month", month);
+        intentDaily.putExtra("day", day);
         startActivity(intentDaily);
     }
 
@@ -70,5 +78,17 @@ public class CalendarActivity extends BaseActivity {
         intentMonth.putExtra("year", year);
         intentMonth.putExtra("month", month);
         startActivity(intentMonth);
+    }
+
+    private boolean isValidDay(String month, int day) {
+        return (day > 0) &&
+                // 31-day months
+                ((("Jan".equals(month) || "Mar".equals(month) || "May".equals(month) || "Jul".equals(month) ||
+                        "Aug".equals(month) || "Oct".equals(month) || "Dec".equals(month)) && day < 31) ||
+                        // 30-day months
+                        (("April".equals(month) || "Jun".equals(month) || "Sep".equals(month) ||
+                                "Nov".equals(month)) && day < 30) ||
+                        // Feb 28 days
+                        ("Feb".equals(month) && day < 28));
     }
 }
