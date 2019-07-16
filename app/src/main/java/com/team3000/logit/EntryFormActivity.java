@@ -152,7 +152,7 @@ public class EntryFormActivity extends AppCompatActivity {
             String date = etFormDate.getText().toString();
             String time = etFormTime.getText().toString();
             String location = "event".equals(type) ? etFormLocation.getText().toString() : null;
-            final String collection = actvCollection.getText().toString();
+            final String collection = actvCollection.getText().toString().trim();
             // String eisen = "task".equals(type) ? spnFormEisen.getSelectedItem().toString() : null;
             String desc = etFormDesc.getText().toString();
             boolean addToMonthLog = cbAddToMonthLog.isChecked();
