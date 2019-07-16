@@ -2,14 +2,14 @@ package com.team3000.logit;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 public class EisenhowerActivity extends BaseActivity {
-    private Button btnDo;
-    private Button btnDecide;
-    private Button btnDelegate;
-    private Button btnEliminate;
+    private TextView tVDo;
+    private TextView tVDecide;
+    private TextView tVDelegate;
+    private TextView tVEliminate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,20 +18,20 @@ public class EisenhowerActivity extends BaseActivity {
 
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_eisenhower, contentFrameLayout);
-        btnDo = findViewById(R.id.btnDo);
-        btnDecide = findViewById(R.id.btnDecide);
-        btnDelegate = findViewById(R.id.btnDelegate);
-        btnEliminate = findViewById(R.id.btnEliminate);
+        tVDo = findViewById(R.id.Do);
+        tVDecide = findViewById(R.id.Decide);
+        tVDelegate = findViewById(R.id.Delegate);
+        tVEliminate = findViewById(R.id.Eliminate);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        btnDo.setOnClickListener(v -> loadEntryList("do"));
-        btnDecide.setOnClickListener(v -> loadEntryList("decide"));
-        btnDelegate.setOnClickListener(v -> loadEntryList("delegate"));
-        btnEliminate.setOnClickListener(v -> loadEntryList("eliminate"));
+        tVDo.setOnClickListener(v -> loadEntryList("do"));
+        tVDecide.setOnClickListener(v -> loadEntryList("decide"));
+        tVDelegate.setOnClickListener(v -> loadEntryList("delegate"));
+        tVEliminate.setOnClickListener(v -> loadEntryList("eliminate"));
     }
 
     private void loadEntryList(String trackType) {

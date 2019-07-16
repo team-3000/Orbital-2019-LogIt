@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,52 +8,64 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="110dp"
-        android:layout_marginEnd="10dp"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <Button
-            android:id="@+id/btnDo"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/Do"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="#8bc34a"
+            android:gravity="center"
             android:text="@string/eisen_do"
-            android:textSize="30sp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnDecide"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/Decide"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="#4fc3f7"
+            android:gravity="center"
             android:text="@string/eisen_decide"
-            android:textSize="30sp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <Button
-            android:id="@+id/btnDelegate"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/Delegate"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="#ffc107"
+            android:gravity="center"
             android:text="@string/eisen_delegate"
-            android:textSize="30sp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnEliminate"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/Eliminate"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="#f44336"
+            android:gravity="center"
             android:text="@string/eisen_eliminate"
-            android:textSize="30sp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+
     </LinearLayout>
+
 </LinearLayout>
