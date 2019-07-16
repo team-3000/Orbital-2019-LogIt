@@ -36,12 +36,14 @@
     <string name="nav_tag_groups">Tag Groups</string>
     <string name="nav_new">New</string>
     <string name="nav_sign_out">Sign out</string>
+    <string name="bottom_btn_notes">Notes</string>
+    <string name="bottom_btn_tasks">Tasks</string>
+    <string name="bottom_btn_events">Events</string>
 
-    <string name="cal_today">Today</string>
-    <string name="cal_tomorrow">Tomorrow</string>
-    <string name="cal_this_month">This Month</string>
-    <string name="cal_last_month">Last Month</string>
-    <string name="cal_next_month">Next Month</string>
+    <string name="cal_year_hint">Year</string>
+    <string name="cal_day_hint">Day</string>
+    <string name="cal_month_go">Go To Month</string>
+    <string name="cal_day_go">Go To Day</string>
 
     <string name="form_type">Type</string>
     <string name="form_title">Title (required)</string>
@@ -86,6 +88,22 @@
     <string-array name="form_eisen_urgency">
         <item>Urgent</item>
         <item>Not Urgent</item>
+    </string-array>
+
+    <string-array name="months_array">
+        <item>Month</item>
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Aug</item>
+        <item>Sep</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>Dec</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->

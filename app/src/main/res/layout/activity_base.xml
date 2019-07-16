@@ -40,7 +40,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:drawableTop="@drawable/ic_action_note"
-                android:text="New Note"
+                android:text="@string/bottom_btn_notes"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
             <Button
@@ -50,7 +50,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:drawableTop="@drawable/ic_action_task"
-                android:text="New Task"
+                android:text="@string/bottom_btn_tasks"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
             <Button
@@ -60,7 +60,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:drawableTop="@drawable/ic_action_event"
-                android:text="New Event"
+                android:text="@string/bottom_btn_events"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
         </LinearLayout>

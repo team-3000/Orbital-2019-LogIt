@@ -19,52 +19,57 @@
             android:focusableInTouchMode="true" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnCalToday"
+            <EditText
+                android:id="@+id/etYearSelect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cal_today"
-                android:textSize="14sp" />
+                android:ems="3"
+                android:hint="@string/cal_year_hint"
+                android:inputType="number"
+                android:maxLength="4"
+                android:textAlignment="center" />
+
+            <Spinner
+                android:id="@+id/spnMonthSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:gravity="center_horizontal|center_vertical" />
 
             <Button
-                android:id="@+id/btnCalTomorrow"
+                android:id="@+id/btnGoToMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cal_tomorrow" />
+                android:text="@string/cal_month_go" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnCalLastMonth"
+            <EditText
+                android:id="@+id/etDaySelect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cal_last_month" />
+                android:ems="3"
+                android:hint="@string/cal_day_hint"
+                android:inputType="number"
+                android:maxLength="2"
+                android:textAlignment="center" />
 
             <Button
-                android:id="@+id/btnCalThisMonth"
+                android:id="@+id/btnGoToDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cal_this_month" />
-
-            <Button
-                android:id="@+id/btnCalNextMonth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cal_next_month" />
+                android:text="@string/cal_day_go" />
         </LinearLayout>
 
     </LinearLayout>

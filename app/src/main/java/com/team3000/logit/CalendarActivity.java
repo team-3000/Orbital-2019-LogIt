@@ -2,12 +2,15 @@ package com.team3000.logit;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.text.DateFormatSymbols;
-import java.util.Calendar;
 
 public class CalendarActivity extends BaseActivity {
 
@@ -19,64 +22,71 @@ public class CalendarActivity extends BaseActivity {
         FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
         getLayoutInflater().inflate(R.layout.activity_calendar, contentFrameLayout);
 
-        Button btnCalToday = findViewById(R.id.btnCalToday);
-        Button btnCalTomorrow = findViewById(R.id.btnCalTomorrow);
-        Button btnCalLastMonth = findViewById(R.id.btnCalLastMonth);
-        Button btnCalThisMonth = findViewById(R.id.btnCalThisMonth);
-        Button btnCalNextMonth = findViewById(R.id.btnCalNextMonth);
+        Spinner spnMonthSelect = findViewById(R.id.spnMonthSelect);
+        EditText etYearSelect = findViewById(R.id.etYearSelect);
+        Button btnGoToMonth = findViewById(R.id.btnGoToMonth);
+        EditText etDaySelect = findViewById(R.id.etDaySelect);
+        Button btnGoToDay = findViewById(R.id.btnGoToDay);
         CalendarView calendarView = findViewById(R.id.calendarView);
-        Calendar cal = Calendar.getInstance();
-        final int year = cal.get(Calendar.YEAR);
-        final int month = cal.get(Calendar.MONTH);
-        final int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        calendarView.setOnDateChangeListener((view, year1, month1, dayOfMonth) -> goToDailyLog(year1, month1, dayOfMonth, 0));
+        calendarView.setOnDateChangeListener((view, year1, month1, dayOfMonth) -> goToDailyLog(year1,
+                new DateFormatSymbols().getMonths()[month1].substring(0, 3), dayOfMonth));
 
-        btnCalToday.setOnClickListener(v -> goToDailyLog(year, month, day,0));
+        ArrayAdapter<CharSequence> mAdapter = ArrayAdapter.createFromResource(this,
+                R.array.months_array, android.R.layout.simple_spinner_item);
+        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnMonthSelect.setAdapter(mAdapter);
+        spnMonthSelect.setSelection(0);
 
-        btnCalTomorrow.setOnClickListener(v -> goToDailyLog(year, month, day, 1));
-
-        btnCalLastMonth.setOnClickListener(v -> {
-            int lastMonth;
-            int adjYear;
-            if (month == 1) {
-                lastMonth = 12;
-                adjYear = year - 1;
+        btnGoToMonth.setOnClickListener(v -> {
+            String monthGo = (String) spnMonthSelect.getSelectedItem();
+            String yearGoString = etYearSelect.getText().toString();
+            if ("Month".equals(monthGo) || "".equals(yearGoString)) {
+                Toast.makeText(this, "Please input Month & Year", Toast.LENGTH_SHORT).show();
             } else {
-                lastMonth = month - 1;
-                adjYear = year;
+                goToMonthlyLog(monthGo, Integer.parseInt(yearGoString));
             }
-            goToMonthlyLog(adjYear, lastMonth);
         });
 
-        btnCalThisMonth.setOnClickListener(v -> goToMonthlyLog(year, month));
-
-        btnCalNextMonth.setOnClickListener(v -> {
-            int nextMonth;
-            int adjYear;
-            if (month == 12) {
-                nextMonth = 1;
-                adjYear = year + 1;
+        btnGoToDay.setOnClickListener(v -> {
+            String monthGo = (String) spnMonthSelect.getSelectedItem();
+            String yearGoString = etYearSelect.getText().toString();
+            String dayGoString = etDaySelect.getText().toString();
+            int dayGo = "".equals(dayGoString) ? 0 : Integer.parseInt(dayGoString);
+            if ("Month".equals(monthGo) || "".equals(yearGoString)) {
+                Toast.makeText(this, "Please input Month & Year", Toast.LENGTH_SHORT).show();
+            } else if (isValidDay(monthGo, dayGo)) {
+                goToDailyLog(Integer.parseInt(yearGoString), monthGo, dayGo);
             } else {
-                nextMonth = month + 1;
-                adjYear = year;
+                Toast.makeText(this, "Please input a valid Day", Toast.LENGTH_SHORT).show();
             }
-            goToMonthlyLog(adjYear, nextMonth);
         });
     }
 
-    private void goToDailyLog(int year, int month, int day, int dayOffset) {
+    private void goToDailyLog(int year, String month, int day) {
         Intent intentDaily = new Intent(CalendarActivity.this, DailyLogActivity.class);
         intentDaily.putExtra("year", year);
-        intentDaily.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
-        intentDaily.putExtra("day", day + dayOffset);
+        intentDaily.putExtra("month", month);
+        intentDaily.putExtra("day", day);
         startActivity(intentDaily);
     }
 
-    private void goToMonthlyLog(int year, int month) {
+    private void goToMonthlyLog(String month, int year) {
         Intent intentMonth = new Intent(CalendarActivity.this, MonthlyLogActivity.class);
         intentMonth.putExtra("year", year);
-        intentMonth.putExtra("month", new DateFormatSymbols().getMonths()[month].substring(0, 3));
+        intentMonth.putExtra("month", month);
         startActivity(intentMonth);
+    }
+
+    private boolean isValidDay(String month, int day) {
+        return (day > 0) &&
+                // 31-day months
+                ((("Jan".equals(month) || "Mar".equals(month) || "May".equals(month) || "Jul".equals(month) ||
+                        "Aug".equals(month) || "Oct".equals(month) || "Dec".equals(month)) && day < 31) ||
+                        // 30-day months
+                        (("April".equals(month) || "Jun".equals(month) || "Sep".equals(month) ||
+                                "Nov".equals(month)) && day < 30) ||
+                        // Feb 28 days
+                        ("Feb".equals(month) && day < 28));
     }
 }
