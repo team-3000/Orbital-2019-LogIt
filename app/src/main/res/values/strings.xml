@@ -19,6 +19,8 @@
     <string name="title_today">Today</string>
     <string name="btnEdit">Edit</string>
     <string name="btnDelete">Delete</string>
+    <string name="delete_yes">Yes</string>
+    <string name="delete_no">No</string>
 
     <string name="title_activity_daily_log">Daily Log</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
