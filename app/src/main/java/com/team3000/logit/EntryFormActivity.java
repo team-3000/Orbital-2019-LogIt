@@ -54,10 +54,6 @@ public class EntryFormActivity extends AppCompatActivity {
     protected String curr_collection;
     protected String curr_collection_path;
 
-    public void setCurr_collection(String curr_collection) {
-        this.curr_collection = curr_collection;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
