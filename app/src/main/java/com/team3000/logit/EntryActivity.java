@@ -1,6 +1,7 @@
 package com.team3000.logit;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -84,10 +85,29 @@ public class EntryActivity extends BaseActivity {
             tvEntryTime.setText(doc.getString("time"));
             tvEntryCollection.setText(doc.getString("collection"));
             if ("task".equals(type)) {
-                eisen = doc.getString("eisen");
-                tvEntryExtra.setText(eisen.toUpperCase());
+                String eisenReceived = doc.getString("eisen");
+                eisen = "".equals(eisenReceived) ? "No Priority Assigned" : eisenReceived.toUpperCase();
+                tvEntryExtra.setText(eisen);
+                switch (eisen) {
+                    case "DO":
+                        tvEntryExtra.setTextColor(0xff8bc34a);
+                        break;
+                    case "DECIDE":
+                        tvEntryExtra.setTextColor(Color.BLUE);
+                        break;
+                    case "DELEGATE":
+                        tvEntryExtra.setTextColor(0xffffc107);
+                        break;
+                    case "ELIMINATE":
+                        tvEntryExtra.setTextColor(0xfff44336);
+                        break;
+                    default:
+                        break;
+                }
             } else if ("event".equals(type)) {
-                tvEntryExtra.setText(doc.getString("location"));
+                String locationReceived = doc.getString("location");
+                String location = "".equals(locationReceived) ? "No location" : locationReceived;
+                tvEntryExtra.setText(location);
             }
             tvEntryDesc.setText(doc.getString("desc"));
         });
