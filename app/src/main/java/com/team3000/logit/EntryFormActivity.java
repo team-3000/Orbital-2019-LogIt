@@ -1,17 +1,11 @@
 package com.team3000.logit;
 
-import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.TimePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,52 +20,48 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.text.DateFormatSymbols;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class EntryFormActivity extends AppCompatActivity {
-    private static final String TAG = "EntryFormActivity";
-    private FirebaseFirestore database;
+    protected static final String TAG = "EntryFormActivity";
+    protected FirebaseFirestore database;
     private FirebaseUser user;
+    private EntryFormManager entryFormManager = new EntryFormManager(EntryFormActivity.this);
+    private EntryManager entryManager = new EntryManager(EntryFormActivity.this);
 
-    private EditText etFormTitle;
-    private EditText etFormDate;
-    private EditText etFormTime;
-    private EditText etFormLocation;
-    private AutoCompleteTextView actvCollection;
-    private EditText etFormDesc;
-    private CheckBox cbAddToMonthLog;
+    protected EditText etFormTitle;
+    protected EditText etFormDate;
+    protected EditText etFormTime;
+    protected EditText etFormLocation;
+    protected AutoCompleteTextView actvCollection;
+    protected EditText etFormDesc;
+    protected CheckBox cbAddToMonthLog;
     private Button btnFormSubmit;
-    private TextView eisenField;
-    private String oriDir;
-    private String type;
+    protected TextView eisenField;
+    protected String oriDir;
+    protected String type;
     private String typeCapitalised; // The type string with the first character capitalised
-    private String entryId;
-    private String oriMonth;
-    private String oriEisen;
-    private String redirect;
+    protected String entryId;
+    protected String oriMonth;
+    protected String oriEisen;
+    protected String redirect;
 
     // new stuff here
-    private String curr_collection;
-    private String curr_collection_path;
+    protected String curr_collection;
+    protected String curr_collection_path;
+
+    public void setCurr_collection(String curr_collection) {
+        this.curr_collection = curr_collection;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_form);
-        /*
-        FrameLayout contentFrameLayout = findViewById(R.id.content_frame);
-        getLayoutInflater().inflate(R.layout.activity_entry_form, contentFrameLayout);
-        */
 
         // Firebase part
         database = FirebaseFirestore.getInstance();
@@ -111,36 +101,20 @@ public class EntryFormActivity extends AppCompatActivity {
         }
 
         if (oriDir != null) {
-            preset(type, etFormTitle, etFormDate, etFormTime, actvCollection, etFormLocation, etFormDesc, cbAddToMonthLog);
+            entryFormManager.preset();
         }
 
         // Open a DatePicker when Date EditText or keyboard "next" clicked
-        etFormDate.setInputType(InputType.TYPE_NULL);
-        etFormDate.setOnClickListener(v -> showDatePicker(etFormDate));
-        etFormDate.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(etFormDate.getWindowToken(), 0);
-                showDatePicker(etFormDate);
-            }
-        });
+        entryFormManager.displayDatePicker(etFormDate);
 
         // Open a TimePicker when Time EditText clicked
-        etFormTime.setInputType(InputType.TYPE_NULL);
-        etFormTime.setOnClickListener(v -> showTimePicker(etFormTime));
-        etFormTime.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(etFormTime.getWindowToken(), 0);
-                showTimePicker(etFormTime);
-            }
-        });
+        entryFormManager.displayTimePicker(etFormTime);
 
         // Show the eisenSelection dialog
         eisenField.setOnClickListener(v -> showEisenSelectionFragment());
 
         // Initialise the collections AutoCompleteTextView
-        initializeAutoCompleteTextView();
+        entryFormManager.initializeAutoCompleteTextView();
     }
 
     @Override
@@ -152,7 +126,6 @@ public class EntryFormActivity extends AppCompatActivity {
             String time = etFormTime.getText().toString();
             String location = "event".equals(type) ? etFormLocation.getText().toString() : null;
             final String collection = actvCollection.getText().toString().trim();
-            // String eisen = "task".equals(type) ? spnFormEisen.getSelectedItem().toString() : null;
             String desc = etFormDesc.getText().toString();
             boolean addToMonthLog = cbAddToMonthLog.isChecked();
 
@@ -173,7 +146,7 @@ public class EntryFormActivity extends AppCompatActivity {
                 Toast.makeText(EntryFormActivity.this, "Please fill in required fields", Toast.LENGTH_SHORT).show();
             } else {
                 final Map<String, Object> entryData = new HashMap<>();
-                fillEntryData(entryData, title, date, time, location, collection, eisen, desc, addToMonthLog);
+                entryFormManager.fillEntryData(entryData, title, date, time, location, collection, eisen, desc, addToMonthLog);
 
                 String[] dateArr = date.split(" ");
                 final int year = Integer.parseInt(dateArr[2]);
@@ -181,78 +154,26 @@ public class EntryFormActivity extends AppCompatActivity {
 
                 final String dbPath_middle = String.format(Locale.US, "%s/%d/%s", type, year, month);
                 final String dbPath = String.format(Locale.US, "users/%s/%s", user.getUid(), dbPath_middle);
-
-                // final String dbPath = String.format(Locale.US, "users/%s/%s/%d/%s", user.getUid(), type, year, month);
                 CollectionReference ref = database.collection(dbPath);
 
                 if (oriDir == null) {
-                    ref.add(entryData).addOnCompleteListener(task -> {
-                        // Add entry into collection if collection is specified
-                        if (task.isSuccessful()) {
-                            DocumentReference doc = task.getResult();
-                            String docID = doc.getId();
-                            String docPath = String.format(Locale.US, "%s/%s", dbPath_middle, docID);
-                            /*
-                            String docPath = String.format(Locale.US, "%d/%s/%s", year, month
-                                                    , docID);
-                            */
-                            EntryManager manager = new EntryManager(EntryFormActivity.this);
-                            manager.addIntoCollection(collection, type, docPath, doc);
-                            String entryPath = String.format("%s/%s", dbPath, docID);
-                            manager.updateTracker(type + "Store", entryPath);
-                            if (!"".equals(eisen)) {
-                                manager.updateTracker(eisen, entryPath);
-                            }
-                            new EntryManager(EntryFormActivity.this).redirectToPrecedingPage(redirect, type);
-                            finish();
-                        }
-                    });
+                    entryManager.addEntry(ref, entryFormManager, entryData, collection, type, dbPath_middle, dbPath, eisen, redirect);
                 } else {
-                    final DocumentReference doc = ref.document(entryId);
-                    Log.i(TAG, doc.getPath());
-                    int entryPosition = getIntent().getIntExtra("entry_position", - 1);
-
-                    Log.i(TAG, String.valueOf(entryData.isEmpty()));
-                    Log.i(TAG, (String) entryData.get("title"));
-                    doc.set(entryData).addOnCompleteListener(task -> {
-                        String docPath = String.format(Locale.US, "%s/%s",
-                                dbPath_middle, entryId);
-
-                        EntryManager manager = new EntryManager(EntryFormActivity.this);
-                        manager.addIntoCollectionForExistingDoc(collection, curr_collection, type, docPath, doc,
-                                        curr_collection_path, entryPosition);
-                        String entryPath = String.format("%s/%s", dbPath, entryId);
-                        // Add latest entry path & delete old entry path in corresponding Type store
-                        manager.updateTracker(type + "Store", entryPath);
-                        manager.deleteFromTracker(type + "Store", oriDir);
-                        /* For tasks, add latest entry path to latest Eisenhower store.
-                           If Eisen tag changed, delete old path from old tag store;
-                           else delete old path from same tag store.
-                        */
-                        if ("task".equals(type)) {
-                            manager.updateTracker(eisen, entryPath);
-                            if (!eisen.equals(oriEisen)) {
-                                manager.deleteFromTracker(oriEisen, oriDir);
-                            } else {
-                                manager.deleteFromTracker(eisen, oriDir);
-                            }
-                        }
-                    });
-
-                    if (!month.equals(oriMonth)) {
-                        database.document(oriDir).delete();
-                    }
+                    entryManager.updateEntry(ref, entryId, type, oriDir, entryData, dbPath_middle, dbPath, collection,
+                            curr_collection, curr_collection_path, eisen, oriEisen, month, oriMonth, database);
                 }
-
-//                if (cbAddToMonthLog.isChecked()) {
-                // Add to monthly log
-//                }
 
                 finish();
                 Toast.makeText(EntryFormActivity.this, typeCapitalised + " added", Toast.LENGTH_SHORT)
                         .show();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        entryFormManager.redirectToPrecedingPage(redirect, type);
     }
 
     // Set the logic of the back button on toolbar so that user can
@@ -281,127 +202,6 @@ public class EntryFormActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("New/Edit " + typeCapitalised);
     }
 
-    private void preset(final String type, final EditText etFormTitle, final EditText etFormDate, final EditText etFormTime,
-                        final AutoCompleteTextView actvCollection, final EditText etFormLocation, final EditText etFormDesc,
-                        final CheckBox cbAddToMonthLog) {
-        database.document(oriDir).get().addOnCompleteListener(task -> {
-            DocumentSnapshot doc = task.getResult();
-            etFormTitle.setText(doc.getString("title"));
-            etFormDate.setText(doc.getString("date"));
-            etFormTime.setText(doc.getString("time"));
-
-            // New stuff here
-            curr_collection = doc.getString("collection");
-            actvCollection.setText(curr_collection);
-            curr_collection_path = doc.getString("collection_path");
-
-            if ("event".equals(type)) {
-                etFormLocation.setText(doc.getString("location"));
-            }
-            etFormDesc.setText(doc.getString("desc"));
-            if (doc.get("monthlyLog") == null) {
-                cbAddToMonthLog.setChecked(false);
-            } else {
-                cbAddToMonthLog.setChecked(doc.getBoolean("monthlyLog"));
-            }
-
-            // new stuff here
-            if ("task".equals(type)) {
-                String eisenTag = doc.getString("eisen");
-                if (!"".equals(eisenTag)) {
-                    String textToDisplay = eisenTag.substring(0, 1).toUpperCase()
-                            + eisenTag.substring(1);
-                    eisenField.setText(textToDisplay);
-                }
-            }
-        });
-    }
-
-    private void showDatePicker(final EditText etFormDate) {
-        final Calendar cal = Calendar.getInstance();
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH);
-        int year = cal.get(Calendar.YEAR);
-        DatePickerDialog picker = new DatePickerDialog(EntryFormActivity.this,
-                (view, year1, month1, dayOfMonth) -> {
-                    String monthName = new DateFormatSymbols().getMonths()[month1];
-                    String monthNameShort = monthName.substring(0, 3);
-                    etFormDate.setText(String.format(Locale.US, "%d %s %d", dayOfMonth, monthNameShort, year1));
-                }, year, month, day);
-        picker.show();
-    }
-
-    private void showTimePicker(final EditText etFormTime) {
-        final Calendar cldr = Calendar.getInstance();
-        int hour = cldr.get(Calendar.HOUR_OF_DAY);
-        int minutes = cldr.get(Calendar.MINUTE);
-        TimePickerDialog picker = new TimePickerDialog(EntryFormActivity.this, android.R.style.Theme_Holo_Light_Dialog,
-                (tp, sHour, sMinute) -> {
-                    int hour12clock;
-                    if (sHour == 0 || sHour == 12) {
-                        hour12clock = 12;
-                    } else {
-                        hour12clock = (sHour > 12) ? (sHour - 12) : sHour;
-                    }
-                    String meridien = (sHour > 11) ? "pm" : "am";
-                    etFormTime.setText(String.format(Locale.US, "%02d:%02d %s", hour12clock, sMinute, meridien));
-                }, hour, minutes, false);
-        picker.show();
-    }
-
-    private void initializeAutoCompleteTextView() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String dbpath = String.format("users/%s/collections", user.getUid());
-
-        // Retrieve all the collections' name and use them to set up the
-        // collection AutoCompleteTextView
-        database.collection(dbpath).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ArrayList<String> names = new ArrayList<>();
-
-                        for (QueryDocumentSnapshot doc : task.getResult()) {
-                            String name = (String) doc.get("name");
-                            names.add(name);
-                        }
-
-                        String[] container = new String[names.size()];
-
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
-                                , android.R.layout.simple_dropdown_item_1line, names.toArray(container));
-                        actvCollection.setAdapter(adapter);
-                    } else {
-                        Log.e(TAG, "Fail to load collections for form's AutoCompleteTextView!");
-                    }
-                });
-    }
-
-    private void fillEntryData(Map<String, Object> entryData, String title, String date, String time,
-                               String location, String collection, String eisen, String desc, boolean addToMonthLog) {
-        entryData.put("type", type);
-        entryData.put("title", title);
-        entryData.put("date", date);
-        entryData.put("time", time);
-        entryData.put("location", location);
-        // entryData.put("collection_path", curr_collection_path);
-        if ("".equals(collection)) {
-            entryData.put("collection", "");
-            entryData.put("collection_path", "");
-        } else {
-            entryData.put("collection", collection);
-            entryData.put("collection_path", curr_collection_path);
-        }
-
-        entryData.put("eisen", eisen);
-
-        if ("".equals(desc)) {
-            entryData.put("desc", "");
-        } else {
-            entryData.put("desc", desc);
-        }
-        entryData.put("monthlyLog", addToMonthLog);
-    }
-
     private void showEisenSelectionFragment() {
         // Handle Fragment transaction & backstack stuff
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -412,7 +212,7 @@ public class EntryFormActivity extends AppCompatActivity {
         ft.addToBackStack(null);
 
         // Create and show the dialog fragment
-        // Note that the setOnDestroyListener must be chained together as it return
+        // Note that the setOnDestroyListener must be chained together as it returns
         // a new eisenselectionfragment
         EisenSelectionFragment fragment = new EisenSelectionFragment()
                 .setOnDestroyListener(eisenTag -> eisenField.setText(eisenTag));

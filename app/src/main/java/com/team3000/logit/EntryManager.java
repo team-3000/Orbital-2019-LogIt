@@ -1,13 +1,13 @@
 package com.team3000.logit;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,22 +36,67 @@ public class EntryManager {
         onUpdateListener = listener;
     }
 
-    /*
-    public void updateEntry(DocumentReference doc, HashMap<String, String> newData) {
-        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    String old_collection_path = (String) task.getResult().get("collection_path");
-
-
+    protected void addEntry(CollectionReference ref, EntryFormManager efManager, Map<String, Object> entryData,
+                            String collection, String type, String dbPath_middle, String dbPath, String eisen,
+                            String redirect) {
+        ref.add(entryData).addOnCompleteListener(task -> {
+            // Add entry into collection if collection is specified
+            if (task.isSuccessful()) {
+                DocumentReference doc = task.getResult();
+                String docID = doc.getId();
+                String docPath = String.format(Locale.US, "%s/%s", dbPath_middle, docID);
+                addIntoCollection(collection, type, docPath, doc);
+                String entryPath = String.format("%s/%s", dbPath, docID);
+                updateTracker(type + "Store", entryPath);
+                if (!"".equals(eisen)) {
+                    updateTracker(eisen, entryPath);
                 }
+                // Adding to Firestore has longer delay than updating & deleting, needs redirecting after op complete
+                efManager.redirectToPrecedingPage(redirect, type);
+                activity.finish();
             }
         });
     }
-    */
 
-    public EntryManager deleteEntry(DocumentReference entryRef, int entryPosition) {
+    protected void updateEntry(CollectionReference ref, String entryId, String type, String oriDir,
+                               Map<String, Object> entryData, String dbPath_middle, String dbPath,
+                               String collection, String curr_collection, String curr_collection_path,
+                               String eisen, String oriEisen, String month, String oriMonth, FirebaseFirestore database) {
+        final DocumentReference doc = ref.document(entryId);
+        Log.i(TAG, doc.getPath());
+        int entryPosition = activity.getIntent().getIntExtra("entry_position", -1);
+
+        Log.i(TAG, String.valueOf(entryData.isEmpty()));
+        Log.i(TAG, (String) entryData.get("title"));
+        doc.set(entryData).addOnCompleteListener(task -> {
+            String docPath = String.format(Locale.US, "%s/%s",
+                    dbPath_middle, entryId);
+
+            addIntoCollectionForExistingDoc(collection, curr_collection, type, docPath, doc,
+                    curr_collection_path, entryPosition);
+            String entryPath = String.format("%s/%s", dbPath, entryId);
+            // Add latest entry path & delete old entry path in corresponding Type store
+            updateTracker(type + "Store", entryPath);
+            deleteFromTracker(type + "Store", oriDir);
+            // For tasks, add latest entry path to latest Eisenhower store.
+            // If Eisen tag changed, delete old path from old tag store;
+            // else delete old path from same tag store.
+            if ("task".equals(type)) {
+                updateTracker(eisen, entryPath);
+                if (!eisen.equals(oriEisen)) {
+                    deleteFromTracker(oriEisen, oriDir);
+                } else {
+                    deleteFromTracker(eisen, oriDir);
+                }
+            }
+        });
+
+        if (!month.equals(oriMonth)) {
+            database.document(oriDir).delete();
+        }
+    }
+
+    public EntryManager deleteEntry(DocumentReference entryRef) {
         entryRef.get().addOnCompleteListener((task -> {
             if (task.isSuccessful()) {
                 Log.i(TAG, "Entry deleted!");
@@ -65,8 +110,6 @@ public class EntryManager {
                             } else {
                                 Log.i(TAG, "Fail to delete from collection!");
                             }
-                            // activity.startActivity(new Intent(activity, DailyLogActivity.class));
-                            // activity.finish(); (move to EntryActivity delete button's setOnClickListener)
                         });
                     }
                 }));
@@ -137,13 +180,13 @@ public class EntryManager {
                 }
             }));
         } else if ((!oldCollection.isEmpty() && !newCollection.isEmpty()) && newCollection.equals(oldCollection)
-            && entryPosition != -1){ // for collection log purpose
+                && entryPosition != -1) { // for collection log purpose
             entryRef.get().addOnCompleteListener(task -> {
-               if (task.isSuccessful()) {
-                   Log.i(TAG, "Collection Log onUpdate");
-                   Entry entry = task.getResult().toObject(Entry.class);
-                   onUpdateListener.onUpdate(entryPosition, entry);
-               }
+                if (task.isSuccessful()) {
+                    Log.i(TAG, "Collection Log onUpdate");
+                    Entry entry = task.getResult().toObject(Entry.class);
+                    onUpdateListener.onUpdate(entryPosition, entry);
+                }
             });
         }
     }
@@ -154,7 +197,7 @@ public class EntryManager {
         // Log.i(TAG, dbPath); used for debugging
         firestore.document(dbPath).delete().addOnCompleteListener(listener);
     }
-  
+
     protected void updateTracker(String trackType, String updateDir) {
         if (!"".equals(trackType)) {
             String trackerPath = String.format("users/%s/%s", user.getUid(), trackType);
@@ -169,31 +212,12 @@ public class EntryManager {
             String trackerPath = String.format("users/%s/%s", user.getUid(), trackType);
             firestore.collection(trackerPath).whereEqualTo("entryPath", entryDir)
                     .get().addOnCompleteListener(task -> {
-                        List<DocumentSnapshot> ds = task.getResult().getDocuments();
-                        if (!ds.isEmpty()) {
-                            String trackerId = ds.get(0).getId();
-                            firestore.document(trackerPath + "/" + trackerId).delete();
-                        }
-                    });
+                List<DocumentSnapshot> ds = task.getResult().getDocuments();
+                if (!ds.isEmpty()) {
+                    String trackerId = ds.get(0).getId();
+                    firestore.document(trackerPath + "/" + trackerId).delete();
+                }
+            });
         }
-    }
-
-    protected void redirectToPrecedingPage(String redirect, String type) {
-        Intent intentNew = new Intent();
-        switch (redirect) {
-            case "dailylog":
-                intentNew = new Intent(activity, DailyLogActivity.class);
-                break;
-            case "monthlylog":
-                intentNew = new Intent(activity, MonthlyLogActivity.class);
-                break;
-            case "entrylist":
-                intentNew = new Intent(activity, EntryListActivity.class);
-                intentNew.putExtra("trackType", type + "Store");
-                break;
-            default:
-                break;
-        }
-        activity.startActivity(intentNew);
     }
 }

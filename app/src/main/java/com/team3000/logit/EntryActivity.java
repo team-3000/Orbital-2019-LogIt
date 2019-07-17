@@ -85,10 +85,10 @@ public class EntryActivity extends BaseActivity {
             tvEntryTime.setText(doc.getString("time"));
             tvEntryCollection.setText(doc.getString("collection"));
             if ("task".equals(type)) {
-                String eisenReceived = doc.getString("eisen");
-                eisen = "".equals(eisenReceived) ? "No Priority Assigned" : eisenReceived.toUpperCase();
-                tvEntryExtra.setText(eisen);
-                switch (eisen) {
+                eisen = doc.getString("eisen");
+                String eisenDisplayed = "".equals(eisen) ? "No Priority Assigned" : eisen.toUpperCase();
+                tvEntryExtra.setText(eisenDisplayed);
+                switch (eisenDisplayed) {
                     case "DO":
                         tvEntryExtra.setTextColor(0xff8bc34a);
                         break;
@@ -129,13 +129,13 @@ public class EntryActivity extends BaseActivity {
         btnDeleteEntry.setOnClickListener(v -> {
             EntryManager entryManager = new EntryManager(EntryActivity.this);
             entryManager.deleteFromTracker(type + "Store", directory);
-            if (eisen != null) {
+            if (!"".equals(eisen)) {
                 entryManager.deleteFromTracker(eisen, directory);
             }
             // ref.delete();
 //            startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
             // The EntryActivity will straightaway close once item is deleted in Firestore (handled in deleteEntry())
-            entryManager.deleteEntry(ref, entryPosition);
+            entryManager.deleteEntry(ref);
 //            EntryActivity.this.finish();
         });
     }
