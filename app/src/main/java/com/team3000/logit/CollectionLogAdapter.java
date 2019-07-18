@@ -2,7 +2,6 @@ package com.team3000.logit;
 
 import android.app.Activity;
 import android.util.Log;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
