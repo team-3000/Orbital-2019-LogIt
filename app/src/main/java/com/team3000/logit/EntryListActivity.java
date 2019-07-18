@@ -1,13 +1,22 @@
 package com.team3000.logit;
 
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -17,15 +26,18 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
-public class EntryListActivity extends BaseActivity {
+public class EntryListActivity extends BaseActivity implements EntryHolder.ClickListener {
     private String TAG = "EntryListActivity";
     private FloatingActionButton fabAddEntryList;
     private String type;
     private String directory;
     private ArrayList<Entry> entries = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private RecyclerView.Adapter mAdapter;
+    private EntryListAdapter mAdapter;
+    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private ActionMode actionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +61,7 @@ public class EntryListActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         entries.clear();
-        mAdapter = new EntryListAdapter(EntryListActivity.this, entries);
+        mAdapter = new EntryListAdapter(EntryListActivity.this, entries, this);
         db.collection(directory).get().addOnCompleteListener(task -> {
             QuerySnapshot querySnapshot = task.getResult();
             if (querySnapshot != null) {
@@ -79,33 +91,6 @@ public class EntryListActivity extends BaseActivity {
             }
         });
 
-//        db.document(directory).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            @SuppressWarnings("unchecked")
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                entries.clear();
-//                entryRefs = (ArrayList<String>) task.getResult().get(type);
-//                if (entryRefs == null) {
-//                    db.document(directory).update(type, new ArrayList<String>());
-//                } else {
-//                    for (String ref : entryRefs) {
-//                        db.document(ref).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                DocumentSnapshot doc = task.getResult();
-//                                Entry currEntry = doc.toObject(Entry.class);
-//                                currEntry.setId(doc.getId());
-//                                entries.add(currEntry);
-//                                Collections.sort(entries);
-//                                mAdapter.notifyDataSetChanged();
-//                                Log.d(TAG, currEntry.getId());
-//                            }
-//                        });
-//                    }
-//                }
-//            }
-//        });
-
         RecyclerView recyclerView = findViewById(R.id.rvEntryList);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(EntryListActivity.this);
@@ -119,5 +104,120 @@ public class EntryListActivity extends BaseActivity {
             startActivity(intent);
             finish();
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (actionMode != null) {
+            actionMode.finish();
+        }
+        getSupportActionBar().show();
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        if (actionMode != null) {
+            toggleSelection(position);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClicked(int position) {
+        if (actionMode == null) {
+            actionMode = startActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+        return true;
+    }
+
+    /**
+     * Toggle the selection state of an item.
+     *
+     * If the item was the last one in the selection and is unselected, the selection is stopped.
+     * Note that the selection must already be started (actionMode must not be null).
+     *
+     * @param position Position of the item to toggle the selection state
+     */
+    private void toggleSelection(int position) {
+        mAdapter.toggleSelection(position);
+        int count = mAdapter.getSelectedItemCount();
+
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+            if (getSupportActionBar().isShowing()) {
+                getSupportActionBar().hide();
+            }
+        }
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @SuppressWarnings("unused")
+        private final String TAG = ActionModeCallback.class.getSimpleName();
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate (R.menu.multi_select_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.barMultiDelete:
+                    // TODO: delete items
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EntryListActivity.this);
+                    builder.setMessage("Delete " + mAdapter.getSelectedItemCount() + " items?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    EntryManager entryManager = new EntryManager(EntryListActivity.this);
+                                    String actualPathPartial = String.format("users/%s", user);
+                                    List<Integer> selectedItems = mAdapter.getSelectedItems();
+                                    for (int i : selectedItems) {
+                                        Entry currEntry = entries.get(i);
+                                        String actualPath = String.format(Locale.US, "%s/%s/%d/%s", actualPathPartial,
+                                                currEntry.getType(), currEntry.getYear(), currEntry.getMonth());
+                                        DocumentReference ref = db.document(actualPath + "/" + currEntry.getId());
+                                        entryManager.deleteFromTracker(currEntry.getType() + "Store", actualPath);
+                                        ref.get().addOnCompleteListener(task -> {
+                                            String eisen = task.getResult().getString("eisen");
+                                            if (!"".equals(eisen)) {
+                                                entryManager.deleteFromTracker(eisen, directory);
+                                            }
+                                        });
+                                        // The EntryActivity will straightaway close once item is deleted in Firestore (handled in deleteEntry())
+                                        entryManager.deleteEntry(ref);
+                                        startActivity(new Intent(EntryListActivity.this, EntryListActivity.class));
+                                        mode.finish();
+                                    }
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.clearSelection();
+            actionMode = null;
+            getSupportActionBar().show();
+        }
     }
 }

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +24,10 @@ import com.google.firebase.firestore.Query;
 
 import java.util.Locale;
 
-public class BaseLogFragment extends Fragment {
+public class BaseLogFragment extends Fragment implements EntryHolder.ClickListener {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirestoreRecyclerAdapter mAdapter;
+    private ActionMode actionMode;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,7 +108,7 @@ public class BaseLogFragment extends Fragment {
             public EntryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View mView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.list_item, parent, false);
-                return new EntryHolder(mView);
+                return new EntryHolder(mView, BaseLogFragment.this);
             }
         };
         RecyclerView recyclerView = view.findViewById(R.id.rvLogRV);
@@ -114,6 +116,45 @@ public class BaseLogFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        if (actionMode != null) {
+            toggleSelection(position);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClicked(int position) {
+        if (actionMode == null) {
+//            actionMode = getActivity().startActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+        return true;
+    }
+
+    /**
+     * Toggle the selection state of an item.
+     * <p>
+     * If the item was the last one in the selection and is unselected, the selection is stopped.
+     * Note that the selection must already be started (actionMode must not be null).
+     *
+     * @param position Position of the item to toggle the selection state
+     */
+    private void toggleSelection(int position) {
+//        mAdapter.toggleSelection(position);
+//        int count = mAdapter.getSelectedItemCount();
+//
+//        if (count == 0) {
+//            actionMode.finish();
+//        } else {
+//            actionMode.setTitle(String.valueOf(count));
+//            actionMode.invalidate();
+//            if (getActivity().getActionBar().isShowing()) {
+//                getActivity().getActionBar().hide();
+//            }
+//        }
     }
 }
 

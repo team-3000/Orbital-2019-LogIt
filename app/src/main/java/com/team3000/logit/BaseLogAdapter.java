@@ -7,21 +7,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Locale;
 
-public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
+public abstract class BaseLogAdapter extends MultiSelectAdapter<EntryHolder> {
     private static final String TAG = "BaseLogAdapter";
     private Activity activity;
     private String userId;
     protected EntryListener.OnUpdateListener onUpdateListener;
+    private EntryHolder.ClickListener clickListener;
 
-    public BaseLogAdapter(Activity activity) {
+    public BaseLogAdapter(Activity activity, EntryHolder.ClickListener clickListener) {
         this.activity = activity;
         this.userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        this.clickListener = clickListener;
     }
 
     public BaseLogAdapter setOnUpdateListener(EntryListener.OnUpdateListener onUpdateListener) {
@@ -33,7 +33,7 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
     public EntryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View mView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item, parent, false);
-        return new EntryHolder(mView);
+        return new EntryHolder(mView, clickListener);
     }
 
     public void fillUpEntryHolder(EntryHolder holder, Entry entry, String entryId) {
@@ -47,7 +47,6 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
         holder.mView.setOnClickListener(v -> {
             Log.i(TAG, "Attaching onDestroyListener");
             EntryManager.setOnUpdateListener(onUpdateListener); // For collection log
-
 
             String entryType = entry.getType();
             int entryYear = entry.getYear();

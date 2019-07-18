@@ -3,10 +3,14 @@ package com.team3000.logit;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +34,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 
 // Represents a page(note, task or entry) in the Collection Log.
-public class CollectionLogFragment extends Fragment {
+public class CollectionLogFragment extends Fragment implements EntryHolder.ClickListener {
     private static final String TAG = "CollectionLogFragment";
     private FirebaseFirestore db;
     private CollectionReference collectionReference;
@@ -45,8 +49,10 @@ public class CollectionLogFragment extends Fragment {
     private boolean firstTimeLoading;
     private boolean startObservingNewEntry;
     private boolean configChanged;
+    private CollectionLogFragment.ActionModeCallback actionModeCallback = new CollectionLogFragment.ActionModeCallback();
+    private ActionMode actionMode;
 
-    public class OnUpdateListener implements  EntryListener.OnUpdateListener {
+    public class OnUpdateListener implements EntryListener.OnUpdateListener {
         @Override
         public void onUpdate(int entryPosition, Entry updatedEntry) {
             Log.i(TAG, "In OnUpdateListener");
@@ -78,7 +84,7 @@ public class CollectionLogFragment extends Fragment {
         this.db = FirebaseFirestore.getInstance();
         this.userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.directory = String.format(Locale.US, "users/%s/collections/%s/%s"
-        , userID, collectionName, type);
+                , userID, collectionName, type);
         this.collectionReference = db.collection(directory);
 
         handleDisplayOfEntries(savedInstanceState);
@@ -142,7 +148,7 @@ public class CollectionLogFragment extends Fragment {
             this.firstTimeLoading = true;
         }
 
-        this.logAdapter = new CollectionLogAdapter(getActivity(), entriesPairs)
+        this.logAdapter = new CollectionLogAdapter(getActivity(), entriesPairs, this)
                 .setOnUpdateListener(new OnUpdateListener());
 
         // Logic to load all existing entry data from database. Also loads new entry data from database.
@@ -164,7 +170,7 @@ public class CollectionLogFragment extends Fragment {
                     }
                 }
                 fetchRespectiveEntries(dbPaths);
-            } else  if (startObservingNewEntry) {
+            } else if (startObservingNewEntry) {
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
                     switch (dc.getType()) {
                         case ADDED:
@@ -227,7 +233,7 @@ public class CollectionLogFragment extends Fragment {
             // Use to prevent unnecessary fetching of data from the database, esp when orientation
             // changes.
             firstTimeLoading = false;
-        }  ));
+        }));
     }
 
     // Add new entry into the entry list of collection log (Deal with displaying of data, not the database)
@@ -250,7 +256,7 @@ public class CollectionLogFragment extends Fragment {
 
     // Delete an entry from the entry list of collection log (Deal with displaying of data, not the database)
     private void removeEntry(String entryID) {
-        int size  = entriesPairs.size();
+        int size = entriesPairs.size();
         ListIterator<EntryPair> iterator = entriesPairs.listIterator();
 
         // Find the entry data from the adapter's data set using entry id, then delete it
@@ -262,6 +268,81 @@ public class CollectionLogFragment extends Fragment {
                 Log.i(TAG, "Nofified item removed");
                 break;
             }
+        }
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        if (actionMode != null) {
+            toggleSelection(position);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClicked(int position) {
+        if (actionMode == null) {
+            actionMode = getActivity().startActionMode(actionModeCallback);
+        }
+        toggleSelection(position);
+        return true;
+    }
+
+    /**
+     * Toggle the selection state of an item.
+     * <p>
+     * If the item was the last one in the selection and is unselected, the selection is stopped.
+     * Note that the selection must already be started (actionMode must not be null).
+     *
+     * @param position Position of the item to toggle the selection state
+     */
+    private void toggleSelection(int position) {
+        logAdapter.toggleSelection(position);
+        int count = logAdapter.getSelectedItemCount();
+
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+            if (getActivity().getActionBar().isShowing()) {
+                getActivity().getActionBar().hide();
+            }
+        }
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @SuppressWarnings("unused")
+        private final String TAG = CollectionLogFragment.ActionModeCallback.class.getSimpleName();
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate (R.menu.multi_select_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.barMultiDelete:
+                    // TODO: delete items
+                    Log.d(TAG, "menu_remove");
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            logAdapter.clearSelection();
+            actionMode = null;
+            getActivity().getActionBar().show();
         }
     }
 }
