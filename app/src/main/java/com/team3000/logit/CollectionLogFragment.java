@@ -51,19 +51,20 @@ public class CollectionLogFragment extends Fragment {
         public void onUpdate(int entryPosition, Entry updatedEntry) {
             Log.i(TAG, "In OnUpdateListener");
 
-            // Try to use iterator later so that we won't have to tranverse the list twice
-            /*
-            Pair<Entry, String> oldEntryPair = entriesPairs.get(entryPosition);
-            String entryId = oldEntryPair.second;
-
-            entriesPairs.set(entryPosition, new Pair<>(updatedEntry, entryId));
-            */
-
             EntryPair oldEntryPair = entriesPairs.get(entryPosition);
             String entryId = oldEntryPair.getEntryId();
 
-            entriesPairs.set(entryPosition, new EntryPair(updatedEntry, entryId));
-            logAdapter.notifyItemChanged(entryPosition);
+            // Use an iterator to traverse the list to find the correct entryPair and
+            // update it to the new entryPair
+            ListIterator<EntryPair> iterator = entriesPairs.listIterator();
+            int size = entriesPairs.size();
+            for (int i = 0; i < size; i++) {
+                if (iterator.nextIndex() == entryPosition) {
+                    iterator.next();
+                    iterator.set(new EntryPair(updatedEntry, entryId));
+                    logAdapter.notifyItemChanged(entryPosition);
+                }
+            }
         }
     }
 
@@ -225,7 +226,7 @@ public class CollectionLogFragment extends Fragment {
             logAdapter.notifyDataSetChanged();
 
             // Use to prevent unnecessary fetching of data from the database, esp when orientation
-            // changes.
+            // changes. It is set to false(to prevent unnecessary fetc
             firstTimeLoading = false;
         }  ));
     }
