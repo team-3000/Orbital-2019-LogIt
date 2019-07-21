@@ -63,6 +63,8 @@ public class CollectionLogFragment extends Fragment {
                     iterator.next();
                     iterator.set(new EntryPair(updatedEntry, entryId));
                     logAdapter.notifyItemChanged(entryPosition);
+                } else {
+                    iterator.next();
                 }
             }
         }
