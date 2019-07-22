@@ -38,12 +38,11 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
 
     public void fillUpEntryHolder(EntryHolder holder, Entry entry, String entryId) {
         Log.i(TAG, "In fillUpEntryHolder");
-        Log.i(TAG, entryId);
+        // Log.i(TAG, entryId); for debugging purpose
         holder.tvListTitle.setText(entry.getTitle());
         holder.tvListDate.setText(entry.getDate());
         holder.tvListTime.setText(entry.getTime());
         holder.tvListDesc.setText(entry.getDesc());
-        // final DocumentSnapshot doc = getSnapshots().getSnapshot(holder.getAdapterPosition());
         holder.mView.setOnClickListener(v -> {
             Log.i(TAG, "Attaching onDestroyListener");
             EntryManager.setOnUpdateListener(onUpdateListener); // For collection log
@@ -52,7 +51,6 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
             String entryType = entry.getType();
             int entryYear = entry.getYear();
             String entryMonth = entry.getMonth();
-            // String entryId = doc.getId();
             String directory = String.format(Locale.US, "users/%s/%s/%d/%s/%s", userId, entryType, entryYear, entryMonth, entryId);
             Intent entryIntent = new Intent(activity, EntryActivity.class);
             entryIntent.putExtra("type", entryType);
@@ -65,7 +63,6 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
             }
 
             activity.startActivity(entryIntent);
-            // activity.onBackPressed();
         });
     }
 }

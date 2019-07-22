@@ -42,6 +42,8 @@ public class EntryManager {
         ref.add(entryData).addOnCompleteListener(task -> {
             // Add entry into collection if collection is specified
             if (task.isSuccessful()) {
+                String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+                Toast.makeText(activity, typeCapitalised + " added", Toast.LENGTH_SHORT).show();
                 DocumentReference doc = task.getResult();
                 String docID = doc.getId();
                 String docPath = String.format(Locale.US, "%s/%s", dbPath_middle, docID);
@@ -69,6 +71,8 @@ public class EntryManager {
         Log.i(TAG, String.valueOf(entryData.isEmpty()));
         Log.i(TAG, (String) entryData.get("title"));
         doc.set(entryData).addOnCompleteListener(task -> {
+            String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+            Toast.makeText(activity, typeCapitalised + " updated", Toast.LENGTH_SHORT).show();
             String docPath = String.format(Locale.US, "%s/%s",
                     dbPath_middle, entryId);
 
