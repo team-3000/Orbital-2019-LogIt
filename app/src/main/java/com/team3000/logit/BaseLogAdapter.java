@@ -38,7 +38,7 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
 
     public void fillUpEntryHolder(EntryHolder holder, Entry entry, String entryId) {
         Log.i(TAG, "In fillUpEntryHolder");
-        // Log.i(TAG, entryId); for debugging purpose
+        Log.i(TAG, entryId);
         holder.tvListTitle.setText(entry.getTitle());
         holder.tvListDate.setText(entry.getDate());
         holder.tvListTime.setText(entry.getTime());
@@ -46,7 +46,6 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
         holder.mView.setOnClickListener(v -> {
             Log.i(TAG, "Attaching onDestroyListener");
             EntryManager.setOnUpdateListener(onUpdateListener); // For collection log
-
 
             String entryType = entry.getType();
             int entryYear = entry.getYear();
