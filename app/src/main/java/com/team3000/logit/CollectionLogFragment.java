@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -46,17 +47,29 @@ public class CollectionLogFragment extends Fragment {
     private boolean startObservingNewEntry;
     private boolean configChanged;
 
-    public class OnUpdateListener implements  EntryListener.OnUpdateListener {
+    public class OnUpdateListener implements EntryListener.OnUpdateListener {
         @Override
-        public void onUpdate(int entryPosition, Entry updatedEntry) {
+        public void onUpdate(String entryId, Entry updatedEntry) {
             Log.i(TAG, "In OnUpdateListener");
-
-            EntryPair oldEntryPair = entriesPairs.get(entryPosition);
-            String entryId = oldEntryPair.getEntryId();
 
             // Use an iterator to traverse the list to find the correct entryPair and
             // update it to the new entryPair
             ListIterator<EntryPair> iterator = entriesPairs.listIterator();
+            int size = entriesPairs.size();
+            for (int i = 0; i < size; i++) {
+                if (iterator.next().getEntryId().equals(entryId)) {
+                    iterator.set(new EntryPair(updatedEntry, entryId));
+                    Collections.sort(entriesPairs);
+                    logAdapter.notifyDataSetChanged();
+                    break;
+                }
+            }
+
+            /*
+                        EntryPair oldEntryPair = entriesPairs.get(entryPosition);
+            String entryId = oldEntryPair.getEntryId();
+
+                        ListIterator<EntryPair> iterator = entriesPairs.listIterator();
             int size = entriesPairs.size();
             for (int i = 0; i < size; i++) {
                 if (iterator.nextIndex() == entryPosition) {
@@ -67,6 +80,7 @@ public class CollectionLogFragment extends Fragment {
                     iterator.next();
                 }
             }
+             */
         }
     }
 
@@ -225,6 +239,7 @@ public class CollectionLogFragment extends Fragment {
                 }
             }
 
+            Collections.sort(entriesPairs);
             logAdapter.notifyDataSetChanged();
 
             // Use to prevent unnecessary fetching of data from the database, esp when orientation
@@ -244,7 +259,8 @@ public class CollectionLogFragment extends Fragment {
                 String entryID = doc.getId();
 
                 entriesPairs.add(new EntryPair(newEntry, entryID));
-                logAdapter.notifyItemInserted(entriesPairs.size() - 1);
+                Collections.sort(entriesPairs);
+                logAdapter.notifyDataSetChanged();
             } else {
                 Log.e(TAG, "Fail to add new entry into Collection Log's display!");
             }

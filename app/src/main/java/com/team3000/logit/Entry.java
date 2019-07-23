@@ -61,6 +61,7 @@ public class Entry implements Comparable<Entry>, Parcelable {
         this.id = id;
     }
 
+    // Sort entry according to its date & time in ascending order
     @Override
     public int compareTo(Entry other) {
         String[] thisDateArr = this.date.split(" ");
@@ -72,22 +73,40 @@ public class Entry implements Comparable<Entry>, Parcelable {
         String[] thisTimeNums = thisTimeSplit[0].split(":");
         String[] otherTimeNums = otherTimeSplit[0].split(":");
 
+        int thisYear = Integer.parseInt(thisDateArr[2]);
+        int thisMonth = convertToInt(thisDateArr[1]);
         int thisDay = Integer.parseInt(thisDateArr[0]);
+
+        int otherYear = Integer.parseInt(otherDateArr[2]);
+        int otherMonth = convertToInt(otherDateArr[1]);
         int otherDay = Integer.parseInt(otherDateArr[0]);
-        if (thisDay == otherDay) {
-            if (thisMeridien.equals(otherMeridien)) {
-                int thisHour = Integer.parseInt(thisTimeNums[0]);
-                int otherHour = Integer.parseInt(otherTimeNums[0]);
-                if (thisHour == otherHour) {
-                    return Integer.parseInt(thisTimeNums[1]) - Integer.parseInt(otherTimeNums[1]);
+
+        // Year
+        if (thisYear == otherYear) {
+            // Month
+            if (thisMonth == otherMonth) {
+                // Day
+                if (thisDay == otherDay) {
+                    // Time
+                    if (thisMeridien.equals(otherMeridien)) {
+                        int thisHour = Integer.parseInt(thisTimeNums[0]);
+                        int otherHour = Integer.parseInt(otherTimeNums[0]);
+                        if (thisHour == otherHour) {
+                            return Integer.parseInt(thisTimeNums[1]) - Integer.parseInt(otherTimeNums[1]);
+                        } else {
+                            return thisHour - otherHour;
+                        }
+                    } else {
+                        return ("am".equals(thisMeridien) && "pm".equals(otherMeridien)) ? -1 : 1;
+                    }
                 } else {
-                    return thisHour - otherHour;
+                    return thisDay - otherDay;
                 }
             } else {
-                return ("am".equals(thisMeridien) && "pm".equals(otherMeridien)) ? -1 : 1;
+                return thisMonth - otherMonth;
             }
         } else {
-            return thisDay - otherDay;
+            return thisYear - otherYear;
         }
     }
 
@@ -125,4 +144,21 @@ public class Entry implements Comparable<Entry>, Parcelable {
             return new Entry[size];
         }
     };
+
+    // Convert a month string into its corresponding int
+    private int convertToInt(String month) {
+        int result = "Jan".equals(month) ? 1 :
+                     "Feb".equals(month) ? 2 :
+                     "Mar".equals(month) ? 3 :
+                     "Apr".equals(month) ? 4 :
+                     "May".equals(month) ? 5 :
+                     "Jun".equals(month) ? 6 :
+                     "Jul".equals(month) ? 7 :
+                     "Aug".equals(month) ? 8 :
+                     "Sep".equals(month) ? 9 :
+                     "Oct".equals(month) ? 10 :
+                     "Nov".equals(month) ? 11 : 12;
+
+        return result;
+    }
 }
