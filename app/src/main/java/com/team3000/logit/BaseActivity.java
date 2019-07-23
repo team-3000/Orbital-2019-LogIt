@@ -121,10 +121,11 @@ public abstract class BaseActivity extends AppCompatActivity
         Log.i("BaseActivity", "After calling finish");
     }
 
+    /* Code for showing the dropdown menu on the top right corner of the app bar, may need it in future
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.daily_log, menu);
+        getMenuInflater().inflate(R.menu.toolbar_options_menu, menu);
         return true;
     }
 
@@ -142,6 +143,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+    */
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
