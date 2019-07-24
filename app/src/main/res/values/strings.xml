@@ -53,7 +53,7 @@
     <string name="form_collection">Collection</string>
     <string name="form_priority">Priority:</string>
     <string name="form_description">Description</string>
-    <string name="form_monthlyLog">Monthly Log</string>
+    <string name="form_monthlyLog">Add to Monthly Log</string>
     <string name="form_submit">Submit</string>
     <string name="form_selectPriority">Select Priority</string>
 
