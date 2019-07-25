@@ -55,7 +55,7 @@ public class EntryListActivity extends BaseActivity {
             if (querySnapshot != null) {
                 List<DocumentSnapshot> storeSnaps = querySnapshot.getDocuments();
                 for (DocumentSnapshot store : storeSnaps) {
-                    Log.i(TAG, store.getId());
+                    // Log.i(TAG, store.getId()); for debugging purpose
                     DocumentReference doc = db.document(store.getString("entryPath"));
 
                     // To handle cases where the delete button is pressed which straightaway closes EntryActivity

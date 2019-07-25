@@ -131,8 +131,10 @@ public class EntryManager {
         entryRef.get().addOnCompleteListener((task -> {
             if (task.isSuccessful()) {
                 Log.i(TAG, "Entry deleted!");
+                Toast.makeText(activity, "Entry deleted", Toast.LENGTH_SHORT).show();
 
                 String collection_path = task.getResult().getString("collection_path");
+
                 entryRef.delete().addOnCompleteListener((task2 -> {
                     if (task2.isSuccessful() && !collection_path.isEmpty()) {
                         deleteFromCollection(collection_path, (task3) -> {
@@ -140,6 +142,7 @@ public class EntryManager {
                                 Log.i(TAG, "Succesfully deleted from collection!");
                             } else {
                                 Log.i(TAG, "Fail to delete from collection!");
+                                Toast.makeText(activity, "Fail to delete entry from collection!", Toast.LENGTH_LONG).show();
                             }
                         });
                     }
