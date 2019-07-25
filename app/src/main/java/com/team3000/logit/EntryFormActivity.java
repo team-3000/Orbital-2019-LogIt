@@ -12,7 +12,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -83,7 +82,7 @@ public class EntryFormActivity extends AppCompatActivity {
         oriEisen = getIntent().getStringExtra("oriEisen");
         redirect = getIntent().getStringExtra("redirect");
 
-        curr_collection_path = ""; // new stuff here
+        curr_collection_path = "";
 
         initialiseToolbar();
 
@@ -125,6 +124,7 @@ public class EntryFormActivity extends AppCompatActivity {
             String desc = etFormDesc.getText().toString();
             boolean addToMonthLog = cbAddToMonthLog.isChecked();
 
+            // Handle eisenhower part of the entry form
             String eisen;
             if ("task".equals(type)) {
                 String displayedText = eisenField.getText().toString();
@@ -138,9 +138,15 @@ public class EntryFormActivity extends AppCompatActivity {
                 eisen = "";
             }
 
-            if ("".equals(title) || "".equals(date) || "".equals(time)) {
-                Toast.makeText(EntryFormActivity.this, "Please fill in required fields", Toast.LENGTH_SHORT).show();
-            } else {
+            // Handle form submission
+            Bundle info = new Bundle();
+            info.putString("title", title);
+            info.putString("date", date);
+            info.putString("time", time);
+            info.putString("collectionName", collection);
+
+            // Submit the entry into the database if it's valid
+            if (checkIfFormIsValid(info)) {
                 final Map<String, Object> entryData = new HashMap<>();
                 entryFormManager.fillEntryData(entryData, title, date, time, location, collection, eisen, desc, addToMonthLog);
 
@@ -160,8 +166,6 @@ public class EntryFormActivity extends AppCompatActivity {
                 }
 
                 finish();
-                Toast.makeText(EntryFormActivity.this, typeCapitalised + " added", Toast.LENGTH_SHORT)
-                        .show();
             }
         });
     }
@@ -214,5 +218,48 @@ public class EntryFormActivity extends AppCompatActivity {
                 .setOnDestroyListener(eisenTag -> eisenField.setText(eisenTag));
 
         fragment.show(getSupportFragmentManager(), "dialog");
+    }
+
+    private boolean checkIfFormIsValid(Bundle entryInfo) {
+        String title = entryInfo.getString("title");
+        String date = entryInfo.getString("date");
+        String time = entryInfo.getString("time");
+        String collectionName = entryInfo.getString("collectionName");
+
+        // Clear all the previous errors first
+        etFormTitle.setError(null);
+        etFormDate.setError(null);
+        etFormTime.setError(null);
+        actvCollection.setError(null);
+
+        // Check if there's any error
+        if ("".equals(title)) etFormTitle.setError("Please fill in this field");
+        if ("".equals(date)) etFormDate.setError("Please fill in this field");
+        if ("".equals(time)) etFormTime.setError("Please fill in this field");
+        if (checkIfCollectionNameIsInvalid(collectionName)) actvCollection.setError("Collection name cannot contain the following characters . $ [ ] # / \\");
+
+        boolean isValid = (etFormTitle.getError() == null && etFormDate.getError() == null &&
+                           etFormTime.getError() == null && actvCollection.getError() == null);
+
+        return isValid;
+    }
+
+    // covert the collection name string into an array and check it to prevent multiple traversing
+    // through the string
+    private boolean checkIfCollectionNameIsInvalid(String name) {
+        boolean isInvalid = false;
+
+        if (name != null) {
+            char[] characters = name.toCharArray();
+            for (char c : characters) {
+                isInvalid = (c == '.' || c == '$' ||
+                        c == '[' || c == ']' ||
+                        c == '#' || c == '/' ||
+                        c == '\\');
+                if (isInvalid) break;
+            }
+        }
+
+        return isInvalid;
     }
 }

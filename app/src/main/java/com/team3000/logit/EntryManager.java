@@ -1,6 +1,7 @@
 package com.team3000.logit;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class EntryManager {
+    public static EntryListener.OnDateChangeListener onDateChangeListener;
     private static final String TAG = "EntryManager";
     private static EntryListener.OnUpdateListener onUpdateListener;
     private Activity activity;
@@ -42,6 +44,8 @@ public class EntryManager {
         ref.add(entryData).addOnCompleteListener(task -> {
             // Add entry into collection if collection is specified
             if (task.isSuccessful()) {
+                String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+                Toast.makeText(activity, typeCapitalised + " added", Toast.LENGTH_SHORT).show();
                 DocumentReference doc = task.getResult();
                 String docID = doc.getId();
                 String docPath = String.format(Locale.US, "%s/%s", dbPath_middle, docID);
@@ -63,14 +67,20 @@ public class EntryManager {
                                String collection, String curr_collection, String curr_collection_path,
                                String eisen, String oriEisen, String month, String oriMonth, FirebaseFirestore database) {
         final DocumentReference doc = ref.document(entryId);
-        Log.i(TAG, doc.getPath());
         int entryPosition = activity.getIntent().getIntExtra("entry_position", -1);
+        final String docPath = String.format(Locale.US, "%s/%s",
+                dbPath_middle, entryId);
 
-        Log.i(TAG, String.valueOf(entryData.isEmpty()));
-        Log.i(TAG, (String) entryData.get("title"));
+        // Log.i(TAG, doc.getPath());
+        // Log.i(TAG, String.valueOf(entryData.isEmpty())); for debugging
+        // Log.i(TAG, (String) entryData.get("title")); for debugging
+
+        // Update data
         doc.set(entryData).addOnCompleteListener(task -> {
-            String docPath = String.format(Locale.US, "%s/%s",
-                    dbPath_middle, entryId);
+            String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
+            Toast.makeText(activity, typeCapitalised + " updated", Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "oriDir is " + oriDir);
+            Log.i(TAG, "docPath is " + docPath);
 
             addIntoCollectionForExistingDoc(collection, curr_collection, type, docPath, doc,
                     curr_collection_path, entryPosition);
@@ -91,8 +101,29 @@ public class EntryManager {
             }
         });
 
-        if (!month.equals(oriMonth)) {
+        // Handle change in month and/or year
+        String oriYear = oriDir.split("/")[3];
+        String newYear = docPath.split("/")[1];
+        Log.i(TAG, "oriYear is " + oriYear);
+        Log.i(TAG, "newYear is " + newYear);
+
+        if (!month.equals(oriMonth) || !newYear.equals(oriYear)) {
             database.document(oriDir).delete();
+            Log.i(TAG, "currCollection path is " + curr_collection_path);
+
+            // Update the datapath in the collecction entry
+            if (curr_collection.equals(collection)) {
+                updateEntryDataPath(curr_collection_path, docPath);
+            }
+
+            // Inform EntryActivty change in month/or year so that it can update its
+            // displayed data accordingly
+            if (onDateChangeListener != null) {
+                Bundle monthChangeInfo = new Bundle();
+                monthChangeInfo.putString("month", month);
+                monthChangeInfo.putString("newDirectory", docPath);
+                onDateChangeListener.notifyMonthAndOrYearChanged(monthChangeInfo);
+            }
         }
     }
 
@@ -185,7 +216,9 @@ public class EntryManager {
                 if (task.isSuccessful()) {
                     Log.i(TAG, "Collection Log onUpdate");
                     Entry entry = task.getResult().toObject(Entry.class);
-                    onUpdateListener.onUpdate(entryPosition, entry);
+                    String entryId = task.getResult().getId();
+
+                    onUpdateListener.onUpdate(entryId, entry);
                 }
             });
         }
@@ -219,5 +252,14 @@ public class EntryManager {
                 }
             });
         }
+    }
+
+    // Update the entryDataPath in collection entry (collection log)
+    private void updateEntryDataPath(String collectionPath, String newEntryDataPath) {
+        String completeCollectionPath = String.format("users/%s/collections/%s", user.getUid(), collectionPath);
+        Map<String, Object> newData = new HashMap<>();
+        newData.put("dataPath", newEntryDataPath);
+
+        firestore.document(completeCollectionPath).update(newData);
     }
 }

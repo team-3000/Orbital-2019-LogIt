@@ -55,6 +55,7 @@ public class EntryListActivity extends BaseActivity {
             if (querySnapshot != null) {
                 List<DocumentSnapshot> storeSnaps = querySnapshot.getDocuments();
                 for (DocumentSnapshot store : storeSnaps) {
+                    Log.i(TAG, store.getId());
                     DocumentReference doc = db.document(store.getString("entryPath"));
 
                     // To handle cases where the delete button is pressed which straightaway closes EntryActivity
@@ -78,33 +79,6 @@ public class EntryListActivity extends BaseActivity {
                 }
             }
         });
-
-//        db.document(directory).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            @SuppressWarnings("unchecked")
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                entries.clear();
-//                entryRefs = (ArrayList<String>) task.getResult().get(type);
-//                if (entryRefs == null) {
-//                    db.document(directory).update(type, new ArrayList<String>());
-//                } else {
-//                    for (String ref : entryRefs) {
-//                        db.document(ref).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                DocumentSnapshot doc = task.getResult();
-//                                Entry currEntry = doc.toObject(Entry.class);
-//                                currEntry.setId(doc.getId());
-//                                entries.add(currEntry);
-//                                Collections.sort(entries);
-//                                mAdapter.notifyDataSetChanged();
-//                                Log.d(TAG, currEntry.getId());
-//                            }
-//                        });
-//                    }
-//                }
-//            }
-//        });
 
         RecyclerView recyclerView = findViewById(R.id.rvEntryList);
         recyclerView.setHasFixedSize(true);

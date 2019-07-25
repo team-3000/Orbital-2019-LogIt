@@ -3,7 +3,7 @@ package com.team3000.logit;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class EntryPair implements Parcelable {
+public class EntryPair implements Comparable<EntryPair>, Parcelable {
     private Entry entry;
     private String entryId;
 
@@ -18,6 +18,12 @@ public class EntryPair implements Parcelable {
 
     public String getEntryId() {
         return entryId;
+    }
+
+    // EntryPairs are compared in the same way as Entries are compared
+    @Override
+    public int compareTo(EntryPair o) {
+        return this.entry.compareTo(o.entry);
     }
 
     @Override

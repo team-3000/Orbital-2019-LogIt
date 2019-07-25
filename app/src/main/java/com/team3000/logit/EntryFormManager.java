@@ -170,6 +170,9 @@ public class EntryFormManager {
 
     protected void redirectToPrecedingPage(String redirect, String type) {
         Intent intentNew = new Intent();
+
+        if (redirect == null) return;
+
         switch (redirect) {
             case "dailylog":
                 intentNew = new Intent(activity, DailyLogActivity.class);

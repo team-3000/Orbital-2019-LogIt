@@ -5,12 +5,14 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -33,10 +35,44 @@ public class EntryActivity extends BaseActivity {
     private String directory;
     private String eisen;
     private int entryPosition;
-    // private String collection_path; (may need it in future)
     private DocumentReference ref;
-
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.entry_nav_allentries:
+                    Intent intentList = new Intent(EntryActivity.this, EntryListActivity.class);
+                    intentList.putExtra("trackType", type + "Store");
+                    startActivity(intentList);
+                    return true;
+                case R.id.entry_nav_calendar:
+                    startActivity(new Intent(EntryActivity.this, CalendarActivity.class));
+                    return true;
+                default:
+                    break;
+            }
+            return false;
+        }
+    };
+
+    // Detect change in month and year because it will affect the fetching of data & eventually
+    // the display of data
+    public class onDateChangeListener implements EntryListener.OnDateChangeListener {
+        // Update the entry view accordingly when month and/or year is changed.
+        @Override
+        public void notifyMonthAndOrYearChanged(Bundle data) {
+            Log.i("EntryActivity", "InNotifyMonthChanged");
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            month = data.getString("month");
+            directory = String.format("users/%s/%s", userId, data.getString("newDirectory"));
+            ref = db.document(directory);
+            loadView();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +99,14 @@ public class EntryActivity extends BaseActivity {
         String typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
         getSupportActionBar().setTitle(typeCapitalised);
 
-        // new stuff
+        // Used for collection log
         entryPosition = getIntent().getIntExtra("entry_position", -1);
-        // Log.i("EntryActivity", String.valueOf(position));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        Log.i("EntryActivity", "onStart");
         noteButton.setVisibility(View.GONE);
         taskButton.setVisibility(View.GONE);
         eventButton.setVisibility(View.GONE);
@@ -78,6 +114,11 @@ public class EntryActivity extends BaseActivity {
             tvEntryExtra.setVisibility(View.GONE);
         }
 
+        loadView();
+    }
+
+    // Load the content of the entry view and attach necessary listeners
+    private void loadView() {
         ref.get().addOnCompleteListener(task -> {
             DocumentSnapshot doc = task.getResult();
             tvEntryTitle.setText(doc.getString("title"));
@@ -123,6 +164,8 @@ public class EntryActivity extends BaseActivity {
             intentEdit.putExtra("entry_position", entryPosition);
             intentEdit.putExtra("oriEisen", eisen);
             intentEdit.putExtra("redirect", getIntent().getStringExtra("redirect"));
+
+            EntryManager.onDateChangeListener = new onDateChangeListener();
             startActivity(intentEdit);
         });
 
@@ -132,32 +175,7 @@ public class EntryActivity extends BaseActivity {
             if (!"".equals(eisen)) {
                 entryManager.deleteFromTracker(eisen, directory);
             }
-            // ref.delete();
-//            startActivity(new Intent(EntryActivity.this, DailyLogActivity.class));
-            // The EntryActivity will straightaway close once item is deleted in Firestore (handled in deleteEntry())
             entryManager.deleteEntry(ref);
-//            EntryActivity.this.finish();
         });
     }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.entry_nav_allentries:
-                    Intent intentList = new Intent(EntryActivity.this, EntryListActivity.class);
-                    intentList.putExtra("trackType", type + "Store");
-                    startActivity(intentList);
-                    return true;
-                case R.id.entry_nav_calendar:
-                    startActivity(new Intent(EntryActivity.this, CalendarActivity.class));
-                    return true;
-                default:
-                    break;
-            }
-            return false;
-        }
-    };
 }
