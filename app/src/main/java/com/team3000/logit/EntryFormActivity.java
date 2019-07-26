@@ -197,7 +197,7 @@ public class EntryFormActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Set the title of the toolbar accoridngly
+        // Set the title of the toolbar accordingly
         typeCapitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
         getSupportActionBar().setTitle("New/Edit " + typeCapitalised);
     }

@@ -111,8 +111,8 @@ public class EntryManager {
             database.document(oriDir).delete();
             Log.i(TAG, "currCollection path is " + curr_collection_path);
 
-            // Update the datapath in the collecction entry
-            if (curr_collection.equals(collection)) {
+            // Update the datapath in the collection entry
+            if (curr_collection.equals(collection) && !"".equals(curr_collection_path)) {
                 updateEntryDataPath(curr_collection_path, docPath);
             }
 
@@ -259,7 +259,6 @@ public class EntryManager {
         String completeCollectionPath = String.format("users/%s/collections/%s", user.getUid(), collectionPath);
         Map<String, Object> newData = new HashMap<>();
         newData.put("dataPath", newEntryDataPath);
-
         firestore.document(completeCollectionPath).update(newData);
     }
 }

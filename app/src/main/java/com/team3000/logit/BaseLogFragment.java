@@ -97,7 +97,6 @@ public class BaseLogFragment extends Fragment {
                     intent.putExtra("month", entryMonth);
                     intent.putExtra("entryId", entryId);
                     intent.putExtra("directory", directory);
-                    intent.putExtra("redirect", getArguments().getString("redirect"));
                     startActivity(intent);
                 });
             }
