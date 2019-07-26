@@ -1,5 +1,7 @@
 package com.team3000.logit;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -170,12 +172,26 @@ public class EntryActivity extends BaseActivity {
         });
 
         btnDeleteEntry.setOnClickListener(v -> {
-            EntryManager entryManager = new EntryManager(EntryActivity.this);
-            entryManager.deleteFromTracker(type + "Store", directory);
-            if (!"".equals(eisen)) {
-                entryManager.deleteFromTracker(eisen, directory);
-            }
-            entryManager.deleteEntry(ref);
+            AlertDialog.Builder builder = new AlertDialog.Builder(EntryActivity.this);
+            builder.setMessage("Delete \"" + tvEntryTitle.getText().toString() + "\"?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            EntryManager entryManager = new EntryManager(EntryActivity.this);
+                            entryManager.deleteFromTracker(type + "Store", directory);
+                            if (!"".equals(eisen)) {
+                                entryManager.deleteFromTracker(eisen, directory);
+                            }
+                            // The EntryActivity will close once item is deleted in Firestore (handled in deleteEntry())
+                            entryManager.deleteEntry(ref);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         });
     }
 }

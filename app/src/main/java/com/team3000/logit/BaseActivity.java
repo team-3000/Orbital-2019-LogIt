@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -106,7 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity
         }
 
         // Always redirect the user to today's daily log if the current activity is part of the activities
-        // in the navigation menu and not currrently at today's daily log
+        // in the navigation menu and not currently at today's daily log
         if (isPartOfBaseActivities && !isTodayDailyLog) {
             Intent intent = new Intent(BaseActivity.this, DailyLogActivity.class)
                     .putExtra("year", 0)
@@ -167,11 +166,9 @@ public abstract class BaseActivity extends AppCompatActivity
         Intent intent = null;
         if (id == R.id.nav_today) {
             intent = new Intent(BaseActivity.this, DailyLogActivity.class)
-                    .putExtra("year", 0)
                     .putExtra("isTodayDailyLog", true);
         } else if (id == R.id.nav_this_month) {
-            intent = new Intent(BaseActivity.this, MonthlyLogActivity.class)
-                    .putExtra("year", 0);
+            intent = new Intent(BaseActivity.this, MonthlyLogActivity.class);
         } else if (id == R.id.nav_calendar) {
             intent = new Intent(BaseActivity.this, CalendarActivity.class);
         } else if (id == R.id.nav_collections) {
@@ -193,6 +190,9 @@ public abstract class BaseActivity extends AppCompatActivity
             cameFromNavMenu = true;
         }
 
+        if (this instanceof DailyLogActivity && id != currPosition) {
+            this.finish();
+        }
         startActivity(intent);
 
         if (id == R.id.nav_signOut) {
