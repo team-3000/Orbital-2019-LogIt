@@ -169,24 +169,10 @@ public class EntryFormManager {
     }
 
     protected void redirectToPrecedingPage(String redirect, String type) {
-        Intent intentNew = new Intent();
-
-        if (redirect == null) return;
-
-        switch (redirect) {
-            case "dailylog":
-                intentNew = new Intent(activity, DailyLogActivity.class);
-                break;
-            case "monthlylog":
-                intentNew = new Intent(activity, MonthlyLogActivity.class);
-                break;
-            case "entrylist":
-                intentNew = new Intent(activity, EntryListActivity.class);
-                intentNew.putExtra("trackType", type + "Store");
-                break;
-            default:
-                break;
+        if (redirect != null) {
+            Intent intentNew = new Intent(activity, EntryListActivity.class);
+            intentNew.putExtra("trackType", type + "Store");
+            activity.startActivity(intentNew);
         }
-        activity.startActivity(intentNew);
     }
 }

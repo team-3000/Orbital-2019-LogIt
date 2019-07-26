@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import android.os.Bundle;
 
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class MonthlyLogActivity extends BaseLogActivity {
@@ -16,7 +18,8 @@ public class MonthlyLogActivity extends BaseLogActivity {
         super.onCreate(savedInstanceState);
 
         // Prevent redirection of the same page when the user click on this month in the drawer
-        if (getIntent().getIntExtra("year", 1) == 0) {
+        if (new DateFormatSymbols().getMonths()[Calendar.getInstance().get(Calendar.MONTH)].substring(0, 3)
+            .equals(month)) {
             super.currPosition = R.id.nav_this_month;
         }
 
@@ -25,6 +28,18 @@ public class MonthlyLogActivity extends BaseLogActivity {
         mPager = findViewById(R.id.log_pager);
         pagerAdapter = new BaseLogPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(pagerAdapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mPager.getCurrentItem() == 0) {
+            // If the user is currently looking at the first page, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed();
+        } else {
+            // Otherwise, select the previous page.
+            mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+        }
     }
 
     private class BaseLogPagerAdapter extends FragmentStatePagerAdapter {
@@ -49,7 +64,6 @@ public class MonthlyLogActivity extends BaseLogActivity {
             bundle.putString("logType", logType);
             bundle.putString("directory", directory);
             bundle.putString("logDate", "");
-            bundle.putString("redirect", "monthlylog");
             BaseLogFragment blfrag = new BaseLogFragment();
             blfrag.setArguments(bundle);
             return blfrag;

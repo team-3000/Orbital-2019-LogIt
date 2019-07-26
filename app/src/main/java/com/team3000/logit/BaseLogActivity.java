@@ -18,6 +18,7 @@ public class BaseLogActivity extends BaseActivity {
     protected String userId;
     protected ViewPager mPager;
     protected PagerAdapter pagerAdapter;
+    protected boolean isCurrentDayOrMonth = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class BaseLogActivity extends BaseActivity {
             String monthName = new DateFormatSymbols().getMonths()[monthNum];
             month = monthName.substring(0, 3);
             day = cal.get(Calendar.DAY_OF_MONTH);
+            isCurrentDayOrMonth = true;
         }
     }
 }

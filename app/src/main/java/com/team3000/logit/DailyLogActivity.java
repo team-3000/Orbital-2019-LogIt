@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 public class DailyLogActivity extends BaseLogActivity {
@@ -19,7 +20,7 @@ public class DailyLogActivity extends BaseLogActivity {
         super.onCreate(savedInstanceState);
 
         // For today's daily log
-        if (getIntent().getIntExtra("year", 1) == 0) {
+        if (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == day) {
             super.currPosition = R.id.nav_today;
         }
 
@@ -68,7 +69,6 @@ public class DailyLogActivity extends BaseLogActivity {
             bundle.putString("logType", logType);
             bundle.putString("directory", directory);
             bundle.putString("logDate", logDate);
-            bundle.putString("redirect", "dailylog");
             BaseLogFragment blfrag = new BaseLogFragment();
             blfrag.setArguments(bundle);
             return blfrag;
