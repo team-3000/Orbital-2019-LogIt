@@ -190,9 +190,6 @@ public abstract class BaseActivity extends AppCompatActivity
             cameFromNavMenu = true;
         }
 
-        if (this instanceof DailyLogActivity && id != currPosition) {
-            this.finish();
-        }
         startActivity(intent);
 
         if (id == R.id.nav_signOut) {
