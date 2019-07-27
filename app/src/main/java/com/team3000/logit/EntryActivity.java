@@ -120,6 +120,7 @@ public class EntryActivity extends BaseActivity {
                     return true;
                 case R.id.entry_nav_external_cal:
                     addToExternalCal();
+                    return true;
                 default:
                     break;
             }
