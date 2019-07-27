@@ -64,23 +64,6 @@ public class CollectionLogFragment extends Fragment {
                     break;
                 }
             }
-
-            /*
-                        EntryPair oldEntryPair = entriesPairs.get(entryPosition);
-            String entryId = oldEntryPair.getEntryId();
-
-                        ListIterator<EntryPair> iterator = entriesPairs.listIterator();
-            int size = entriesPairs.size();
-            for (int i = 0; i < size; i++) {
-                if (iterator.nextIndex() == entryPosition) {
-                    iterator.next();
-                    iterator.set(new EntryPair(updatedEntry, entryId));
-                    logAdapter.notifyItemChanged(entryPosition);
-                } else {
-                    iterator.next();
-                }
-            }
-             */
         }
     }
 
@@ -219,7 +202,7 @@ public class CollectionLogFragment extends Fragment {
         for (String directory : directories) {
             String dbPath = String.format(Locale.US, "%s/%s",
                     partial_dbPath, directory);
-            Log.i(TAG, dbPath);
+            // Log.i(TAG, dbPath); for debugging purpose
             tasks.add(db.document(dbPath).get());
         }
 

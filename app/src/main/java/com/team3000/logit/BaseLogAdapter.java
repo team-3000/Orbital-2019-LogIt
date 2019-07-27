@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,7 +39,14 @@ public abstract class BaseLogAdapter extends RecyclerView.Adapter<EntryHolder> {
 
     public void fillUpEntryHolder(EntryHolder holder, Entry entry, String entryId) {
         Log.i(TAG, "In fillUpEntryHolder");
-        Log.i(TAG, entryId);
+        // Log.i(TAG, entryId); // for debugging purpose
+
+        if (entry == null) {
+            Log.e(TAG, "Fail to load entry because it's null!");
+            Toast.makeText(activity, "Fail to load entry!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         holder.tvListTitle.setText(entry.getTitle());
         holder.tvListDate.setText(entry.getDate());
         holder.tvListTime.setText(entry.getTime());
