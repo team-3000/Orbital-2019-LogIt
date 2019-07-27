@@ -59,6 +59,10 @@
         <activity android:name=".BaseLogActivity" />
         <activity android:name=".EntryFormActivity" />
         <activity android:name=".EntryListActivity" />
+        <provider
+            android:authorities="com.team3000.logit.SearchSuggestionsProvider"
+            android:name=".SearchSuggestionsProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

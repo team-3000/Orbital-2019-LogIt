@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -139,6 +140,10 @@ public abstract class BaseActivity extends AppCompatActivity
         if (id == R.id.action_search) {
             onSearchRequested();
             return true;
+        } else if (id == R.id.clear_search_history) {
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SearchSuggestionsProvider.AUTHORITY, SearchSuggestionsProvider.MODE);
+            suggestions.clearHistory();
         }
 
         return super.onOptionsItemSelected(item);
