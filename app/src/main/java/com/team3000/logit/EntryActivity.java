@@ -14,12 +14,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import java.util.Arrays;
+import java.util.Calendar;
 
 public class EntryActivity extends BaseActivity {
     private BottomNavigationView navView;
@@ -33,33 +37,17 @@ public class EntryActivity extends BaseActivity {
     private Button btnDeleteEntry;
     private String type;
     private String month;
+    private String title;
+    private String date;
+    private String time;
+    private String location;
+    private String desc;
     private String entryId;
     private String directory;
     private String eisen;
     private int entryPosition;
     private DocumentReference ref;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.entry_nav_allentries:
-                    Intent intentList = new Intent(EntryActivity.this, EntryListActivity.class);
-                    intentList.putExtra("trackType", type + "Store");
-                    startActivity(intentList);
-                    return true;
-                case R.id.entry_nav_calendar:
-                    startActivity(new Intent(EntryActivity.this, CalendarActivity.class));
-                    return true;
-                default:
-                    break;
-            }
-            return false;
-        }
-    };
 
     // Detect change in month and year because it will affect the fetching of data & eventually
     // the display of data
@@ -119,13 +107,36 @@ public class EntryActivity extends BaseActivity {
         loadView();
     }
 
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.entry_nav_allentries:
+                    Intent intentList = new Intent(EntryActivity.this, EntryListActivity.class);
+                    intentList.putExtra("trackType", type + "Store");
+                    startActivity(intentList);
+                    return true;
+                case R.id.entry_nav_external_cal:
+                    addToExternalCal();
+                default:
+                    break;
+            }
+            return false;
+        }
+    };
+
     // Load the content of the entry view and attach necessary listeners
     private void loadView() {
         ref.get().addOnCompleteListener(task -> {
             DocumentSnapshot doc = task.getResult();
-            tvEntryTitle.setText(doc.getString("title"));
-            tvEntryDate.setText(doc.getString("date"));
-            tvEntryTime.setText(doc.getString("time"));
+            title = doc.getString("title");
+            tvEntryTitle.setText(title);
+            date = doc.getString("date");
+            tvEntryDate.setText(date);
+            time = doc.getString("time");
+            tvEntryTime.setText(time);
             tvEntryCollection.setText(doc.getString("collection"));
             if ("task".equals(type)) {
                 eisen = doc.getString("eisen");
@@ -149,10 +160,11 @@ public class EntryActivity extends BaseActivity {
                 }
             } else if ("event".equals(type)) {
                 String locationReceived = doc.getString("location");
-                String location = "".equals(locationReceived) ? "No location" : locationReceived;
+                location = "".equals(locationReceived) ? "No location" : locationReceived;
                 tvEntryExtra.setText(location);
             }
-            tvEntryDesc.setText(doc.getString("desc"));
+            desc = doc.getString("desc");
+            tvEntryDesc.setText(desc);
         });
 
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -193,5 +205,28 @@ public class EntryActivity extends BaseActivity {
             AlertDialog alert = builder.create();
             alert.show();
         });
+    }
+
+    private void addToExternalCal() {
+        String[] dateArr = date.split(" ");
+        String[] timeArr = time.split(":");
+        String[] monthsArr = getResources().getStringArray(R.array.months_array);
+        int monthNum = Arrays.asList(monthsArr).indexOf(month) - 1;
+        Calendar startTime = Calendar.getInstance();
+        startTime.set(Integer.parseInt(dateArr[2]), monthNum, Integer.parseInt(dateArr[0]),
+                Integer.parseInt(timeArr[0]), Integer.parseInt(timeArr[1].split(" ")[0]));
+        long startMillis = startTime.getTimeInMillis();
+
+        Intent intentCal = new Intent(Intent.ACTION_INSERT)
+                .setData(CalendarContract.Events.CONTENT_URI)
+                .putExtra(CalendarContract.Events.TITLE, title)
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startMillis)
+                .putExtra(CalendarContract.Events.DESCRIPTION, desc);
+        if ("event".equals(type) && !"No location".equals(location)) {
+            intentCal.putExtra(CalendarContract.Events.EVENT_LOCATION, location);
+        }
+        if (intentCal.resolveActivity(getPackageManager()) != null) {
+            startActivity(intentCal);
+        }
     }
 }
