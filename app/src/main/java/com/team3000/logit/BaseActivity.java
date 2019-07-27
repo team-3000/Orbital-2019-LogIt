@@ -5,7 +5,9 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -120,7 +122,7 @@ public abstract class BaseActivity extends AppCompatActivity
         Log.i("BaseActivity", "After calling finish");
     }
 
-    /* Code for showing the dropdown menu on the top right corner of the app bar, may need it in future
+    // Show dropdown menu on the top right corner of app bar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -135,14 +137,17 @@ public abstract class BaseActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
+            onSearchRequested();
             return true;
+        } else if (id == R.id.clear_search_history) {
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SearchSuggestionsProvider.AUTHORITY, SearchSuggestionsProvider.MODE);
+            suggestions.clearHistory();
         }
 
         return super.onOptionsItemSelected(item);
     }
-    */
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
