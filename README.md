@@ -1,5 +1,5 @@
 # LogIt
-Hey there! This is our Android application, LogIt, for Orbital 2019 Summer Project.
+Hey there! This is our Android application, LogIt, for Orbital 2019 Summer Project (CP2106: Independent Software Development Project).
 
 <img src ="Images%20for%20Github/Poster.jpg" width="850">
 
@@ -37,6 +37,7 @@ The Calendar page can be accessed from the “Calendar” option in the side dra
   <img src="Images%20for%20Github/Monthly%20log%201.jpg" width="200" height="350"/>
   <img src="Images%20for%20Github/Monthly%20log%202.jpg" width="200" height="350"/> 
   <img src="Images%20for%20Github/Monthly%20log%203.jpg" width="200" height="350"/> 
+  <img src="Images%20for%20Github/Monthly%20log%204.jpg" width="200" height="350"/> 
 </p>
 
 The Monthly Log is an overview of sorts for the **most important items in a month chosen by the user to be included** in **(migrated to)** the list (see Entry Form section). **The current month’s Monthly Log** can be accessed through the **“This Month”** option in the side drawer. If you want to navigate to **other Monthly Logs**, fill up the year, **select the desired month** and click on **“Go To Month”**.
@@ -66,7 +67,7 @@ The Eisenhower Matrix serves as a tool to help the user prioritise tasks. Upon c
 <p>
   <img src="Images%20for%20Github/View%20entries%201.jpg" width="200" height="350"/>
   <img src="Images%20for%20Github/View%20entries%202.jpg" width="200" height="350"/> 
-  <img src="Images%20for%20Github/VIew%20entries%203.jpg" width="200" height="350"/> 
+  <img src="Images%20for%20Github/View%20entries%203.jpg" width="200" height="350"/> 
 </p>
 
 A list of all Entries of one type can be viewed by **clicking on the corresponding Entries’ buttons** at the bottom of most pages, or the **“All Entries Of This Type”** button in the Entry details page (refer Viewing an Entry section).
@@ -110,3 +111,7 @@ Clicking on the **“Search” icon** on the top bar opens a Search bar where th
 Clicking on the **“Add to External Calendar”** option in an Entry viewing page opens a valid Calendar app on the phone (selection dialog will pop up to choose specific one if there are multiple) where the Entry can be added as a Calendar item with its title, date/time, description and, for Events, location.
 
 **\*All pages work in landscape orientation as well as portrait**
+
+## Methods Employed to Test the Application
+### Self Evaluation
+We have tested the app on real Android phones. We tried to use the functionalities in different ways and combinations to ensure that the app works as intended and does not crash. Tests include continuously orientating the phone while using chains of functionalities, performing CRUD operations on Daily Log, Monthly Log, Collection Log, and Eisenhower Matrix, accessing each page from a variety of preceding pages and testing where the app lands when clicking the phone’s back button, as well as changing the time of Entries to test whether they are still sorted properly in chronological order.
