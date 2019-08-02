@@ -85,7 +85,7 @@ A list of all Entries of one type can be viewed by **clicking on the correspondi
 <p>
   <img src="Images%20for%20Github/View%20entry%201.jpg" width="200" height="350"/>
   <img src="Images%20for%20Github/View%20entry%202.jpg" width="200" height="350"/> 
-  <img src="Images%20for%20Github/View%20entry%203.jpg" width="200" height="350"/> 
+  <img src="Images%20for%20Github/VIew%20entry%203.jpg" width="200" height="350"/> 
   <img src="Images%20for%20Github/View%20entry%204.jpg" width="200" height="350"/> 
 </p>
 
