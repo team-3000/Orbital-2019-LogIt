@@ -67,7 +67,7 @@ The Eisenhower Matrix serves as a tool to help the user prioritise tasks. Upon c
 <p>
   <img src="Images%20for%20Github/View%20entries%201.jpg" width="200" height="350"/>
   <img src="Images%20for%20Github/View%20entries%202.jpg" width="200" height="350"/> 
-  <img src="Images%20for%20Github/View%20entries%203.jpg" width="200" height="350"/> 
+  <img src="Images%20for%20Github/VIew%20entries%203.jpg" width="200" height="350"/> 
 </p>
 
 A list of all Entries of one type can be viewed by **clicking on the corresponding Entries’ buttons** at the bottom of most pages, or the **“All Entries Of This Type”** button in the Entry details page (refer Viewing an Entry section).
@@ -85,7 +85,7 @@ A list of all Entries of one type can be viewed by **clicking on the correspondi
 <p>
   <img src="Images%20for%20Github/View%20entry%201.jpg" width="200" height="350"/>
   <img src="Images%20for%20Github/View%20entry%202.jpg" width="200" height="350"/> 
-  <img src="Images%20for%20Github/VIew%20entry%203.jpg" width="200" height="350"/> 
+  <img src="Images%20for%20Github/View%20entry%203.jpg" width="200" height="350"/> 
   <img src="Images%20for%20Github/View%20entry%204.jpg" width="200" height="350"/> 
 </p>
 
