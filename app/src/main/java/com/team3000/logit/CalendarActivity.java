@@ -2,6 +2,7 @@ package com.team3000.logit;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -52,10 +53,13 @@ public class CalendarActivity extends BaseActivity {
             String monthGo = (String) spnMonthSelect.getSelectedItem();
             String yearGoString = etYearSelect.getText().toString();
             String dayGoString = etDaySelect.getText().toString();
+
+            Log.i("CalendarActivity", dayGoString);
+
             int dayGo = "".equals(dayGoString) ? 0 : Integer.parseInt(dayGoString);
             if ("Month".equals(monthGo) || "".equals(yearGoString)) {
                 Toast.makeText(this, "Please input Month & Year", Toast.LENGTH_SHORT).show();
-            } else if (isValidDay(monthGo, dayGo)) {
+            } else if (isValidDay(yearGoString, monthGo, dayGo)) {
                 goToDailyLog(Integer.parseInt(yearGoString), monthGo, dayGo);
             } else {
                 Toast.makeText(this, "Please input a valid Day", Toast.LENGTH_SHORT).show();
@@ -78,15 +82,22 @@ public class CalendarActivity extends BaseActivity {
         startActivity(intentMonth);
     }
 
-    private boolean isValidDay(String month, int day) {
+    private boolean isValidDay(String year, String month, int day) {
+        int yearInInt = Integer.parseInt(year);
         return (day > 0) &&
                 // 31-day months
                 ((("Jan".equals(month) || "Mar".equals(month) || "May".equals(month) || "Jul".equals(month) ||
-                        "Aug".equals(month) || "Oct".equals(month) || "Dec".equals(month)) && day < 31) ||
+                        "Aug".equals(month) || "Oct".equals(month) || "Dec".equals(month)) && day <= 31) ||
                         // 30-day months
-                        (("April".equals(month) || "Jun".equals(month) || "Sep".equals(month) ||
-                                "Nov".equals(month)) && day < 30) ||
-                        // Feb 28 days
-                        ("Feb".equals(month) && day < 28));
+                        (("Apr".equals(month) || "Jun".equals(month) || "Sep".equals(month) ||
+                                "Nov".equals(month)) && day <= 30) ||
+                        // Feb 28 days (non-leap year)
+                        (!isLeapYear(yearInInt) && "Feb".equals(month) && day <= 28) ||
+                        // Feb 29 days (leap year)
+                        (isLeapYear(yearInInt) && "Feb".equals(month) && day <= 29));
+    }
+
+    private boolean isLeapYear(int year) {
+        return year % 4 == 0 && ((year % 100 != 0) || (year % 400 == 0));
     }
 }
