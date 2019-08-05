@@ -169,6 +169,7 @@ public abstract class BaseActivity extends AppCompatActivity
         }
 
         Intent intent = null;
+
         if (id == R.id.nav_today) {
             intent = new Intent(BaseActivity.this, DailyLogActivity.class)
                     .putExtra("isTodayDailyLog", true);
@@ -193,6 +194,12 @@ public abstract class BaseActivity extends AppCompatActivity
         // for managing backstack
         if (id != R.id.nav_signOut) {
             cameFromNavMenu = true;
+        }
+
+        // To deal with case where user is in daily log that is not today
+        // Must destroy and start the activity(DailyLogActivity) again
+        if (id == R.id.nav_today && currPosition == R.id.daily_log_activity) {
+            this.finish();
         }
 
         startActivity(intent);
