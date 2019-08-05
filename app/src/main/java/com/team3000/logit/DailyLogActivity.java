@@ -19,13 +19,6 @@ public class DailyLogActivity extends BaseLogActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*
-        // For today's daily log
-        if (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == day) {
-            super.currPosition = R.id.nav_today;
-        }
-        */
-
         logDate = String.format(Locale.US, "%d %s %d", day, month, year);
         getSupportActionBar().setTitle(logDate);
 
